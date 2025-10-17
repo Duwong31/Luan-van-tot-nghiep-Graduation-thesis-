@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/System/Volumes/Data/fluttersdk/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/shreesoftech/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/shreesoftech/Documents/work/flutter/custom_projects/eClassify/eClassify/android/app/.cxx/Debug/31483c36/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/shreesoftech/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/shreesoftech/Documents/work/flutter/custom_projects/eClassify/eClassify/android/app/.cxx/Debug/31483c36/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

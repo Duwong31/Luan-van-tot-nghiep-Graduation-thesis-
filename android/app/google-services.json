@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "339364873947",
+    "project_id": "celes-movie-booking-ticket",
+    "storage_bucket": "celes-movie-booking-ticket.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339364873947:android:282712b53bd22ca5d3eefe",
+        "android_client_info": {
+          "package_name": "com.celes.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVU6KuNjE1iIcSb_5uI96yCF6jIqI-3GQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

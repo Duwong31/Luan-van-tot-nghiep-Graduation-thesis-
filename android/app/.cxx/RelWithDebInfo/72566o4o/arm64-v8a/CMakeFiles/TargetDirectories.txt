@@ -1,0 +1,2 @@
+/Users/wrteamnikita/Documents/New Project/eClassify/android/app/.cxx/RelWithDebInfo/72566o4o/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/wrteamnikita/Documents/New Project/eClassify/android/app/.cxx/RelWithDebInfo/72566o4o/arm64-v8a/CMakeFiles/rebuild_cache.dir

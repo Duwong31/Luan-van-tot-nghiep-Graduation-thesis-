@@ -1,0 +1,108 @@
+name: Celes
+description: A movie booking ticket app
+
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev [Be careful]
+
+version: 2.6.0+29
+
+environment:
+  sdk: ">=3.0.6 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.2.0
+  firebase_messaging: ^15.1.3
+  flick_video_player: ^0.9.0
+  youtube_player_flutter: ^9.1.1
+  country_picker: ^2.0.26
+  connectivity_plus: ^6.0.5
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  dio: ^5.8.0+1
+  image_picker: ^1.1.2
+  flutter_bloc: ^9.1.1
+  shimmer: ^3.0.0
+  cached_network_image: ^3.4.1
+  dotted_border: ^2.1.0
+  url_launcher: ^6.3.1
+  share_plus: ^11.0.0
+  in_app_review: ^2.0.10
+  lottie: ^3.3.1
+  mime_type: ^1.0.1
+  awesome_notifications: ^0.10.1
+  device_preview: ^1.2.0
+  path_provider: ^2.1.5
+  record: ^6.0.0
+  audioplayers: ^6.4.0
+  image_cropper: ^9.1.0
+  permission_handler: ^12.0.0+1
+  open_filex: ^4.7.0
+  package_info_plus: ^8.3.0
+  any_link_preview: ^3.0.3
+  geocoding: ^3.0.0
+  google_sign_in: ^6.3.0
+  sign_in_with_apple: ^7.0.1
+  geolocator: ^14.0.0
+  flutter_svg: ^2.1.0
+  google_mobile_ads: ^6.0.0
+  flutter_image_compress: ^2.4.0
+  google_maps_flutter: ^2.12.1
+  vibration: ^3.1.3
+  device_region: ^1.4.0
+  flutter_pdfview: ^1.4.0+1
+  change_app_package_name: ^1.5.0
+  video_player: ^2.9.5
+  path: ^1.9.1
+  device_info_plus: ^11.4.0
+  sms_autofill: ^2.4.1
+  webview_flutter: ^4.11.0
+  flutter_widget_from_html: ^0.16.0
+  file_picker: ^10.1.2
+  android_intent_plus: ^5.3.0
+  google_cloud_translation: ^0.0.4
+  flutter_native_splash: ^2.4.7
+
+
+dependency_overrides:
+  intl: ^0.20.0
+
+
+
+dev_dependencies:
+  rename: ^3.0.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
+flutter_native_splash:
+  android: true
+  ios: true
+  color: "#15151E"
+  image: assets/splash_logo.png
+  android_12:
+    color: "#15151E"
+    image: assets/splash_logo.png    
+flutter:
+
+
+  uses-material-design: true
+
+  assets:
+    - assets/
+
+
+  # fonts:
+
+# fvm use 3.32.2 && fvm flutter clean && fvm flutter pub get && fvm flutter build appbundle --no-tree-shake-icons && cd iOS && pod install && open Runner.xcworkspace && cd ../
