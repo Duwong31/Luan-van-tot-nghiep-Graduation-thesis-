@@ -1,6 +1,28 @@
+import 'package:Celes/app/app_routes.dart';
+import 'package:Celes/app/app_theme.dart';
+import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
+import 'package:Celes/ui/theme/theme.dart';
+import 'package:Celes/utils/custom_text.dart';
+import 'package:Celes/utils/extensions/extensions.dart';
+import 'package:Celes/utils/extensions/lib/translate.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class UiUtils {
+  static SvgPicture getSvg(String path,
+      {Color? color, BoxFit? fit, double? width, double? height}) {
+    return SvgPicture.asset(
+      path,
+      colorFilter:
+          color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      fit: fit ?? BoxFit.contain,
+      width: width,
+      height: height,
+    );
+  }
   static Color getAdaptiveTextColor(Color color) {
     int d = 0;
 
@@ -9,6 +31,79 @@ class UiUtils {
     d = luminance > 0.5 ? 0 : 255;
 
     return Color.fromARGB(color.a.toInt(), d, d, d);
+  }
+
+  static void checkUser(
+      {required Function() onNotGuest, required BuildContext context}) {
+    if (!HiveUtils.isUserAuthenticated()) {
+      _loginBox(context);
+    } else {
+      onNotGuest.call();
+    }
+  }
+
+  static void _loginBox(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: false,
+      backgroundColor: context.color.primaryColor.withValues(alpha: 0.9),
+      enableDrag: false,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.fromLTRB(
+              30, 30, 30, MediaQuery.of(context).padding.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                "loginIsRequiredForAccessingThisFeatures".translate(context),
+                fontSize: context.font.larger,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              CustomText("tapOnLoginToAuthorize".translate(context),
+                  fontSize: context.font.small),
+              const SizedBox(
+                height: 10,
+              ),
+              MaterialButton(
+                elevation: 0,
+                color: context.color.territoryColor,
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, Routes.login,
+                      arguments: {"popToCurrent": true});
+                },
+                child: CustomText(
+                  "loginNow".translate(context),
+                  color: context.color.buttonColor,
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static SystemUiOverlayStyle getSystemUiOverlayStyle(
+      {required BuildContext context,
+      required Color statusBarColor,
+      Color? navigationBarColor}) {
+    bool isDarkMode =
+        context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark;
+    Brightness iconBrightness = isDarkMode ? Brightness.light : Brightness.dark;
+    return SystemUiOverlayStyle(
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: iconBrightness,
+        systemNavigationBarColor:
+            navigationBarColor ?? context.color.secondaryColor,
+        statusBarColor: statusBarColor,
+        statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: iconBrightness);
   }
 }
 

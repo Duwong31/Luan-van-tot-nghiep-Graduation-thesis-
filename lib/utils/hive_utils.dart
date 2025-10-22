@@ -1,5 +1,5 @@
 import 'package:Celes/app/app_theme.dart';
-import 'package:Celes/app/routes.dart';
+import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/hive_keys.dart';
 import 'package:flutter/foundation.dart';
