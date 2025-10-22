@@ -12,6 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: 
+    sdk: flutter
   cupertino_icons: ^1.0.8
   firebase_core: ^3.6.0
   firebase_auth: ^5.2.0
@@ -65,7 +67,7 @@ dependencies:
   android_intent_plus: ^5.3.0
   google_cloud_translation: ^0.0.4
   flutter_native_splash: ^2.4.7
-
+  intl: ^0.20.2
 
 dependency_overrides:
   intl: ^0.20.0
@@ -95,14 +97,12 @@ flutter_native_splash:
     color: "#15151E"
     image: assets/splash_logo.png    
 flutter:
-
-
   uses-material-design: true
-
+  generate: true
   assets:
     - assets/
-
-
+    - assets/languages/
+    - assets/svg/bottomnav/
   # fonts:
 
 # fvm use 3.32.2 && fvm flutter clean && fvm flutter pub get && fvm flutter build appbundle --no-tree-shake-icons && cd iOS && pod install && open Runner.xcworkspace && cd ../
