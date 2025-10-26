@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({ super.key});
+  const SplashScreen({super.key});
+
   @override
   SplashScreenState createState() => SplashScreenState();
 }
@@ -17,55 +18,68 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    //locationPermission();
     super.initState();
     startTimer();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Future<void> startTimer() async {
-    Timer(const Duration(seconds: 1), () {
-      isTimerCompleted = true;
-      if (mounted) setState(() {});
-    });
-  }
-
-  void navigateCheck() {
-    if (isTimerCompleted) {
-      navigateToScreen(); 
+    @override
+    void dispose() {
+      super.dispose();
     }
-  }
 
-  void navigateToScreen() async {
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed(Routes.main, arguments: {
-          'from': "main",
-        });
+    Future<void> startTimer() async {
+      Timer(const Duration(seconds: 1), () {
+        isTimerCompleted = true;
+        if (mounted) setState(() {});
+      });
+    }
+
+    void navigateCheck() {
+      if (isTimerCompleted) {
+        navigateToScreen();
       }
-    });
-  }
+    }
+
+    void navigateToScreen() async {
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed(Routes.main, arguments: {
+            'from': "main",
+          });
+        }
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
     navigateCheck();
     return SafeArea(
-        top: false,
-        child: AnnotatedRegion(
-          value: SystemUiOverlayStyle(
-            statusBarColor: context.color.territoryColor,
-            statusBarIconBrightness: Brightness.light,
-            systemNavigationBarIconBrightness: Brightness.light,
-            systemNavigationBarColor: context.color.territoryColor,
-          ),
-          child: Scaffold(
-            backgroundColor: context.color.backgroundColor,
-            body: Center(
-              child: Text('Splash Screen'),
+      top: false,
+      child: AnnotatedRegion(
+        value: SystemUiOverlayStyle(
+          statusBarColor: context.color.territoryColor,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: context.color.territoryColor,
+        ),
+        child: Scaffold(
+          backgroundColor: const Color(0xFF15151E),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/splash_logo.png',
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 50),
+                const CircularProgressIndicator(
+                  strokeWidth: 4,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ],
+            ),
           ),
         ),
       ),
