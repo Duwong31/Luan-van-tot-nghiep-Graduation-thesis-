@@ -15,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 class SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   bool isTimerCompleted = false;
+  bool isFirstTime = true;
 
   @override
   void initState() {
@@ -22,26 +23,33 @@ class SplashScreenState extends State<SplashScreen>
     startTimer();
   }
 
-    @override
-    void dispose() {
-      super.dispose();
-    }
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-    Future<void> startTimer() async {
-      Timer(const Duration(seconds: 1), () {
-        isTimerCompleted = true;
-        if (mounted) setState(() {});
+  Future<void> startTimer() async {
+    Timer(const Duration(seconds: 2), () {
+      isTimerCompleted = true;
+      if (mounted) setState(() {});
+    });
+  }
+
+  void navigateCheck() {
+    if (isTimerCompleted) {
+      navigateToScreen();
+    }
+  }
+
+  void navigateToScreen() async {
+    if (isFirstTime) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed(Routes.onboarding);
+        }
       });
-    }
-
-    void navigateCheck() {
-      if (isTimerCompleted) {
-        navigateToScreen();
-      }
-    }
-
-    void navigateToScreen() async {
-      Future.delayed(const Duration(seconds: 1), () {
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           Navigator.of(context).pushReplacementNamed(Routes.main, arguments: {
             'from': "main",
@@ -49,13 +57,14 @@ class SplashScreenState extends State<SplashScreen>
         }
       });
     }
+  }
 
   @override
   Widget build(BuildContext context) {
     navigateCheck();
     return SafeArea(
       top: false,
-      child: AnnotatedRegion(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: context.color.territoryColor,
           statusBarIconBrightness: Brightness.light,

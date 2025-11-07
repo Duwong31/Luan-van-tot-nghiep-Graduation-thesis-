@@ -16,6 +16,11 @@ class AppIcons {
   static String cinemaNavActive = _svgPath("bottomnav/cinema_active");
   static String profileNav = _svgPath("bottomnav/profile");
   static String profileNavActive = _svgPath("bottomnav/profile_active");
+  static String nameApp = _svgPath("name_app");
+  static String eyes = _svgPath("eyes");
+  static String eyes_close = _svgPath("eyes_close");
+  static String facebook = _svgPath("facebook");
+  static String google = _svgPath("google");
 
   ///
   static String _svgPath(String name) {
