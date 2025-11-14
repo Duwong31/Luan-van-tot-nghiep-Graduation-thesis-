@@ -21,7 +21,8 @@ class AppIcons {
   static String eyes_close = _svgPath("eyes_close");
   static String facebook = _svgPath("facebook");
   static String google = _svgPath("google");
-
+  static String darkTheme = _svgPath("dark_theme");
+  static String arrowRight = _svgPath("arrow_right");
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";

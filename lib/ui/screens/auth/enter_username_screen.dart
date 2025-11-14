@@ -1,3 +1,4 @@
+import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/custom_text.dart';
@@ -92,9 +93,15 @@ class _EnterUsernameScreenState extends State<EnterUsernameScreen> {
             CustomButton(
               label: 'Done',
               onPressed: () {
-                if (_isUsernameValid()) {
-                  _onDone();
-                }
+                // if (_isUsernameValid()) {
+                //   _onDone();
+                // }
+                Navigator.of(context).pushReplacementNamed(
+                  Routes.main,
+                  arguments: {
+                    'from': "auth",
+                  },
+                );
               },
               colorType: ButtonColorType.territory,
               height: 56,
