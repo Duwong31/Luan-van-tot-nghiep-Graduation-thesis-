@@ -23,6 +23,10 @@ class AppIcons {
   static String google = _svgPath("google");
   static String darkTheme = _svgPath("dark_theme");
   static String arrowRight = _svgPath("arrow_right");
+  static String arrowLeft = _svgPath("arrow_left");
+  static String notification_dark = _svgPath("notification");
+  
+  static String search = _svgPath("search");
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";
