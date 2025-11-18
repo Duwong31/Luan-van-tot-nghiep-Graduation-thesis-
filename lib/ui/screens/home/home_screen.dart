@@ -1,4 +1,5 @@
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
+import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -63,7 +64,7 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
                           Text(
                             'Hi, Angelina ',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w400,
                               color: context.color.textDefaultColor,
                             ),
@@ -78,7 +79,7 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
                       Text(
                         'Welcome back',
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 20,
                           color: context.color.textDefaultColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -88,19 +89,19 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
                 ),
                 // Right side - Profile/Notification icon
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 32,
+                  height: 32,
                   child: UiUtils.getSvg(
                     AppIcons.notification_dark,
                     fit: BoxFit.none,
-                    color: context.color.textDefaultColor,
+                    color: context.color.iconColor,
                   ),
                 ),
               ],
             ),
           ),
         ),
-        backgroundColor: context.color.primaryColor,
+        backgroundColor: context.color.secondaryColor,
         body: RefreshIndicator(
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           key: _refreshIndicatorKey,
@@ -126,6 +127,8 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
       mainAxisSize: MainAxisSize.min,
       children: [
         const HomeSearchField(),
+        const SizedBox(height: 24),
+        const MainSlider(),
       ],
     );
   }

@@ -16,7 +16,7 @@ class HomeSearchField extends StatelessWidget {
       return Padding(
         padding: EdgeInsetsDirectional.only(start: 16.0, end: 16),
         child: UiUtils.getSvg(AppIcons.search,
-          color: context.color.territoryColor));
+          color: context.color.iconColor));
     }
 
     return GestureDetector(
@@ -36,12 +36,15 @@ class HomeSearchField extends StatelessWidget {
             alignment: AlignmentDirectional.center,
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                color: context.color.secondaryColor),
+                border: Border.all(
+                    color: context.color.borderColor, width: 1
+                ),
+                color: context.color.forthColor),
             child: TextFormField(
                 readOnly: true,
                 decoration: InputDecoration(
                   border: InputBorder.none, //OutlineInputBorder()
-                  fillColor: Theme.of(context).colorScheme.secondaryColor,
+                  fillColor: Theme.of(context).colorScheme.forthColor,
                   hintText: "searchHintLbl".translate(context),
                   hintStyle: TextStyle(
                       color: context.color.textDefaultColor
