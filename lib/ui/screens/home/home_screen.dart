@@ -2,6 +2,7 @@ import 'package:Celes/ui/screens/home/widgets/ads_home_card.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
+import 'package:Celes/ui/screens/home/widgets/news_home.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -153,6 +154,15 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
         
         // Popular movies section
         CategoryHomeData.popular(
+          onSeeAllTap: () {
+
+          },
+        ),
+        
+        const SizedBox(height: 32),
+        
+        // Movie News section
+        NewsHomeCardData.movieNews(
           onSeeAllTap: () {
 
           },
