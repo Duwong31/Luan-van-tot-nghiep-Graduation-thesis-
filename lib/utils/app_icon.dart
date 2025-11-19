@@ -25,7 +25,7 @@ class AppIcons {
   static String arrowRight = _svgPath("arrow_right");
   static String arrowLeft = _svgPath("arrow_left");
   static String notification_dark = _svgPath("notification");
-  
+  static String calendar = _svgPath("calendar");
   static String search = _svgPath("search");
   ///
   static String _svgPath(String name) {
