@@ -1,3 +1,4 @@
+import 'package:Celes/ui/screens/home/widgets/ads_home_card.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
@@ -134,6 +135,15 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
         
         // Coming soon section
         CategoryHomeData.comingSoon(
+          onSeeAllTap: () {
+
+          },
+        ),
+        
+        const SizedBox(height: 32),
+        
+        // Promo & Discount section
+        AdsHomeCardData.promoDiscount(
           onSeeAllTap: () {
 
           },
