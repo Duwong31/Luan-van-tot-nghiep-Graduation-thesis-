@@ -1,3 +1,4 @@
+import 'package:Celes/ui/screens/home/widgets/category_home.dart';
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
 import 'package:Celes/ui/theme/theme.dart';
@@ -129,6 +130,23 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
         const HomeSearchField(),
         const SizedBox(height: 24),
         const MainSlider(),
+        const SizedBox(height: 32),
+        
+        // Coming soon section
+        CategoryHomeData.comingSoon(
+          onSeeAllTap: () {
+
+          },
+        ),
+        
+        const SizedBox(height: 32),
+        
+        // Popular movies section
+        CategoryHomeData.popular(
+          onSeeAllTap: () {
+
+          },
+        ),
       ],
     );
   }

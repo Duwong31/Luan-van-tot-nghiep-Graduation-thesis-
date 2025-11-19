@@ -1,3 +1,4 @@
+import 'package:Celes/ui/components/see_all_button.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -87,23 +88,9 @@ class _MainSliderState extends State<MainSlider> {
                   color: context.color.textDefaultColor,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'See all',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: context.color.territoryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: context.color.territoryColor,
-                  ),
-                ],
+              SeeAllButton(
+                onTap: () {
+                },
               ),
             ],
           ),
