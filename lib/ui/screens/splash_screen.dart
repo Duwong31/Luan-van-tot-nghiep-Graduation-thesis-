@@ -45,7 +45,7 @@ class SplashScreenState extends State<SplashScreen>
     if (isFirstTime) {
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed(Routes.onboarding);
+          Navigator.of(context).pushReplacementNamed(Routes.welcome);
         }
       });
     } else {

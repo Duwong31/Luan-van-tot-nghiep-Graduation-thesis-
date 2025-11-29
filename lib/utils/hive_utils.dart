@@ -42,7 +42,6 @@ class HiveUtils {
     await Hive.box(HiveKeys.userDetailsBox).putAll(data);
   }
 
-
   static void setJWT(String token) async {
     await Hive.box(HiveKeys.userDetailsBox).put(HiveKeys.jwtToken, token);
   }
@@ -99,7 +98,7 @@ class HiveUtils {
       Duration.zero,
       () {
         if (isRedirect ?? true) {
-          HelperUtils.killPreviousPages(context, Routes.login, {});
+          HelperUtils.killPreviousPages(context, Routes.signUp, {});
         }
       },
     );
