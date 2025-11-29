@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 const Color primaryColor_ = Color(0xFFF6F5FA);
 const Color secondaryColor_ = Color(0xFFFFFFFF);
 const Color territoryColor_ = Color(0xFFFF1E00);
-const Color forthColor_ = Color(0xffFA6E53);
+const Color forthColor_ = Color(0xffEBEBEB);
 const Color _backgroundColor = primaryColor_; 
 const Color textDarkColor = Color(0xFF000000);
 Color lightTextColor = const Color(0xFF000000).withValues(alpha: 0.5);
@@ -13,17 +13,16 @@ Color widgetsBorderColorLight = const Color(0xffEEEEEE).withValues(alpha: 0.6);
 //Color senderChatColor = const Color.fromARGB(255, 233, 233, 233).withValues(22);
 
 ///Dark Theme Colors
-Color primaryColorDark = const Color(0xff15151E);
-Color secondaryColorDark = const Color(0xff1C1C1C).withValues(alpha: 0.9);
+Color primaryColorDark = const Color(0xff000000);
+Color secondaryColorDark = const Color(0xff000000);
 const Color territoryColorDark = Color(0xFFFF1E00);
 Color deactivateColorLight = const Color(0xff7F7F7F);
 
-const Color forthColorDark = Color(0xffFA6E53);
+const Color forthColorDark = Color(0xff1C1C1C);
 Color backgroundColorDark = primaryColorDark; 
 const Color textColorDarkTheme = Color(0xffFDFDFD);
 Color lightTextColorDarkTheme = const Color(0xffFDFDFD).withValues(alpha: 0.3);
 Color widgetsBorderColorDark = const Color(0x1aFDFDFD);
-
 
 ///Messages Color
 const Color errorMessageColor =
@@ -95,6 +94,8 @@ extension ColorPrefs on ColorScheme {
   Color get shimmerContentColor => brightness == Brightness.light
       ? Colors.white.withValues(alpha: 0.85)
       : Colors.white.withValues(alpha: 0.7);
+
+  Color get iconColor => Color(0xff717171);
 }
 
 // 10pt: Smaller

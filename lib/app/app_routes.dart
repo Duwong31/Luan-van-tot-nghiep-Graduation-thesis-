@@ -15,7 +15,8 @@ class Routes {
   static const main = 'main';
   static const home = 'Home';
   static const chooseLanguage = 'chooseLanguage';
-
+  static const searchScreenRoute = '/searchScreenRoute';
+  
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case splash:
