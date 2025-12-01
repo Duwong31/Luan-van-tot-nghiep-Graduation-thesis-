@@ -49,11 +49,11 @@ class CategoryHome extends StatelessWidget {
         
         // Movie cards carousel
         SizedBox(
-          height: 320, // Height for card + info
+          height: 340, 
           child: CarouselSlider.builder(
             itemCount: movies.length,
             options: CarouselOptions(
-              height: 320,
+              height: 340,
               viewportFraction: 0.45, // Show ~2.2 cards
               enableInfiniteScroll: false,
               autoPlay: false,
@@ -75,9 +75,8 @@ class CategoryHome extends StatelessWidget {
                   genres: movie['genres'],
                   releaseDate: movie['releaseDate'],
                   width: double.infinity,
-                  height: 220, // Poster height
+                  // height: 220, 
                   onTap: () {
-
                   },
                 ),
               );

@@ -13,7 +13,7 @@ class MovieCard extends StatelessWidget {
   final String? genres;
   final String? releaseDate;
   final double? width;
-  final double? height;
+  final double aspectRatio; // 👈 thêm tỷ lệ poster (mặc định 2:3)
   final VoidCallback? onTap;
 
   const MovieCard({
@@ -26,80 +26,82 @@ class MovieCard extends StatelessWidget {
     this.genres,
     this.releaseDate,
     this.width,
-    this.height,
+    this.aspectRatio = 2 / 3,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final textColor = context.color.textDefaultColor;
+    final lightTextColor = context.color.textLightColor;
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: width ?? 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      child: SizedBox(
+        width: width, 
         child: Column(
+          mainAxisSize: MainAxisSize.min, 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Movie poster
-            Container(
-              height: height ?? 280,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.grey[300],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.movie,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
+            AspectRatio(
+              aspectRatio: aspectRatio, // 2:3 
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.movie,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-            
-            const SizedBox(height: 12),
-            
+
+            const SizedBox(height: 8),
+
             // Movie info
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Title
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: context.color.textDefaultColor,
+                      color: context.color.territoryColor,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   // Rating (if provided)
                   if (rating != null) ...[
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(
                           Icons.star,
@@ -111,7 +113,7 @@ class MovieCard extends StatelessWidget {
                           rating!.toString(),
                           style: TextStyle(
                             fontSize: 12,
-                            color: context.color.textDefaultColor,
+                            color: textColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -120,46 +122,47 @@ class MovieCard extends StatelessWidget {
                             ' ($ratingCount)',
                             style: TextStyle(
                               fontSize: 12,
-                              color: context.color.textLightColor,
+                              color: lightTextColor,
                             ),
                           ),
                         ],
                       ],
                     ),
                   ],
-                  
-                  // Duration (if provided)
+
+                  // Duration
                   if (duration != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.access_time,
                           size: 14,
-                          color: context.color.textLightColor,
+                          color: textColor,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           duration!,
                           style: TextStyle(
                             fontSize: 12,
-                            color: context.color.textLightColor,
+                            color: textColor,
                           ),
                         ),
                       ],
                     ),
                   ],
-                  
-                  // Genres (if provided)
+
+                  // Genres
                   if (genres != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
                         UiUtils.getSvg(
                           AppIcons.cinemaNav,
                           width: 14,
                           height: 14,
-                          color: context.color.textDefaultColor,
+                          color: textColor,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -167,7 +170,7 @@ class MovieCard extends StatelessWidget {
                             genres!,
                             style: TextStyle(
                               fontSize: 12,
-                              color: context.color.textDefaultColor,
+                              color: textColor,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -176,24 +179,25 @@ class MovieCard extends StatelessWidget {
                       ],
                     ),
                   ],
-                  
-                  // Release date (if provided)
+
+                  // Release date
                   if (releaseDate != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         UiUtils.getSvg(
                           AppIcons.calendar,
                           width: 14,
                           height: 14,
-                          color: context.color.textDefaultColor,
+                          color: textColor,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           releaseDate!,
                           style: TextStyle(
                             fontSize: 12,
-                            color: context.color.textDefaultColor,
+                            color: textColor,
                           ),
                         ),
                       ],

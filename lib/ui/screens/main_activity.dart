@@ -4,6 +4,7 @@ import 'dart:async';
 
 //import 'package:app_links/app_links.dart';
 import 'package:Celes/ui/screens/home/home_screen.dart';
+import 'package:Celes/ui/screens/movie/movie_screen.dart';
 import 'package:Celes/ui/screens/user_profile/profile_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
@@ -28,10 +29,14 @@ dynamic currentVisitingCategory = "";
 List<int> navigationStack = [0];
 
 ScrollController homeScreenController = ScrollController();
+ScrollController ticketScreenController = ScrollController();
+ScrollController movieScreenController = ScrollController();
 ScrollController profileScreenController = ScrollController();
 
 List<ScrollController> controllerList = [
   homeScreenController,
+  ticketScreenController,
+  movieScreenController,
   profileScreenController
 ];
 
@@ -114,8 +119,8 @@ class MainActivityState extends State<MainActivity>
 
   late List<Widget> pages = [
     HomeScreen(from: widget.from),
-    // TicketScreen(),
-    // TheaterScreen()
+    const Placeholder(), 
+    const MovieScreen(),
     const ProfileScreen(),
   ];
 
@@ -190,7 +195,7 @@ class MainActivityState extends State<MainActivity>
     //   }
     // }
     searchBody = {};
-    if (index == 1 || index == 2) {
+    if (index == 3) {
       UiUtils.checkUser(
           onNotGuest: () {
             currentTab = index;
@@ -214,6 +219,7 @@ class MainActivityState extends State<MainActivity>
       shape: const CircularNotchedRectangle(),
       child: Container(
         color: context.color.secondaryColor,
+        padding: const EdgeInsets.symmetric(vertical: 8), 
         child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,

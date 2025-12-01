@@ -174,7 +174,7 @@ class _MainSliderState extends State<MainSlider> {
                 '${movies[_currentIndex]['duration']} • ${movies[_currentIndex]['genres']}',
                 style: TextStyle(
                   fontSize: 14,
-                  color: context.color.textLightColor,
+                  color: context.color.textDefaultColor,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -254,7 +254,7 @@ class BarPageIndicator extends StatelessWidget {
                 child: Container(
                   width: thumbWidth,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFBC02D), // vàng
+                    color: context.color.territoryColor, 
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
