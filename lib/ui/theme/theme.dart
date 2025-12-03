@@ -20,10 +20,11 @@ Color deactivateColorLight = const Color(0xff7F7F7F);
 
 const Color forthColorDark = Color(0xff1C1C1C);
 Color backgroundColorDark = primaryColorDark; 
-const Color textColorDarkTheme = Color(0xffFDFDFD);
+const Color textColorDarkTheme = Color(0xffF2F2F2);
 Color lightTextColorDarkTheme = const Color(0xffFDFDFD).withValues(alpha: 0.3);
 Color widgetsBorderColorDark = const Color(0x1aFDFDFD);
 
+const Color descriptionColor_ = Color(0xffBFBFBF);
 ///Messages Color
 const Color errorMessageColor =
     Color.fromARGB(255, 166, 4, 4); // Color(0xffeb5479)
@@ -77,6 +78,10 @@ extension ColorPrefs on ColorScheme {
   Color get borderColor => _getColor(brightness,
       lightColor: widgetsBorderColorLight,
       darkColor: secondaryColorDark.withValues(alpha: 0.2));
+
+  Color get descriptionColor => _getColor(brightness, 
+      lightColor: descriptionColor_, 
+      darkColor: descriptionColor_);
 
   Color textAutoAdapt(Color backgroundColor) =>
       UiUtils.getAdaptiveTextColor(backgroundColor);

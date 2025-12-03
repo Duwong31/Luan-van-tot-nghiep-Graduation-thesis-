@@ -27,6 +27,9 @@ class AppIcons {
   static String notification_dark = _svgPath("notification");
   static String calendar = _svgPath("calendar");
   static String search = _svgPath("search");
+  static String cgv = _svgPath("cgv");
+  static String arrow_left = _svgPath("arrow-left");
+  static String play = _svgPath("play");
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";
