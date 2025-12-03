@@ -1,5 +1,6 @@
 import 'package:Celes/ui/screens/auth/sign_in_screen.dart';
 import 'package:Celes/ui/screens/main_activity.dart';
+import 'package:Celes/ui/screens/movie_detail/movie_detail_screen.dart';
 import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
 import 'package:Celes/ui/screens/onboarding/onboarding_screen.dart';
 import 'package:Celes/ui/screens/splash_screen.dart';
@@ -14,6 +15,7 @@ class Routes {
   static const home = 'Home';
   static const chooseLanguage = 'chooseLanguage';
   static const searchScreenRoute = '/searchScreenRoute';
+  static const movieDetail = '/movieDetail';
   
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
@@ -31,6 +33,8 @@ class Routes {
       case chooseLanguage:
         return CupertinoPageRoute(
             builder: ((context) => const ChooseLanguagePopup()));
+      case movieDetail:
+        return MovieDetailScreen.route(routeSettings);
       default:
         return CupertinoPageRoute(builder: (context) => const Scaffold());
     }

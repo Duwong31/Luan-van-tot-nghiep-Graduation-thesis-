@@ -77,6 +77,7 @@ class CategoryHome extends StatelessWidget {
                   width: double.infinity,
                   // height: 220, 
                   onTap: () {
+                    Navigator.pushNamed(context, '/movieDetail');
                   },
                 ),
               );
