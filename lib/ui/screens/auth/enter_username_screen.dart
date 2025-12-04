@@ -25,19 +25,19 @@ class _EnterUsernameScreenState extends State<EnterUsernameScreen> {
     super.dispose();
   }
 
-  bool _isUsernameValid() {
-    final username = _usernameController.text.trim();
-    final latinRegex = RegExp(r'^[a-zA-Z]+$');
-    return username.isNotEmpty && latinRegex.hasMatch(username);
-  }
+  // bool _isUsernameValid() {
+  //   final username = _usernameController.text.trim();
+  //   final latinRegex = RegExp(r'^[a-zA-Z]+$');
+  //   return username.isNotEmpty && latinRegex.hasMatch(username);
+  // }
 
-  void _onDone() {
-    if (_isUsernameValid()) {
-      final username = _usernameController.text.trim();
-      print('Username: $username');
-      Navigator.pop(context, username);
-    }
-  }
+  // void _onDone() {
+  //   if (_isUsernameValid()) {
+  //     final username = _usernameController.text.trim();
+  //     print('Username: $username');
+  //     Navigator.pop(context, username);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

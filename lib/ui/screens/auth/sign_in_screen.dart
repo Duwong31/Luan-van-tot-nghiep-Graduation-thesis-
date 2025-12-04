@@ -131,7 +131,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   label: 'Facebook',
                   onPressed: () {},
                   styleType: ButtonStyleType.outlined,
-                  borderColor: Colors.grey.withOpacity(0.3),
+                  borderColor: Colors.grey.withValues(alpha: 0.3),
                   borderWidth: 1.0,
                   textColor: Colors.white,
                   height: 56,
@@ -160,7 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     );
                   },
                   styleType: ButtonStyleType.outlined,
-                  borderColor: Colors.grey.withOpacity(0.3),
+                  borderColor: Colors.grey.withValues(alpha: 0.3),
                   borderWidth: 1.0,
                   textColor: Colors.white,
                   height: 56,

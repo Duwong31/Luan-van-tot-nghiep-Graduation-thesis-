@@ -75,21 +75,21 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
     }
   }
 
-  String _getOtpCode() {
-    return _controllers.map((controller) => controller.text).join();
-  }
+  // String _getOtpCode() {
+  //   return _controllers.map((controller) => controller.text).join();
+  // }
 
-  bool _isOtpComplete() {
-    return _getOtpCode().length == 6;
-  }
+  // bool _isOtpComplete() {
+  //   return _getOtpCode().length == 6;
+  // }
 
-  void _onContinue() {
-    if (_isOtpComplete()) {
-      final otpCode = _getOtpCode();
-      print('OTP Code: $otpCode');
-      // Handle OTP verification
-    }
-  }
+  // void _onContinue() {
+  //   if (_isOtpComplete()) {
+  //     final otpCode = _getOtpCode();
+  //     print('OTP Code: $otpCode');
+  //     // Handle OTP verification
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +196,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
               ? const Color(0xFFFFB800)
-              : Colors.grey.withOpacity(0.5),
+              : Colors.grey.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),

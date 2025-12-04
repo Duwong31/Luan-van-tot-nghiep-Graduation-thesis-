@@ -112,8 +112,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     widget.imgSvg!,
                     width: 16,
                     height: 16,
-                    color: widget.textColor ??
-                        context.color.textColorDark.withValues(alpha: 0.6),
+                    colorFilter: ColorFilter.mode(widget.textColor ??
+                        context.color.textColorDark.withValues(alpha: 0.6), BlendMode.srcIn),
                   ),
                   const SizedBox(width: 4),
                 ],
@@ -162,7 +162,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   obscure ? AppIcons.eyes_close : AppIcons.eyes,
                   width: 24,
                   height: 24,
-                  color: context.color.textColorDark.withValues(alpha: 0.3),
+                  colorFilter: ColorFilter.mode(context.color.textColorDark.withValues(alpha: 0.3), BlendMode.srcIn),
                 ),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
