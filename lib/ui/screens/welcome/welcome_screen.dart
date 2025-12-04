@@ -1,24 +1,24 @@
 import 'package:Celes/app/app_routes.dart';
-import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
+import 'package:Celes/ui/screens/welcome/choose_language_popup.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
   final List<String> _movieImages = [
-    'https://i.imgur.com/sGQ7nI3.jpg',
-    'https://i.imgur.com/yFj7pMl.jpg',
-    'https://i.imgur.com/L0u0n0s.jpg',
+    'assets/mai.png',
+    'assets/Monster.png',
+    'assets/tieuthuyetthamtulungdanhconanngoisao5canh1trieudobia-2-19542082.png',
   ];
 
   @override
@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
+                      child: Image.asset(
                         _movieImages[index],
                         fit: BoxFit.cover,
                       ),
@@ -125,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, Routes.login);
+                        Navigator.of(context).pushNamed(Routes.signIn);
                       },
                       child: const Text(
                         "Sign in",
@@ -149,7 +149,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(Routes.signUp);
+                      },
                       child: const Text(
                         "Sign up",
                         style: TextStyle(

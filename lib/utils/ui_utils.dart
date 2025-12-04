@@ -74,7 +74,7 @@ class UiUtils {
                 color: context.color.territoryColor,
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, Routes.login,
+                  Navigator.pushNamed(context, Routes.signUp,
                       arguments: {"popToCurrent": true});
                 },
                 child: CustomText(

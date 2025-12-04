@@ -1,195 +1,445 @@
+import 'package:Celes/app/app_routes.dart';
+import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/services/token_service.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
-import 'package:Celes/ui/screens/auth/otp/otp_confirm_screen.dart'
-    show OtpConfirmScreen;
-import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
+import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  final bool? isDeleteAccount;
+  final bool? popToCurrent;
+  final String? email;
+
+  const LoginScreen({
+    super.key,
+    this.isDeleteAccount,
+    this.popToCurrent,
+    this.email,
+  });
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<LoginScreen> createState() => LoginScreenState();
+
+  static MaterialPageRoute route(RouteSettings routeSettings) {
+    Map? args = routeSettings.arguments as Map?;
+    return MaterialPageRoute(
+      builder: (_) => LoginScreen(
+        isDeleteAccount: args?['isDeleteAccount'],
+        popToCurrent: args?['popToCurrent'],
+        email: args?['email'] as String?,
+      ),
+    );
+  }
 }
 
-class _SignInScreenState extends State<SignInScreen> {
-  final TextEditingController _phoneController = TextEditingController();
-  String? countryCode = '84';
-  String? flagEmoji = '🇻🇳';
+class LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+  final TokenService _tokenService = TokenService();
+  bool _rememberMe = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.email != null) {
+      _emailController.text = widget.email!;
+    }
   }
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  void _onLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty) {
+      _showError('Please enter your email');
+      return;
+    }
+
+    if (password.isEmpty) {
+      _showError('Please enter your password');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await _authService.login(
+        email: email,
+        password: password,
+      );
+
+      if (response.success && response.data != null) {
+        if (mounted) {
+          // Save token and user data to local storage
+          final accessToken = response.data!['access_token'] as String?;
+          final refreshToken = response.data!['refresh_token'] as String?;
+          final expiresIn = response.data!['expires_in'] as int?;
+          final userData = response.data!['user'] as Map<String, dynamic>?;
+
+          // Save tokens using TokenService
+          if (accessToken != null && refreshToken != null) {
+            await _tokenService.saveTokens(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              expiresIn: expiresIn,
+            );
+
+            print('✅ Tokens saved successfully');
+            print('Access Token: ${accessToken.substring(0, 20)}...');
+            print('User: ${userData?['name']}');
+          }
+
+          // ✅ FIX: Set authentication status in Hive
+          HiveUtils.setUserIsAuthenticated(true);
+
+          // ✅ FIX: Save user data to Hive if available
+          if (userData != null) {
+            HiveUtils.setUserData(userData);
+            print('✅ User data saved to Hive: ${userData['name']}');
+          }
+
+          // ✅ FIX: Save JWT token to Hive if needed
+          if (accessToken != null) {
+            HiveUtils.setJWT(accessToken);
+            print('✅ JWT token saved to Hive');
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to main screen with required arguments
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.main,
+            (route) => false,
+            arguments: {
+              'from': 'login',
+              'slug': null,
+            },
+          );
+        }
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        String errorMessage = e.message;
+
+        // Handle specific error codes
+        if (e.code == 'INVALID_CREDENTIALS') {
+          errorMessage = 'Invalid email or password';
+        } else if (e.code == 'ACCOUNT_NOT_VERIFIED') {
+          errorMessage = 'Please verify your email first';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _onFacebookLogin() {
+    // Handle Facebook login
+    print('Facebook login pressed');
+    _showSnackBar('Facebook login not implemented');
+  }
+
+  void _onGoogleLogin() {
+    // Handle Google login
+    print('Google login pressed');
+    _showSnackBar('Google login not implemented');
+  }
+
+  void _onSignUp() {
+    Navigator.of(context).pushNamed(Routes.signUp);
+  }
+
+  void _onForgotPassword() {
+    Navigator.of(context).pushNamed(Routes.forgotPassword);
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.orange,
+      ),
+    );
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: const CustomText(
-            'Sign up',
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.w600,
-          ),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-            child: SizedBox(
-          height: MediaQuery.of(context).size.height -
-              MediaQuery.of(context).padding.top -
-              kToolbarHeight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-                CustomTextField(
-                  controller: _phoneController,
-                  label: '',
-                  isPhoneField: true,
-                  colorType: TextFieldColorType.dark,
-                  height: 60,
-                  countryCode: countryCode,
-                  flagEmoji: flagEmoji,
-                  borderColor: Colors.white,
-                  borderRadius: 12,
-                  textColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  inputFontSize: 18,
-                  onCountryCodeChanged: (code) {
-                    setState(() {
-                      countryCode = code;
-                    });
-                  },
-                  onCountrySelected: (country) {
-                    setState(() {
-                      countryCode = country.phoneCode;
-                      flagEmoji = country.flagEmoji;
-                    });
-                  },
-                ),
-                const SizedBox(height: 32),
-                CustomButton(
-                  label: 'Continue',
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => const OtpConfirmScreen()),
-                    );
-                  },
-                  colorType: ButtonColorType.territory,
-                  height: 56,
-                  borderRadius: 28,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  textColor: Colors.white,
-                ),
-                const Spacer(),
-                Row(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),
+
+              // Close button (top right)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Title and subtitle
+              const Center(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: Container(
-                        height: 1,
+                    CustomText(
+                      'Log In',
+                      fontSize: 32,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8),
+                    CustomText(
+                      'Please log in to experience more!',
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              // Email Field
+              CustomTextField(
+                controller: _emailController,
+                label: 'Email',
+                hintText: 'example@gmail.com',
+                keyboardType: TextInputType.emailAddress,
+                colorType: TextFieldColorType.dark,
+                height: 62,
+                textColor: Colors.white,
+                borderColor: Colors.white30,
+              ),
+
+              const SizedBox(height: 25),
+
+              // Password Field
+              CustomTextField(
+                controller: _passwordController,
+                label: 'Password',
+                hintText: '••••••',
+                isPassword: true,
+                colorType: TextFieldColorType.dark,
+                height: 62,
+                textColor: Colors.white,
+                borderColor: Colors.white30,
+              ),
+
+              const SizedBox(height: 10),
+
+              // Remember Me and Forgot Password
+              Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: _rememberMe,
+                      onChanged: (value) =>
+                          setState(() => _rememberMe = value ?? false),
+                      activeColor: const Color(0xFFFFB800),
+                      checkColor: Colors.white,
+                      side: const BorderSide(
                         color: Colors.white,
+                        width: 2,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: CustomText(
-                        'Or continue with',
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  const CustomText(
+                    'Remember me',
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                  const Spacer(),
+                  MaterialButton(
+                    onPressed: _onForgotPassword,
+                    padding: EdgeInsets.zero,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: const CustomText(
+                      'Forgot Password?',
+                      color: Colors.red,
+                      fontSize: 16,
+                      showUnderline: true,
                     ),
-                    Expanded(
-                      child: Container(
-                        height: 1,
-                        color: Colors.white,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Login Button
+              CustomButton(
+                label: _isLoading ? 'Logging in...' : 'Log In',
+                onPressed: _isLoading ? () {} : _onLogin,
+                colorType: ButtonColorType.territory,
+                height: 56,
+                borderRadius: 10,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                textColor: Colors.white,
+              ),
+
+              const SizedBox(height: 30),
+
+              // Or Divider
+              const Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.white30)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: CustomText(
+                      'Or',
+                      color: Colors.white70,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Expanded(child: Divider(color: Colors.white30)),
+                ],
+              ),
+
+              const SizedBox(height: 22),
+
+              // Social Login Buttons
+              CustomButton(
+                label: 'Facebook',
+                onPressed: _onFacebookLogin,
+                styleType: ButtonStyleType.outlined,
+                borderColor: Colors.grey.withOpacity(0.3),
+                borderWidth: 1.0,
+                textColor: Colors.white,
+                height: 56,
+                borderRadius: 10,
+                leftWidget: Container(
+                  width: 20,
+                  height: 20,
+                  child: Center(
+                    child: SvgPicture.asset(
+                      AppIcons.facebook,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+
+              const SizedBox(height: 16),
+
+              CustomButton(
+                label: 'Google',
+                onPressed: _onGoogleLogin,
+                styleType: ButtonStyleType.outlined,
+                borderColor: Colors.grey.withOpacity(0.3),
+                borderWidth: 1.0,
+                textColor: Colors.white,
+                height: 56,
+                borderRadius: 10,
+                leftWidget: Container(
+                  width: 20,
+                  height: 20,
+                  child: Center(
+                    child: SvgPicture.asset(
+                      AppIcons.google,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+
+              const SizedBox(height: 24),
+
+              // Sign Up Link
+              Center(
+                child: Column(
+                  children: [
+                    const CustomText(
+                      'Have not got an account?',
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: _onSignUp,
+                      child: const CustomText(
+                        'Sign Up Now',
+                        fontSize: 16,
+                        color: Color(0xFFFF385C),
+                        showUnderline: true,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                CustomButton(
-                  label: 'Facebook',
-                  onPressed: () {},
-                  styleType: ButtonStyleType.outlined,
-                  borderColor: Colors.grey.withValues(alpha: 0.3),
-                  borderWidth: 1.0,
-                  textColor: Colors.white,
-                  height: 56,
-                  borderRadius: 28,
-                  leftWidget: Container(
-                    width: 20,
-                    height: 20,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        AppIcons.facebook,
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
-                  ),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                const SizedBox(height: 16),
-                CustomButton(
-                  label: 'Google',
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => const OtpConfirmScreen()),
-                    );
-                  },
-                  styleType: ButtonStyleType.outlined,
-                  borderColor: Colors.grey.withValues(alpha: 0.3),
-                  borderWidth: 1.0,
-                  textColor: Colors.white,
-                  height: 56,
-                  borderRadius: 28,
-                  leftWidget: Container(
-                    width: 20,
-                    height: 20,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        AppIcons.google,
-                        width: 30,
-                        height: 30,
-                      ),
-                    ),
-                  ),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                const SizedBox(height: 40),
-                const CustomText(
-                  'By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy',
-                  textAlign: TextAlign.center,
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
-                const SizedBox(height: 40),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 40),
+            ],
           ),
-        )));
+        ),
+      ),
+    );
   }
 }
