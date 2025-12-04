@@ -1,7 +1,12 @@
+import 'package:Celes/app/app_routes.dart';
+import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/services/token_service.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
+import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -33,40 +38,136 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? countryCode = '84'; // Default to Vietnam
-  String? flagEmoji = '🇻🇳'; // Vietnam flag
+  final AuthService _authService = AuthService();
+  final TokenService _tokenService = TokenService();
   bool _rememberMe = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.email != null) {
+      _emailController.text = widget.email!;
+    }
+  }
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _onLogin() {
-    final phoneNumber = _phoneController.text.trim();
+  void _onLogin() async {
+    final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (phoneNumber.isEmpty) {
-      _showSnackBar('Please enter your phone number');
+    if (email.isEmpty) {
+      _showError('Please enter your email');
       return;
     }
 
     if (password.isEmpty) {
-      _showSnackBar('Please enter your password');
+      _showError('Please enter your password');
       return;
     }
 
-    // Handle login logic here
-    print(
-        'Login: Phone: $phoneNumber, Password: $password, Remember: $_rememberMe');
+    setState(() => _isLoading = true);
 
-    // Navigate to main screen or handle authentication
-    // For now, just show success message
-    _showSnackBar('Login successful!');
+    try {
+      final response = await _authService.login(
+        email: email,
+        password: password,
+      );
+
+      if (response.success && response.data != null) {
+        if (mounted) {
+          // Save token and user data to local storage
+          final accessToken = response.data!['access_token'] as String?;
+          final refreshToken = response.data!['refresh_token'] as String?;
+          final expiresIn = response.data!['expires_in'] as int?;
+          final userData = response.data!['user'] as Map<String, dynamic>?;
+
+          // Save tokens using TokenService
+          if (accessToken != null && refreshToken != null) {
+            await _tokenService.saveTokens(
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              expiresIn: expiresIn,
+            );
+
+            print('✅ Tokens saved successfully');
+            print('Access Token: ${accessToken.substring(0, 20)}...');
+            print('User: ${userData?['name']}');
+          }
+
+          // ✅ FIX: Set authentication status in Hive
+          HiveUtils.setUserIsAuthenticated(true);
+
+          // ✅ FIX: Save user data to Hive if available
+          if (userData != null) {
+            HiveUtils.setUserData(userData);
+            print('✅ User data saved to Hive: ${userData['name']}');
+          }
+
+          // ✅ FIX: Save JWT token to Hive if needed
+          if (accessToken != null) {
+            HiveUtils.setJWT(accessToken);
+            print('✅ JWT token saved to Hive');
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to main screen with required arguments
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.main,
+            (route) => false,
+            arguments: {
+              'from': 'login',
+              'slug': null,
+            },
+          );
+        }
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        String errorMessage = e.message;
+
+        // Handle specific error codes
+        if (e.code == 'INVALID_CREDENTIALS') {
+          errorMessage = 'Invalid email or password';
+        } else if (e.code == 'ACCOUNT_NOT_VERIFIED') {
+          errorMessage = 'Please verify your email first';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   void _onFacebookLogin() {
@@ -82,15 +183,20 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void _onSignUp() {
-    // Navigate to sign up screen
-    print('Navigate to sign up');
-    _showSnackBar('Navigate to sign up');
+    Navigator.of(context).pushNamed(Routes.signUp);
   }
 
   void _onForgotPassword() {
-    // Navigate to forgot password
-    print('Navigate to forgot password');
-    _showSnackBar('Navigate to forgot password');
+    Navigator.of(context).pushNamed(Routes.forgotPassword);
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   void _showSnackBar(String message) {
@@ -152,20 +258,16 @@ class LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 40),
 
-              // Phone Number Field
+              // Email Field
               CustomTextField(
-                controller: _phoneController,
-                label: 'Phone Number',
-                hintText: '123-456-789',
-                isPhoneField: true,
-                countryCode: countryCode,
-                flagEmoji: flagEmoji,
+                controller: _emailController,
+                label: 'Email',
+                hintText: 'example@gmail.com',
+                keyboardType: TextInputType.emailAddress,
                 colorType: TextFieldColorType.dark,
                 height: 62,
                 textColor: Colors.white,
                 borderColor: Colors.white30,
-                onCountryCodeChanged: (code) =>
-                    setState(() => countryCode = code),
               ),
 
               const SizedBox(height: 25),
@@ -195,6 +297,11 @@ class LoginScreenState extends State<LoginScreen> {
                       onChanged: (value) =>
                           setState(() => _rememberMe = value ?? false),
                       activeColor: const Color(0xFFFFB800),
+                      checkColor: Colors.white,
+                      side: const BorderSide(
+                        color: Colors.white,
+                        width: 2,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -222,8 +329,8 @@ class LoginScreenState extends State<LoginScreen> {
 
               // Login Button
               CustomButton(
-                label: 'Log In',
-                onPressed: _onLogin,
+                label: _isLoading ? 'Logging in...' : 'Log In',
+                onPressed: _isLoading ? () {} : _onLogin,
                 colorType: ButtonColorType.territory,
                 height: 56,
                 borderRadius: 10,

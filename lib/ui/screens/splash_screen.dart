@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -42,21 +43,32 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   void navigateToScreen() async {
-    if (isFirstTime) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
+    // ✅ Check if user is authenticated
+    final bool isAuthenticated = HiveUtils.isUserAuthenticated();
+
+    // ✅ Check if user is first time (for onboarding)
+    final bool isUserFirstTime = HiveUtils.isUserFirstTime();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        if (isAuthenticated) {
+          // User is logged in, go to main screen
+          Navigator.of(context).pushReplacementNamed(
+            Routes.main,
+            arguments: {
+              'from': 'splash',
+              'slug': null,
+            },
+          );
+        } else if (isUserFirstTime) {
+          // First time user, show welcome/onboarding
+          Navigator.of(context).pushReplacementNamed(Routes.welcome);
+        } else {
+          // Returning user but not logged in, show welcome
           Navigator.of(context).pushReplacementNamed(Routes.welcome);
         }
-      });
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed(Routes.main, arguments: {
-            'from': "main",
-          });
-        }
-      });
-    }
+      }
+    });
   }
 
   @override

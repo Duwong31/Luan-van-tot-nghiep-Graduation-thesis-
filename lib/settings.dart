@@ -1,11 +1,12 @@
 import 'package:Celes/utils/helper_utils.dart';
+
 class AppSettings {
   /// Basic Settings
 
   static const String applicationName = 'Celes';
   static const String packageName = 'com.celes.app';
 
-  static const String hostUrl = "";
+  static const String hostUrl = "https://vnsportify.space";
 
   ///API Setting
 

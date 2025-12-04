@@ -6,19 +6,20 @@ import 'package:Celes/utils/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class OtpConfirmScreen extends StatefulWidget {
+class ForgotPasswordOtpScreen extends StatefulWidget {
   final String email;
 
-  const OtpConfirmScreen({
+  const ForgotPasswordOtpScreen({
     super.key,
     required this.email,
   });
 
   @override
-  State<OtpConfirmScreen> createState() => _OtpConfirmScreenState();
+  State<ForgotPasswordOtpScreen> createState() =>
+      _ForgotPasswordOtpScreenState();
 }
 
-class _OtpConfirmScreenState extends State<OtpConfirmScreen>
+class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
     with TickerProviderStateMixin {
   final List<TextEditingController> _controllers =
       List.generate(6, (index) => TextEditingController());
@@ -99,27 +100,41 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
 
     try {
       final otpCode = _getOtpCode();
+
+      // Verify OTP to get reset_token
       final response = await _authService.verifyOtp(
         email: widget.email,
         otp: otpCode,
+        type: 'forgot_password', // Type for forgot password flow
       );
 
-      if (response.success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Registration successful! Please sign in to continue.'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
-            ),
-          );
+      if (response.success && response.data != null) {
+        // Get reset_token from response (should be 64 characters)
+        final resetToken = response.data!['reset_token'] as String?;
 
-          // Navigate to sign-in screen after successful verification
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            Routes.signIn,
-            (route) => false,
-          );
+        if (resetToken != null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('OTP verified successfully!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+
+            // Navigate to Reset Password screen with reset_token
+            Navigator.of(context).pushReplacementNamed(
+              Routes.resetPassword,
+              arguments: {
+                'email': widget.email,
+                'resetToken': resetToken, // Use the 64-char token from API
+              },
+            );
+          }
+        } else {
+          if (mounted) {
+            _showError('Failed to get reset token. Please try again.');
+          }
         }
       }
     } on ApiException catch (e) {
@@ -162,7 +177,10 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
     setState(() => _isResending = true);
 
     try {
-      final response = await _authService.resendOtp(email: widget.email);
+      final response = await _authService.resendOtp(
+        email: widget.email,
+        type: 'forgot_password', // Different type for forgot password
+      );
 
       if (response.success) {
         if (mounted) {
@@ -239,17 +257,17 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
 
             // Title
             const CustomText(
-              'Confirm OTP code',
+              'Verify OTP Code',
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFFFB800), // Orange/yellow color
+              color: Color(0xFFFFB800),
             ),
 
             const SizedBox(height: 16),
 
             // Description
             CustomText(
-              'You just need to enter the OTP sent to the registered email ${widget.email}',
+              'Enter the OTP code sent to ${widget.email}',
               fontSize: 13,
               color: Colors.white70,
               maxLines: 3,
