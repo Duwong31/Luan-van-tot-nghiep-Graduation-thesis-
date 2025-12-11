@@ -30,6 +30,12 @@ class AppIcons {
   static String cgv = _svgPath("cgv");
   static String arrow_left = _svgPath("arrow-left");
   static String play = _svgPath("play");
+  static String Face_ID = _svgPath("Face_ID");
+  static String lock = _svgPath("lock");
+  static String shopping_cart = _svgPath("shopping_cart");
+  static String ticket_2 = _svgPath("ticket_2");
+  static String translate = _svgPath("translate");
+
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";
