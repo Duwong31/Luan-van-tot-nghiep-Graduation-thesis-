@@ -5,7 +5,10 @@ import 'package:Celes/ui/screens/auth/sign_up_screen.dart';
 import 'package:Celes/ui/screens/main_activity.dart';
 import 'package:Celes/ui/screens/movie_detail/movie_detail_screen.dart';
 import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
-import 'package:Celes/ui/screens/welcome/choose_language_popup.dart' hide ChooseLanguagePopup;
+import 'package:Celes/ui/screens/payment/payment_screen.dart';
+import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
+import 'package:Celes/ui/screens/welcome/choose_language_popup.dart'
+    hide ChooseLanguagePopup;
 import 'package:Celes/ui/screens/welcome/welcome_screen.dart';
 import 'package:Celes/ui/screens/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +26,8 @@ class Routes {
   static const chooseLanguage = 'chooseLanguage';
   static const searchScreenRoute = '/searchScreenRoute';
   static const movieDetail = '/movieDetail';
-  
+  static const payment = 'payment';
+  static const myTicket = 'myTicket';
 
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
@@ -53,6 +57,10 @@ class Routes {
             builder: ((context) => const ChooseLanguagePopup()));
       case movieDetail:
         return MovieDetailScreen.route(routeSettings);
+      case payment:
+        return PaymentScreen.route(routeSettings);
+      case myTicket:
+        return MyTicketScreen.route(routeSettings);
       default:
         return CupertinoPageRoute(builder: (context) => const Scaffold());
     }
