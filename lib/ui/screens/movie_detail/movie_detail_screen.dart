@@ -1,6 +1,6 @@
 import 'package:Celes/ui/components/avatar_card.dart';
 import 'package:Celes/ui/screens/movie_detail/widgets/cinema_card.dart';
-import 'package:Celes/ui/screens/payment/payment_screen.dart';
+import 'package:Celes/ui/screens/select_seat/select_seat_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -255,7 +255,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const PaymentScreen(),
+                            builder: (context) => const SelectSeatScreen(),
                           ),
                         );
                       },
