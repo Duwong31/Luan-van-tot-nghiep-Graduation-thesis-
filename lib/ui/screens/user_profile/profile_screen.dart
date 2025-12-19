@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:Celes/app/app_theme.dart';
 import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
 import 'package:Celes/ui/screens/main_activity.dart';
@@ -7,7 +5,6 @@ import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
-import 'package:Celes/utils/extensions/lib/translate.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: context.color.territoryColor.withOpacity(0.3),
+                color: context.color.territoryColor.withValues(alpha: 0.3),
                 width: 2,
               ),
               image: const DecorationImage(
@@ -163,13 +160,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icon(
                       Icons.phone_outlined,
                       size: 14,
-                      color: context.color.textColorDark.withOpacity(0.6),
+                      color: context.color.textColorDark.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 6),
                     CustomText(
                       "(704) 555-0127",
                       fontSize: 13,
-                      color: context.color.textColorDark.withOpacity(0.7),
+                      color: context.color.textColorDark.withValues(alpha: 0.7),
                     ),
                   ],
                 ),
@@ -179,13 +176,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icon(
                       Icons.email_outlined,
                       size: 14,
-                      color: context.color.textColorDark.withOpacity(0.6),
+                      color: context.color.textColorDark.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 6),
                     CustomText(
                       "angelina@example.com",
                       fontSize: 13,
-                      color: context.color.textColorDark.withOpacity(0.7),
+                      color: context.color.textColorDark.withValues(alpha: 0.7),
                     ),
                   ],
                 ),
@@ -222,6 +219,11 @@ class _ProfileScreenState extends State<ProfileScreen>
           onTap: () {
             // Navigate to language settings
           },
+        ),
+        const SizedBox(height: 12),
+        _buildThemeSwitchItem(
+          iconPath: AppIcons.darkTheme,
+          title: "Dark Theme",
         ),
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
@@ -265,7 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   height: 40,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: context.color.territoryColor.withOpacity(0.1),
+                    color: context.color.territoryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SvgPicture.asset(
@@ -325,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               height: 40,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: context.color.territoryColor.withOpacity(0.1),
+                color: context.color.territoryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SvgPicture.asset(
@@ -352,9 +354,73 @@ class _ProfileScreenState extends State<ProfileScreen>
                   scale: 0.8,
                   child: CupertinoSwitch(
                     value: value,
-                    activeColor: const Color(0xFFFDB022), // Yellow/Gold color
+                    activeTrackColor:
+                        const Color(0xFFFDB022), // Yellow/Gold color
                     onChanged: (newValue) {
                       isFaceIDEnabled.value = newValue;
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeSwitchItem({
+    required String iconPath,
+    required String title,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: context.color.secondaryColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: context.color.territoryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: SvgPicture.asset(
+                iconPath,
+                colorFilter: ColorFilter.mode(
+                  context.color.territoryColor,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomText(
+                title,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: context.color.textColorDark,
+              ),
+            ),
+            ValueListenableBuilder(
+              valueListenable: isDarkTheme,
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: 0.8,
+                  child: CupertinoSwitch(
+                    value: value,
+                    activeTrackColor: context.color.territoryColor,
+                    onChanged: (newValue) {
+                      final newTheme =
+                          newValue ? AppTheme.dark : AppTheme.light;
+                      this.context.read<AppThemeCubit>().changeTheme(newTheme);
+                      isDarkTheme.value = newValue;
                     },
                   ),
                 );

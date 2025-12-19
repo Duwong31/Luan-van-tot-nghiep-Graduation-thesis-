@@ -4,19 +4,36 @@ import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'widgets/shadow_clipper.dart';
+import 'package:Celes/ui/screens/select_seat/widgets/shadow_clipper.dart';
 
 enum SeatStatus { available, reserved, selected }
 
 class SelectSeatScreen extends StatefulWidget {
-  const SelectSeatScreen({super.key});
+  final String cinemaName;
+  final String showTime;
+  final DateTime selectedDate;
+  final int roomNumber;
+
+  const SelectSeatScreen({
+    super.key,
+    required this.cinemaName,
+    required this.showTime,
+    required this.selectedDate,
+    this.roomNumber = 1,
+  });
 
   @override
   State<SelectSeatScreen> createState() => _SelectSeatScreenState();
 
   static Route route(RouteSettings routeSettings) {
+    final args = routeSettings.arguments as Map<String, dynamic>?;
     return MaterialPageRoute(
-      builder: (_) => const SelectSeatScreen(),
+      builder: (_) => SelectSeatScreen(
+        cinemaName: args?['cinemaName'] ?? 'Cinema',
+        showTime: args?['showTime'] ?? '00:00',
+        selectedDate: args?['selectedDate'] ?? DateTime.now(),
+        roomNumber: args?['roomNumber'] ?? 1,
+      ),
     );
   }
 }
@@ -37,7 +54,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
       List<SeatStatus> seatRow = [];
       for (int col = 0; col < 13; col++) {
         // Create some reserved seats for demo
-        if ((row == 5 && (col >= 6 && col <= 8)) || 
+        if ((row == 5 && (col >= 6 && col <= 8)) ||
             (row == 6 && (col >= 6 && col <= 8)) ||
             (row == 7 && (col >= 6 && col <= 8))) {
           seatRow.add(SeatStatus.reserved);
@@ -52,7 +69,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
   void _toggleSeat(int row, int col) {
     if (row >= seats.length || col >= seats[row].length) return;
     if (seats[row][col] == SeatStatus.reserved) return;
-    
+
     setState(() {
       String seatId = '${String.fromCharCode(65 + row)}${col + 1}';
       if (selectedSeats.contains(seatId)) {
@@ -65,20 +82,61 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     });
   }
 
+  String _getEndTime(String startTime) {
+    final parts = startTime.split(':');
+    if (parts.length == 2) {
+      int hour = int.tryParse(parts[0]) ?? 0;
+      int minute = int.tryParse(parts[1]) ?? 0;
+      minute += 29;
+      hour += 2;
+      if (minute >= 60) {
+        hour += 1;
+        minute -= 60;
+      }
+      if (hour >= 24) hour -= 24;
+      return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    }
+    return startTime;
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().substring(2)}';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final endTime = _getEndTime(widget.showTime);
+    final formattedDate = _formatDate(widget.selectedDate);
+
     return Scaffold(
       backgroundColor: Color(0xff000000),
       bottomNavigationBar: _buildBottomNavigationBar(),
       appBar: AppBar(
         backgroundColor: context.color.secondaryColor,
-        title: Text(
-          'Select Seat',
-          style: TextStyle(
-            color: context.color.textDefaultColor,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
+        toolbarHeight: 70,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              widget.cinemaName,
+              style: TextStyle(
+                color: context.color.textDefaultColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Rạp ${widget.roomNumber}, $formattedDate, ${widget.showTime} ~ $endTime',
+              style: TextStyle(
+                color: context.color.descriptionColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
         leading: IconButton(
@@ -103,12 +161,12 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
           SizedBox(height: 20),
           // screen section
           SizedBox(
-            height: 80, 
+            height: 80,
             child: Stack(
               alignment: Alignment.topCenter,
               children: [
                 Positioned.fill(
-                  top: 2, 
+                  top: 2,
                   child: ClipPath(
                     clipper: ScreenShadowClipper(),
                     child: Container(
@@ -153,7 +211,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                 children: [
                   const SizedBox(height: 20),
 
-                  // Seat grid
+                  // Seat grid with zoom/pan support
                   Expanded(
                     child: seats.isEmpty
                         ? const Center(
@@ -161,46 +219,27 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                               color: Color(0xffFF1E00),
                             ),
                           )
-                        : SingleChildScrollView(
-                            child: Column(
-                              children: List.generate(13, (rowIndex) {
-                                if (rowIndex >= seats.length) {
-                                  return const SizedBox.shrink();
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 3),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
+                        : InteractiveViewer(
+                            minScale: 0.5,
+                            maxScale: 3.0,
+                            boundaryMargin: const EdgeInsets.all(100),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: List.generate(13, (rowIndex) {
+                                  if (rowIndex >= seats.length) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 3),
                                     child: _buildSeatRow(context, rowIndex),
-                                  ),
-                                );
-                              }),
+                                  );
+                                }),
+                              ),
                             ),
                           ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Column numbers
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 28),
-                      ...List.generate(13, (index) {
-                        return SizedBox(
-                          width: (MediaQuery.of(context).size.width - 80) / 15,
-                          child: Text(
-                            '${index + 1}',
-                            style: TextStyle(
-                              color: context.color.textDefaultColor,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }),
-                      const SizedBox(width: 28),
-                    ],
                   ),
                 ],
               ),
@@ -254,27 +293,12 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Row label (A, B, C, etc.)
-        Container(
-          width: 20,
-          child: Text(
-            String.fromCharCode(65 + rowIndex),
-            style: TextStyle(
-              color: context.color.textDefaultColor,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        SizedBox(width: 8),
         // Seats
         ...List.generate(13, (colIndex) {
           if (colIndex >= seats[rowIndex].length) {
             return SizedBox(
-              width: (MediaQuery.of(context).size.width - 80) / 15, 
-              height: (MediaQuery.of(context).size.width - 80) / 15
-            );
+                width: (MediaQuery.of(context).size.width - 80) / 15,
+                height: (MediaQuery.of(context).size.width - 80) / 15);
           }
           return GestureDetector(
             onTap: () => _toggleSeat(rowIndex, colIndex),
@@ -286,25 +310,26 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
               decoration: BoxDecoration(
                 color: _getSeatColor(seats[rowIndex][colIndex]),
                 borderRadius: BorderRadius.circular(6),
-                border: seats[rowIndex][colIndex] == SeatStatus.available 
-                  ? Border.all(color: Color(0xff555555), width: 1)
-                  : null,
+                border: seats[rowIndex][colIndex] == SeatStatus.available
+                    ? Border.all(color: Color(0xff555555), width: 1)
+                    : null,
                 boxShadow: seats[rowIndex][colIndex] == SeatStatus.selected
-                  ? [
-                      BoxShadow(
-                        color: Color(0xffFF1E00).withValues(alpha: 0.5),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      ),
-                    ]
-                  : null,
+                    ? [
+                        BoxShadow(
+                          color: Color(0xffFF1E00).withValues(alpha: 0.5),
+                          blurRadius: 8,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : null,
               ),
               child: Center(
                 child: Text(
                   '${String.fromCharCode(65 + rowIndex)}${colIndex + 1}',
                   style: TextStyle(
                     color: _getSeatTextColor(seats[rowIndex][colIndex]),
-                    fontSize: ((MediaQuery.of(context).size.width - 80) / 15) * 0.25,
+                    fontSize:
+                        ((MediaQuery.of(context).size.width - 80) / 15) * 0.25,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -312,20 +337,6 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
             ),
           );
         }),
-        SizedBox(width: 8),
-        // Row label again
-        Container(
-          width: 20,
-          child: Text(
-            String.fromCharCode(65 + rowIndex),
-            style: TextStyle(
-              color: context.color.textDefaultColor,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
       ],
     );
   }
@@ -355,7 +366,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
 
   Widget _buildBottomNavigationBar() {
     int totalPrice = selectedSeats.length * 210000;
-    
+
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -395,17 +406,16 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
               ],
             ),
           ),
-          
+
           SizedBox(width: 16),
-          
+
           // Buy ticket button
           Expanded(
             flex: 1,
             child: SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xffFF1E00),
                   shape: RoundedRectangleBorder(
@@ -429,4 +439,3 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     );
   }
 }
-

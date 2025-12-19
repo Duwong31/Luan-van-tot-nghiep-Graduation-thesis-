@@ -7,8 +7,6 @@ import 'package:Celes/ui/screens/movie_detail/movie_detail_screen.dart';
 import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
 import 'package:Celes/ui/screens/payment/payment_screen.dart';
 import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
-import 'package:Celes/ui/screens/welcome/choose_language_popup.dart'
-    hide ChooseLanguagePopup;
 import 'package:Celes/ui/screens/welcome/welcome_screen.dart';
 import 'package:Celes/ui/screens/splash_screen.dart';
 import 'package:flutter/cupertino.dart';

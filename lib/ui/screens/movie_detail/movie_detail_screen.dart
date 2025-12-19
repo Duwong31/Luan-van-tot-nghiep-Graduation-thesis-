@@ -1,6 +1,5 @@
 import 'package:Celes/ui/components/avatar_card.dart';
-import 'package:Celes/ui/screens/movie_detail/widgets/cinema_card.dart';
-import 'package:Celes/ui/screens/select_seat/select_seat_screen.dart';
+import 'package:Celes/ui/screens/select_seat/select_datetime_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -22,13 +21,13 @@ class MovieDetailScreen extends StatefulWidget {
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   bool _isStorylineExpanded = false;
-  int _selectedCinemaIndex = -1;
 
   @override
   Widget build(BuildContext context) {
     final movie = {
       'title': 'Avengers: Infinity War',
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg',
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg',
       'rating': 4.8,
       'ratingCount': '1,327',
       'duration': '2h 29m',
@@ -37,7 +36,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       'language': 'English',
     };
 
-    const double cardOverlap = 120; 
+    const double cardOverlap = 120;
 
     return Scaffold(
       backgroundColor: context.color.primaryColor,
@@ -54,38 +53,37 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image:
-                            NetworkImage(movie['imageUrl'] as String? ?? ''),
+                        image: NetworkImage(movie['imageUrl'] as String? ?? ''),
                         fit: BoxFit.cover,
                       ),
-                    ),              
+                    ),
                   ),
                 ),
-      
+
                 Positioned(
-                  top: 16,
-                  left: 16,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: context.color.backgroundColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: SvgPicture.asset(
-                        AppIcons.arrow_left,
-                        width: 32,
-                        height: 32,
-                        colorFilter: ColorFilter.mode(
-                          context.color.textDefaultColor,
-                          BlendMode.srcIn,
+                    top: 16,
+                    left: 16,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: context.color.backgroundColor
+                              .withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          AppIcons.arrow_left,
+                          width: 32,
+                          height: 32,
+                          colorFilter: ColorFilter.mode(
+                            context.color.textDefaultColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ),
-      
+                    )),
+
                 Positioned(
                   left: 16,
                   right: 16,
@@ -94,9 +92,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 ),
               ],
             ),
-      
             const SizedBox(height: cardOverlap + 16),
-      
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: Column(
@@ -104,16 +100,15 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 children: [
                   _buildMovieInfoSection(context, movie),
                   const SizedBox(height: 24),
-      
+
                   // Storyline
                   Text(
                     'Storyline',
                     style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: context.color.textDefaultColor,
-                      height: 1.2
-                    ),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: context.color.textDefaultColor,
+                        height: 1.2),
                   ),
                   const SizedBox(height: 12),
                   Column(
@@ -149,9 +144,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ),
                     ],
                   ),
-      
+
                   const SizedBox(height: 32),
-                  
+
                   // Director section
                   Text(
                     'Director',
@@ -162,13 +157,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       color: context.color.textDefaultColor,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: _getDirectors((movie['title'] as String?)).map((director) {
+                      children: _getDirectors((movie['title'] as String?))
+                          .map((director) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: PersonChip(
@@ -180,9 +176,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       }).toList(),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Actor section
                   Text(
                     'Actor',
@@ -193,13 +189,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       color: context.color.textDefaultColor,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: _getActors((movie['title'] as String?)).map((actor) {
+                      children:
+                          _getActors((movie['title'] as String?)).map((actor) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: PersonChip(
@@ -211,41 +208,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       }).toList(),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
-                  // Cinema section
-                  Text(
-                    'Cinema',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      height: 1.25,
-                      color: context.color.textDefaultColor,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  ..._getCinemas().asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final cinema = entry.value;
-                    return CinemaCard(
-                      name: cinema['name'] as String,
-                      distance: cinema['distance'] as String? ?? '2.5 km',
-                      address: cinema['address'] as String,
-                      logoAsset: cinema['logoAsset'] as String? ?? 'assets/logo.png',
-                      isSelected: _selectedCinemaIndex == index,
-                      onTap: () {
-                        setState(() {
-                          _selectedCinemaIndex = index;
-                        });
-                      },
-                    );
-                  }).toList(),
-                  
-                  const SizedBox(height: 32),
-                  
+
                   // Continue button
                   SizedBox(
                     width: double.infinity,
@@ -255,7 +220,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SelectSeatScreen(),
+                            builder: (context) => SelectDateTimeScreen(
+                              movieTitle: movie['title']?.toString() ?? 'Movie',
+                            ),
                           ),
                         );
                       },
@@ -283,6 +250,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       ),
     );
   }
+
   Widget _buildMovieInfoSection(
     BuildContext context,
     Map<String, dynamic> movie,
@@ -316,7 +284,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 120, 
+          width: 120,
           child: Text(
             label,
             style: TextStyle(
@@ -339,8 +307,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-
-  Widget _buildMovieHeaderCard(BuildContext context, Map<String, dynamic> movie,) {
+  Widget _buildMovieHeaderCard(
+    BuildContext context,
+    Map<String, dynamic> movie,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -354,14 +324,12 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           Text(
             (movie['title'] as String?) ?? 'Unknown Movie',
             style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: context.color.textDefaultColor,
-              height: 1.2
-            ),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: context.color.textDefaultColor,
+                height: 1.2),
           ),
           const SizedBox(height: 6),
-
           Text(
             '${movie['duration']} • 16.12.2022',
             style: TextStyle(
@@ -370,16 +338,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
           ),
           const SizedBox(height: 40),
-
           Row(
             children: [
               Text(
                 'Review',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: context.color.textDefaultColor,
-                  height: 1.2
-                ),
+                    fontSize: 16,
+                    color: context.color.textDefaultColor,
+                    height: 1.2),
               ),
               const SizedBox(width: 8),
               const Icon(Icons.star, color: Color(0xffFCC434), size: 16),
@@ -404,7 +370,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ],
             ],
           ),
-
           Row(
             children: [
               Row(
@@ -425,14 +390,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.color.descriptionColor,
                   side: BorderSide(color: context.color.descriptionColor),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -440,7 +404,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     SizedBox(width: 4),
                     const Text(
                       'Watch trailer',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -455,69 +420,49 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   String _getMovieStoryline(String? title) {
     return 'As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain. The heroes must be willing to sacrifice everything in an attempt to defeat the powerful Thanos before his blitz of devastation and ruin puts an end to the universe.';
   }
-  
+
   List<Map<String, String>> _getDirectors(String? title) {
     return [
       {
         'firstName': 'Anthony',
         'lastName': 'Russo',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/bKqrshBbUAS6TAetMjdPZAbnMPL.jpg',
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/bKqrshBbUAS6TAetMjdPZAbnMPL.jpg',
       },
       {
         'firstName': 'Joe',
         'lastName': 'Russo',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/mKBWQqLFjWFVn63b9tVsUggmgUW.jpg',
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/mKBWQqLFjWFVn63b9tVsUggmgUW.jpg',
       },
     ];
   }
-  
+
   List<Map<String, String>> _getActors(String? title) {
     return [
       {
         'firstName': 'Robert',
         'lastName': 'Downey Jr.',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg',
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg',
       },
       {
         'firstName': 'Chris',
         'lastName': 'Evans',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/3bOGNsHlrswhyW79uvIHH1V43JI.jpg',
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/3bOGNsHlrswhyW79uvIHH1V43JI.jpg',
       },
       {
         'firstName': 'Mark',
         'lastName': 'Ruffalo',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/z3dvKqMNDQWk3QLxzumloQVR0pv.jpg',
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/z3dvKqMNDQWk3QLxzumloQVR0pv.jpg',
       },
       {
         'firstName': 'Chris',
         'lastName': 'Hemsworth',
-        'imageUrl': 'https://image.tmdb.org/t/p/w200/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg',
-      },
-    ];
-  }
-  
-  List<Map<String, dynamic>> _getCinemas() {
-    return [
-      {
-        'name': 'Vincom Ocean Park CGV',
-        'distance': '2.5 km',
-        'address': 'Đa Tốn, Gia Lâm, Hà Nội',
-        'logoAsset': AppIcons.cgv,
-        'isHot': true,
-      },
-      {
-        'name': 'Aeon Mall CGV',
-        'distance': '3.2 km',
-        'address': 'Long Biên, Hà Nội',
-        'logoAsset': AppIcons.cgv,
-        'isHot': true,
-      },
-      {
-        'name': 'Lotte Cinema Long Biên',
-        'distance': '4.1 km',
-        'address': '14 Phố Tạ Hiện, Hoàn Kiếm, Hà Nội',
-        'logoAsset': AppIcons.cgv,
-        'isHot': false,
+        'imageUrl':
+            'https://image.tmdb.org/t/p/w200/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg',
       },
     ];
   }

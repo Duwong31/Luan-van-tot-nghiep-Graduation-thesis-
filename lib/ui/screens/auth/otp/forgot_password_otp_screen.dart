@@ -359,7 +359,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
               ? const Color(0xFFFFB800)
-              : Colors.grey.withOpacity(0.5),
+              : Colors.grey.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
