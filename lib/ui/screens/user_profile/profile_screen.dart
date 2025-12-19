@@ -1,5 +1,7 @@
 import 'package:Celes/app/app_theme.dart';
 import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
+import 'package:Celes/l10n/app_localizations.dart';
+import 'package:Celes/ui/screens/language/language_selection_screen.dart';
 import 'package:Celes/ui/screens/main_activity.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
@@ -65,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: CustomText(
-                    "Profile User",
+                    Tr.of(context)!.profile,
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: context.color.textColorDark,
@@ -199,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       children: [
         _buildMenuItemWithSvg(
           iconPath: AppIcons.ticket_2,
-          title: "My ticket",
+          title: Tr.of(context)!.myTicket,
           onTap: () {
             // Navigate to my tickets
           },
@@ -207,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
           iconPath: AppIcons.shopping_cart,
-          title: "Payment history",
+          title: Tr.of(context)!.paymentHistory,
           onTap: () {
             // Navigate to payment history
           },
@@ -215,9 +217,13 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
           iconPath: AppIcons.translate,
-          title: "Change language",
+          title: Tr.of(context)!.changeLanguage,
           onTap: () {
-            // Navigate to language settings
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const LanguageSelectionScreen(),
+              ),
+            );
           },
         ),
         const SizedBox(height: 12),
@@ -228,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
           iconPath: AppIcons.lock,
-          title: "Change password",
+          title: Tr.of(context)!.changePassword,
           onTap: () {
             // Navigate to change password
           },
@@ -236,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
         _buildMenuItemWithSwitchSvg(
           iconPath: AppIcons.Face_ID,
-          title: "Face ID / Touch ID",
+          title: Tr.of(context)!.faceIdTouchId,
         ),
       ],
     );

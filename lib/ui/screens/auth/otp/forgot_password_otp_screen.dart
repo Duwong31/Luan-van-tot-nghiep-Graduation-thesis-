@@ -1,5 +1,5 @@
 import 'package:Celes/app/app_routes.dart';
-import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
@@ -25,7 +25,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _isLoading = false;
   bool _isResending = false;
 
@@ -102,7 +102,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
       final otpCode = _getOtpCode();
 
       // Verify OTP to get reset_token
-      final response = await _authService.verifyOtp(
+      final response = await _authRepository.verifyOtp(
         email: widget.email,
         otp: otpCode,
         type: 'forgot_password', // Type for forgot password flow
@@ -177,7 +177,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
     setState(() => _isResending = true);
 
     try {
-      final response = await _authService.resendOtp(
+      final response = await _authRepository.resendOtp(
         email: widget.email,
         type: 'forgot_password', // Different type for forgot password
       );

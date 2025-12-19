@@ -38,16 +38,16 @@ class HiveUtils {
     Hive.box(HiveKeys.themeBox).put(HiveKeys.currentTheme, newTheme);
   }
 
-  static void setUserData(Map data) async {
+  static Future<void> setUserData(Map data) async {
     await Hive.box(HiveKeys.userDetailsBox).putAll(data);
   }
 
-  static void setJWT(String token) async {
+  static Future<void> setJWT(String token) async {
     await Hive.box(HiveKeys.userDetailsBox).put(HiveKeys.jwtToken, token);
   }
 
-  static void setUserIsAuthenticated(bool value) {
-    Hive.box(HiveKeys.authBox).put(HiveKeys.isAuthenticated, value);
+  static Future<void> setUserIsAuthenticated(bool value) async {
+    await Hive.box(HiveKeys.authBox).put(HiveKeys.isAuthenticated, value);
   }
 
   static Future<void> setUserIsNotNew() {
@@ -104,9 +104,37 @@ class HiveUtils {
     );
   }
 
-  static void clear() async {
+  static String? getRefreshToken() {
+    return Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.refreshToken);
+  }
+
+  static Future<void> setRefreshToken(String token) async {
+    await Hive.box(HiveKeys.userDetailsBox).put(HiveKeys.refreshToken, token);
+  }
+
+  static DateTime? getTokenExpiry() {
+    final expiryString =
+        Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.tokenExpiry);
+    if (expiryString == null) return null;
+    return DateTime.tryParse(expiryString);
+  }
+
+  static Future<void> setTokenExpiry(DateTime expiryTime) async {
+    await Hive.box(HiveKeys.userDetailsBox).put(
+      HiveKeys.tokenExpiry,
+      expiryTime.toIso8601String(),
+    );
+  }
+
+  static Future<void> clearTokens() async {
+    await Hive.box(HiveKeys.userDetailsBox).delete(HiveKeys.jwtToken);
+    await Hive.box(HiveKeys.userDetailsBox).delete(HiveKeys.refreshToken);
+    await Hive.box(HiveKeys.userDetailsBox).delete(HiveKeys.tokenExpiry);
+  }
+
+  static Future<void> clear() async {
     await Hive.box(HiveKeys.userDetailsBox).clear();
     await Hive.box(HiveKeys.historyBox).clear();
-    HiveUtils.setUserIsAuthenticated(false);
+    await HiveUtils.setUserIsAuthenticated(false);
   }
 }

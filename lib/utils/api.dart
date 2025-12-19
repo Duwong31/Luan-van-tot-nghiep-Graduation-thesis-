@@ -1,0 +1,297 @@
+import 'dart:io';
+
+import 'package:Celes/utils/constant.dart';
+import 'package:Celes/utils/helper_utils.dart';
+import 'package:Celes/utils/hive_utils.dart';
+import 'package:Celes/utils/network_request.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class ApiException implements Exception {
+  ApiException(this.errorMessage);
+
+  dynamic errorMessage;
+
+  @override
+  String toString() {
+    return errorMessage.toString();
+  }
+}
+
+class Api {
+  static Map<String, dynamic> headers() {
+    if (HiveUtils.isUserAuthenticated()) {
+      String? jwtToken = HiveUtils.getJWT();
+      debugPrint('Bearer token: ${jwtToken}');
+      return {
+        "Authorization": "Bearer $jwtToken",
+        "Accept": "application/json",
+        "Content-Language": HiveUtils.getLanguage()['code'] ?? ""
+      };
+    } else if (HiveUtils.getLanguage() != null ||
+        HiveUtils.getLanguage()?['data'] != null) {
+      return {
+        "Accept": "application/json",
+        "Content-Language": HiveUtils.getLanguage()['code'] ?? ""
+      };
+    }
+    return {};
+  }
+
+  // ==================== API ENDPOINTS ====================
+
+  // Authentication APIs
+  static const String authRegister = 'auth/register';
+  static const String authLogin = 'auth/login';
+  static const String authVerifyOtp = 'auth/verify-otp';
+  static const String authResendOtp = 'auth/resend-otp';
+  static const String authForgotPassword = 'auth/forgot-password';
+  static const String authResetPassword = 'auth/reset-password';
+  static const String authRefreshToken = 'auth/refresh';
+  static const String authLogout = 'auth/logout';
+
+  static Future<Map<String, dynamic>> post({
+    required String url,
+    dynamic parameter,
+    Options? options,
+    bool? useBaseUrl,
+  }) async {
+    try {
+      final Dio dio = Dio();
+      dio.interceptors.add(NetworkRequestInterceptor());
+
+      late FormData formData;
+
+      if (parameter is Map<String, dynamic>) {
+        Map<String, dynamic> formMap = {};
+
+        parameter.forEach((key, value) {
+          if (value is File) {
+            formMap[key] = MultipartFile.fromFileSync(value.path,
+                filename: value.path.split('/').last);
+          } else if (value is List<File>) {
+            formMap[key] = value
+                .map((file) => MultipartFile.fromFileSync(file.path,
+                    filename: file.path.split('/').last))
+                .toList();
+          } else {
+            formMap[key] = value;
+          }
+        });
+
+        formData = FormData.fromMap(
+          formMap,
+          ListFormat.multiCompatible,
+        );
+      } else {
+        throw ArgumentError(
+            'Invalid parameter type. Expected Map<String, dynamic>.');
+      }
+
+      final response = await dio.post(
+        ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
+        data: formData,
+        options: Options(
+          contentType: "multipart/form-data",
+          headers: headers(),
+        ),
+      );
+
+      var resp = response.data;
+
+      if (resp['error'] ?? false) {
+        throw ApiException(resp['message'].toString());
+      }
+
+      return Map.from(resp);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        userExpired();
+      }
+
+      if (e.response?.statusCode == 503) {
+        throw "server-not-available";
+      }
+
+      throw ApiException(
+        e.error is SocketException
+            ? "no-internet"
+            : "Something went wrong with error ${e.response?.statusCode}",
+      );
+    } on ApiException catch (e) {
+      throw ApiException(e.errorMessage);
+    } catch (e) {
+      throw ApiException(e.toString());
+    }
+  }
+
+  static void userExpired() {
+    HelperUtils.showSnackBarMessage(
+        Constant.navigatorKey.currentContext!, "User is deactivated",
+        messageDuration: 3);
+    Future.delayed(Duration(seconds: 2), () {
+      HiveUtils.clear();
+      // Constant.favoriteItemList.clear();
+      // Constant.navigatorKey.currentContext!.read<UserDetailsCubit>().clear();
+      // Constant.navigatorKey.currentContext!.read<FavoriteCubit>().resetState();
+      HiveUtils.logoutUser(
+        Constant.navigatorKey.currentContext!,
+        onLogout: () {},
+      );
+    });
+  }
+
+  static Future<Map<String, dynamic>> put({
+    required String url,
+    dynamic parameter,
+    Options? options,
+    bool? useBaseUrl,
+  }) async {
+    try {
+      final Dio dio = Dio();
+      dio.interceptors.add(NetworkRequestInterceptor());
+
+      // late FormData formData;
+
+      // if (parameter is Map<String, dynamic>) {
+      //   Map<String, dynamic> formMap = {};
+
+      //   parameter.forEach((key, value) {
+      //     if (value is File) {
+      //       formMap[key] = MultipartFile.fromFileSync(value.path,
+      //           filename: value.path.split('/').last);
+      //     } else if (value is List<File>) {
+      //       formMap[key] = value
+      //           .map((file) => MultipartFile.fromFileSync(file.path,
+      //               filename: file.path.split('/').last))
+      //           .toList();
+      //     } else {
+      //       formMap[key] = value;
+      //     }
+      //   });
+
+      //   formData = FormData.fromMap(
+      //     formMap,
+      //     ListFormat.multiCompatible,
+      //   );
+      // } else {
+      //   throw ArgumentError(
+      //       'Invalid parameter type. Expected Map<String, dynamic>.');
+      // }
+
+      // final response = await dio.put(
+      //   ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
+      //   data: formData,
+      //   options: Options(
+      //     contentType: "multipart/form-data",
+      //     headers: headers(),
+      //   ),
+      // );
+
+      final response = await dio.put(
+        ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
+        data: parameter,
+        options: Options(
+          contentType: "application/json",
+          headers: headers(),
+        ),
+      );
+
+      var resp = response.data;
+
+      if (resp['error'] ?? false) {
+        throw ApiException(resp['message'].toString());
+      }
+
+      return Map.from(resp);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        userExpired();
+      }
+
+      if (e.response?.statusCode == 503) {
+        throw "server-not-available";
+      }
+
+      throw ApiException(
+        e.error is SocketException
+            ? "no-internet"
+            : "Something went wrong with error ${e.response?.statusCode}",
+      );
+    } on ApiException catch (e) {
+      throw ApiException(e.errorMessage);
+    } catch (e) {
+      throw ApiException(e.toString());
+    }
+  }
+
+  static Future<Map<String, dynamic>> delete(
+      {required String url,
+      Map<String, dynamic>? queryParameters,
+      bool? useBaseUrl}) async {
+    try {
+      final Dio dio = Dio();
+      dio.interceptors.add(NetworkRequestInterceptor());
+
+      final response = await dio.delete(
+          ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
+          queryParameters: queryParameters,
+          options: Options(headers: headers()));
+
+      if (response.data['error'] == true) {
+        throw ApiException(response.data['message'].toString());
+      }
+      return Map.from(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        userExpired();
+      }
+      if (e.response?.statusCode == 503) {
+        throw "server-not-available";
+      }
+
+      throw ApiException(e.error is SocketException
+          ? "no-internet"
+          : "Something went wrong with error ${e.response?.statusCode}");
+    } on ApiException catch (e) {
+      throw ApiException(e.errorMessage);
+    } catch (e, st) {
+      throw ApiException(st.toString());
+    }
+  }
+
+  static Future<Map<String, dynamic>> get(
+      {required String url,
+      Map<String, dynamic>? queryParameters,
+      bool? useBaseUrl}) async {
+    try {
+      final Dio dio = Dio();
+      dio.interceptors.add(NetworkRequestInterceptor());
+      String mainurl = ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url;
+      final response = await dio.get(mainurl,
+          queryParameters: queryParameters,
+          options: Options(headers: headers()));
+
+      if (response.data['error'] == true) {
+        throw ApiException(response.data['message'].toString());
+      }
+      return Map.from(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        userExpired();
+      }
+      if (e.response?.statusCode == 503) {
+        throw "server-not-available";
+      }
+
+      throw ApiException(e.error is SocketException
+          ? "no-internet"
+          : "Something went wrong with error ${e.response?.statusCode}");
+    } on ApiException catch (e) {
+      throw ApiException(e.errorMessage);
+    } catch (e, st) {
+      throw ApiException(st.toString());
+    }
+  }
+}

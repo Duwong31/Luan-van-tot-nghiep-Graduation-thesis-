@@ -1,16 +1,15 @@
 import 'package:Celes/app/app.dart';
-import 'package:Celes/app/app_localization.dart';
 import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/app/app_theme.dart';
 import 'package:Celes/app/register_cubits.dart';
 import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
 import 'package:Celes/data/cubits/system/language_cubit.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/utils/constant.dart';
 import 'package:Celes/utils/hive_utils.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => initApp();
 
@@ -32,10 +31,10 @@ class EntryPointState extends State<EntryPoint> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: RegisterCubits().providers,
-      child: Builder(builder: (BuildContext context) {
-        return const App();
-      }));
+        providers: RegisterCubits().providers,
+        child: Builder(builder: (BuildContext context) {
+          return const App();
+        }));
   }
 }
 
@@ -61,8 +60,14 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     AppTheme currentTheme = context.watch<AppThemeCubit>().state.appTheme;
+
     return BlocBuilder<LanguageCubit, LanguageState>(
       builder: (context, languageState) {
+        Locale currentLocale = const Locale('vi'); // Default
+        if (languageState is LanguageLoaded) {
+          currentLocale = languageState.locale;
+        }
+
         return MaterialApp(
           initialRoute: Routes.splash,
           navigatorKey: Constant.navigatorKey,
@@ -70,47 +75,26 @@ class _AppState extends State<App> {
           debugShowCheckedModeBanner: false,
           onGenerateRoute: Routes.onGenerateRouted,
           theme: appThemeData[currentTheme],
-          builder: (context, child) {
-            TextDirection direction = TextDirection.ltr;
+          locale: currentLocale,
+          localizationsDelegates: Tr.localizationsDelegates,
+          supportedLocales: Tr.supportedLocales,
 
-            if (languageState is LanguageLoader) {
-              direction = languageState.language['rtl']
-                  ? TextDirection.rtl
-                  : TextDirection.ltr;
-            }
+          builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(
                 textScaler: const TextScaler.linear(1.0),
               ),
-              child: Directionality(
-                textDirection: direction,
-                child: DevicePreview(
-                  enabled: false,
-                  builder: (context) {
-                    return child!;
-                  },
-                ),
+              child: DevicePreview(
+                enabled: false,
+                builder: (context) {
+                  return child!;
+                },
               ),
             );
           },
-          localizationsDelegates: const [
-            AppLocalization.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          locale: loadLocalLanguageIfFail(languageState),
         );
       },
     );
-  }
-
-  dynamic loadLocalLanguageIfFail(LanguageState state) {
-    if ((state is LanguageLoader)) {
-      return Locale(state.language['code']);
-    } else if (state is LanguageLoadFail) {
-      return const Locale("en");
-    }
   }
 }
 

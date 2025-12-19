@@ -1,5 +1,5 @@
 import 'package:Celes/app/app_routes.dart';
-import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
@@ -24,7 +24,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _isLoading = false;
   bool _isResending = false;
 
@@ -106,7 +106,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
 
     try {
       final otpCode = _getOtpCode();
-      final response = await _authService.verifyOtp(
+      final response = await _authRepository.verifyOtp(
         email: widget.email,
         otp: otpCode,
       );
@@ -169,7 +169,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
     setState(() => _isResending = true);
 
     try {
-      final response = await _authService.resendOtp(email: widget.email);
+      final response = await _authRepository.resendOtp(email: widget.email);
 
       if (response.success) {
         if (mounted) {

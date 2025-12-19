@@ -3,6 +3,7 @@
 import 'dart:async';
 
 //import 'package:app_links/app_links.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/home_screen.dart';
 import 'package:Celes/ui/screens/movie/movie_screen.dart';
 import 'package:Celes/ui/screens/user_profile/profile_screen.dart';
@@ -11,7 +12,6 @@ import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/constant.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
-import 'package:Celes/utils/extensions/lib/translate.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -119,7 +119,7 @@ class MainActivityState extends State<MainActivity>
 
   late List<Widget> pages = [
     HomeScreen(from: widget.from),
-    const Placeholder(), 
+    const Placeholder(),
     const MovieScreen(),
     const ProfileScreen(),
   ];
@@ -149,7 +149,7 @@ class MainActivityState extends State<MainActivity>
               currentBackPressTime = now;
 
               HelperUtils.showSnackBarMessage(
-                  context, "pressAgainToExit".translate(context));
+                  context, Tr.of(context)!.pressAgainToExit);
 
               setState(() {
                 isBack = false;
@@ -219,19 +219,19 @@ class MainActivityState extends State<MainActivity>
       shape: const CircularNotchedRectangle(),
       child: Container(
         color: context.color.secondaryColor,
-        padding: const EdgeInsets.symmetric(vertical: 8), 
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               buildBottomNavigationbarItem(0, AppIcons.homeNav,
-                  AppIcons.homeNavActive, "homeTab".translate(context)),
+                  AppIcons.homeNavActive, Tr.of(context)!.home),
               buildBottomNavigationbarItem(1, AppIcons.ticketNav,
-                  AppIcons.ticketNavActive, "ticketTab".translate(context)),
+                  AppIcons.ticketNavActive, Tr.of(context)!.ticket),
               buildBottomNavigationbarItem(2, AppIcons.cinemaNav,
-                  AppIcons.cinemaNavActive, "cinemaTab".translate(context)),
+                  AppIcons.cinemaNavActive, Tr.of(context)!.cinema),
               buildBottomNavigationbarItem(3, AppIcons.profileNav,
-                  AppIcons.profileNavActive, "profileTab".translate(context))
+                  AppIcons.profileNavActive, Tr.of(context)!.profile)
             ]),
       ),
     );

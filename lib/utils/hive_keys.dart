@@ -3,6 +3,8 @@ class HiveKeys {
   static const String userDetailsBox = "userDetailsBox";
   static const String translationsBox = "translations";
   static const String jwtToken = "token";
+  static const String refreshToken = "refreshToken";
+  static const String tokenExpiry = "tokenExpiry";
   static const String svgBox = "svgBox";
   static const String historyBox = "historyBox";
 

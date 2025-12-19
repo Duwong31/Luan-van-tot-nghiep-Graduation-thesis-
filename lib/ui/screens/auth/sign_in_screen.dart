@@ -1,12 +1,10 @@
 import 'package:Celes/app/app_routes.dart';
-import 'package:Celes/data/services/auth_service.dart';
-import 'package:Celes/data/services/token_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/app_icon.dart';
-import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -40,8 +38,7 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
-  final TokenService _tokenService = TokenService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _rememberMe = false;
   bool _isLoading = false;
 
@@ -77,46 +74,17 @@ class LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _authService.login(
+      // AuthRepository tự động lưu token và user data vào Hive
+      final response = await _authRepository.login(
         email: email,
         password: password,
       );
 
       if (response.success && response.data != null) {
         if (mounted) {
-          // Save token and user data to local storage
-          final accessToken = response.data!['access_token'] as String?;
-          final refreshToken = response.data!['refresh_token'] as String?;
-          final expiresIn = response.data!['expires_in'] as int?;
           final userData = response.data!['user'] as Map<String, dynamic>?;
-
-          // Save tokens using TokenService
-          if (accessToken != null && refreshToken != null) {
-            await _tokenService.saveTokens(
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-              expiresIn: expiresIn,
-            );
-
-            print('✅ Tokens saved successfully');
-            print('Access Token: ${accessToken.substring(0, 20)}...');
-            print('User: ${userData?['name']}');
-          }
-
-          // ✅ FIX: Set authentication status in Hive
-          HiveUtils.setUserIsAuthenticated(true);
-
-          // ✅ FIX: Save user data to Hive if available
-          if (userData != null) {
-            HiveUtils.setUserData(userData);
-            print('✅ User data saved to Hive: ${userData['name']}');
-          }
-
-          // ✅ FIX: Save JWT token to Hive if needed
-          if (accessToken != null) {
-            HiveUtils.setJWT(accessToken);
-            print('✅ JWT token saved to Hive');
-          }
+          print('✅ Login successful');
+          print('User: ${userData?['name']}');
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
