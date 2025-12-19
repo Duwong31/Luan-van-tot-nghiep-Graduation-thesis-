@@ -1,47 +1,68 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:Celes/utils/hive_keys.dart';
+import 'package:Celes/utils/hive_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 
-class LanguageState {}
+// States
+abstract class LanguageState {}
 
 class LanguageInitial extends LanguageState {}
 
-class LanguageLoader extends LanguageState {
-  final dynamic language;
+class LanguageLoaded extends LanguageState {
+  final Locale locale;
 
-  LanguageLoader(this.language);
+  LanguageLoaded(this.locale);
 }
 
-class LanguageLoadFail extends LanguageState {
-  final dynamic error;
-  LanguageLoadFail({required this.error});
-}
-
+// Cubit
 class LanguageCubit extends Cubit<LanguageState> {
   LanguageCubit() : super(LanguageInitial());
 
+  /// Load ngôn ngữ hiện tại từ Hive
   void loadCurrentLanguage() {
-    var language =
-        Hive.box(HiveKeys.languageBox).get(HiveKeys.currentLanguageKey);
-    if (language != null) {
-      emit(LanguageLoader(language));
+    final languageData = HiveUtils.getLanguage();
+
+    if (languageData != null && languageData['code'] != null) {
+      final locale = Locale(languageData['code']);
+      emit(LanguageLoaded(locale));
     } else {
-      emit(LanguageLoadFail(error: "error"));
+      // Mặc định là tiếng Việt
+      emit(LanguageLoaded(const Locale('vi')));
     }
   }
 
-  void changeLanguages(dynamic map) {
-    emit(LanguageLoader(map));
+  /// Đổi ngôn ngữ
+  void changeLanguage(Locale locale) {
+    // Lưu vào Hive
+    HiveUtils.storeLanguage({
+      'code': locale.languageCode,
+      'name': locale.languageCode == 'vi' ? 'Tiếng Việt' : 'English',
+      'rtl': false, // Vietnamese và English đều là LTR
+    });
+
+    emit(LanguageLoaded(locale));
   }
 
-  dynamic currentLanguageCode() {
-    return Hive.box(HiveKeys.languageBox)
-        .get(HiveKeys.currentLanguageKey)['code'];
+  /// Toggle giữa tiếng Việt và tiếng Anh
+  void toggleLanguage() {
+    if (state is LanguageLoaded) {
+      final currentLocale = (state as LanguageLoaded).locale;
+      final newLocale = currentLocale.languageCode == 'vi'
+          ? const Locale('en')
+          : const Locale('vi');
+      changeLanguage(newLocale);
+    }
   }
 
-  dynamic currentCountryCode() {
-    return Hive.box(HiveKeys.languageBox)
-        .get(HiveKeys.currentLanguageKey)['country_code'];
+  /// Lấy locale hiện tại
+  Locale getCurrentLocale() {
+    if (state is LanguageLoaded) {
+      return (state as LanguageLoaded).locale;
+    }
+    return const Locale('vi'); // Default
+  }
+
+  /// Lấy language code hiện tại
+  String currentLanguageCode() {
+    return getCurrentLocale().languageCode;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/api_exception.dart';
@@ -23,7 +23,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _isLoading = false;
 
   @override
@@ -61,7 +61,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _authService.resetPassword(
+      final response = await _authRepository.resetPassword(
         email: widget.email,
         resetToken: widget.resetToken,
         password: password,

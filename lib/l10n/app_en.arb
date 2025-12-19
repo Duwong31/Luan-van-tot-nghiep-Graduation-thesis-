@@ -1,0 +1,83 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Celes",
+  "@appTitle": {
+    "description": "The main title of the application shown on the app bar and task switcher"
+  },
+
+  "login": "Login",
+  "@login": {
+    "description": "Text for the login button"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Text for the logout button"
+  },
+
+  "email": "Email",
+  "@email": {
+    "description": "Label for the email input field"
+  },
+
+  "password": "Password",
+  "@password": {
+    "description": "Label for the password input field"
+  },
+
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Label for confirming the user's password during registration"
+  },
+
+  "welcomeMessage": "Welcome back!",
+  "@welcomeMessage": {
+    "description": "Greeting message shown when the user successfully logs in"
+  },
+  "home": "Home",
+  "ticket": "Ticket",
+  "cinema": "Cinema",
+  "searchHint": "Search for movies...",
+  "profile": "Profile",
+  "@profile": {
+    "description": "Title for the profile screen"
+  },
+  "myTicket": "My ticket",
+  "@myTicket": {
+    "description": "Menu item for viewing user tickets"
+  },
+  "paymentHistory": "Payment history",
+  "@paymentHistory": {
+    "description": "Menu item for viewing payment history"
+  },
+  "changeLanguage": "Change language",
+  "@changeLanguage": {
+    "description": "Menu item for changing app language"
+  },
+  "changePassword": "Change password",
+  "@changePassword": {
+    "description": "Menu item for changing password"
+  },
+  "faceIdTouchId": "Face ID / Touch ID",
+  "@faceIdTouchId": {
+    "description": "Menu item for Face ID / Touch ID settings"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Title for language selection screen"
+  },
+  "vietnamese": "Vietnamese",
+  "@vietnamese": {
+    "description": "Vietnamese language name"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "pressAgainToExit": "Press again to exit",
+  "@pressAgainToExit": {
+    "description": "Message shown when user presses back button"
+  }
+
+}

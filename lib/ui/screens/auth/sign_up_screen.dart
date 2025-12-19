@@ -1,4 +1,4 @@
-import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/otp_confirm_screen.dart';
@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _isLoading = false;
 
   @override
@@ -61,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _authService.register(
+      final response = await _authRepository.register(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),

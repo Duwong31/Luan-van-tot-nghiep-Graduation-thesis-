@@ -4,7 +4,6 @@ import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
-import 'package:Celes/utils/extensions/lib/translate.dart';
 import 'package:Celes/utils/hive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +22,7 @@ class UiUtils {
       height: height,
     );
   }
+
   static Color getAdaptiveTextColor(Color color) {
     int d = 0;
 
@@ -58,13 +58,13 @@ class UiUtils {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                "loginIsRequiredForAccessingThisFeatures".translate(context),
+                "Login is required for accessing this feature",
                 fontSize: context.font.larger,
               ),
               const SizedBox(
                 height: 5,
               ),
-              CustomText("tapOnLoginToAuthorize".translate(context),
+              CustomText("Tap on Login to authorize",
                   fontSize: context.font.small),
               const SizedBox(
                 height: 10,
@@ -78,7 +78,7 @@ class UiUtils {
                       arguments: {"popToCurrent": true});
                 },
                 child: CustomText(
-                  "loginNow".translate(context),
+                  "Login Now",
                   color: context.color.buttonColor,
                 ),
               )

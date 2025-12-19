@@ -1,0 +1,25 @@
+{
+  "@@locale": "vi",
+
+  "appTitle": "Celes",
+  "login": "Đăng nhập",
+  "logout": "Đăng xuất",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "confirmPassword": "Xác nhận mật khẩu",
+  "welcomeMessage": "Chào mừng bạn quay trở lại!",
+  "home": "Trang chủ",
+  "ticket": "Vé",
+  "cinema": "Cinema",
+  "searchHint": "Tìm kiếm phim...",
+  "profile": "Hồ sơ",
+  "myTicket": "Vé của tôi",
+  "paymentHistory": "Lịch sử thanh toán",
+  "changeLanguage": "Thay đổi ngôn ngữ",
+  "changePassword": "Đổi mật khẩu",
+  "faceIdTouchId": "Face ID / Touch ID",
+  "selectLanguage": "Chọn ngôn ngữ",
+  "vietnamese": "Tiếng Việt",
+  "english": "Tiếng Anh",
+  "pressAgainToExit": "Nhấn lại để thoát"
+}

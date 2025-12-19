@@ -1,4 +1,4 @@
-import 'package:Celes/data/services/auth_service.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/forgot_password_otp_screen.dart';
@@ -15,7 +15,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
-  final AuthService _authService = AuthService();
+  final AuthRepository _authRepository = AuthRepository();
   bool _isLoading = false;
 
   @override
@@ -41,7 +41,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await _authService.forgotPassword(email: email);
+      final response = await _authRepository.forgotPassword(email: email);
 
       if (response.success) {
         if (mounted) {
