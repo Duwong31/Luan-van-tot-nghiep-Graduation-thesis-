@@ -167,7 +167,8 @@ class AuthRepository {
           // Lưu thông tin user nếu có
           if (apiResponse.data!['user'] != null) {
             final userData = apiResponse.data!['user'] as Map<String, dynamic>;
-            await HiveUtils.setUserData(userData);
+            final user = User.fromJson(userData);
+            await HiveUtils.setUserData(user.toJson());
           }
 
           await HiveUtils.setUserIsAuthenticated(true);
@@ -215,6 +216,40 @@ class AuthRepository {
           'password': password,
           'password_confirmation': passwordConfirmation,
         },
+      );
+
+      final result = _handleResponse(response);
+      return ApiResponse.fromJson(result, (data) => data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Đổi mật khẩu (yêu cầu đăng nhập)
+  Future<ApiResponse<dynamic>> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final token = await getValidAccessToken();
+      if (token == null) {
+        throw ApiException(
+          code: 'UNAUTHORIZED',
+          message: 'Please login to change password',
+        );
+      }
+
+      final response = await _dio.post(
+        Api.authChangePassword,
+        data: {
+          'current_password': currentPassword,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+        options: Options(
+          headers: _getAuthHeaders(token),
+        ),
       );
 
       final result = _handleResponse(response);
@@ -282,6 +317,129 @@ class AuthRepository {
       await HiveUtils.clear();
 
       return ApiResponse.fromJson(result, (data) => data);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Lấy thông tin profile của user hiện tại
+  Future<ApiResponse<User>> getProfile() async {
+    try {
+      final token = await getValidAccessToken();
+      if (token == null) {
+        throw ApiException(
+          code: 'UNAUTHORIZED',
+          message: 'Please login to get profile',
+        );
+      }
+
+      final response = await _dio.get(
+        Api.authGetProfile,
+        options: Options(
+          headers: _getAuthHeaders(token),
+        ),
+      );
+
+      final result = _handleResponse(response);
+      final apiResponse = ApiResponse.fromJson(
+        result,
+        (data) => User.fromJson(data as Map<String, dynamic>),
+      );
+
+      // Cập nhật user data vào Hive nếu thành công
+      if (apiResponse.success && apiResponse.data != null) {
+        await HiveUtils.setUserData(apiResponse.data!.toJson());
+      }
+
+      return apiResponse;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Cập nhật thông tin profile
+  Future<ApiResponse<User>> updateProfile({
+    required String name,
+    int? avatarId,
+    String? phone,
+    String? dateOfBirth,
+    String? gender,
+    String? address,
+  }) async {
+    try {
+      final token = await getValidAccessToken();
+      if (token == null) {
+        throw ApiException(
+          code: 'UNAUTHORIZED',
+          message: 'Please login to update profile',
+        );
+      }
+
+      final Map<String, dynamic> data = {'name': name};
+      if (avatarId != null) data['avatar_id'] = avatarId;
+      if (phone != null) data['phone'] = phone;
+      if (dateOfBirth != null) data['date_of_birth'] = dateOfBirth;
+      if (gender != null) data['gender'] = gender;
+      if (address != null) data['address'] = address;
+
+      final response = await _dio.put(
+        Api.authUpdateProfile,
+        data: data,
+        options: Options(
+          headers: _getAuthHeaders(token),
+        ),
+      );
+
+      final result = _handleResponse(response);
+      final apiResponse = ApiResponse.fromJson(
+        result,
+        (data) => User.fromJson(data as Map<String, dynamic>),
+      );
+
+      // Cập nhật user data vào Hive nếu thành công
+      if (apiResponse.success && apiResponse.data != null) {
+        await HiveUtils.setUserData(apiResponse.data!.toJson());
+      }
+
+      return apiResponse;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Upload ảnh
+  Future<ApiResponse<Map<String, dynamic>>> uploadImage(
+    String imagePath,
+  ) async {
+    try {
+      final token = await getValidAccessToken();
+      if (token == null) {
+        throw ApiException(
+          code: 'UNAUTHORIZED',
+          message: 'Please login to upload image',
+        );
+      }
+
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(imagePath),
+      });
+
+      final response = await _dio.post(
+        Api.mediaUploadImage,
+        data: formData,
+        options: Options(
+          headers: {
+            ..._getAuthHeaders(token),
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+
+      final result = _handleResponse(response);
+      return ApiResponse.fromJson(
+        result,
+        (data) => data as Map<String, dynamic>,
+      );
     } on DioException catch (e) {
       throw _handleError(e);
     }

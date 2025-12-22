@@ -6,7 +6,6 @@ import 'package:Celes/utils/hive_utils.dart';
 import 'package:Celes/utils/network_request.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ApiException implements Exception {
   ApiException(this.errorMessage);
@@ -48,8 +47,14 @@ class Api {
   static const String authResendOtp = 'auth/resend-otp';
   static const String authForgotPassword = 'auth/forgot-password';
   static const String authResetPassword = 'auth/reset-password';
+  static const String authChangePassword = 'auth/change-password';
   static const String authRefreshToken = 'auth/refresh';
   static const String authLogout = 'auth/logout';
+  static const String authGetProfile = 'auth/me';
+  static const String authUpdateProfile = 'auth/me';
+
+  // Media APIs
+  static const String mediaUploadImage = 'media/upload-image';
 
   static Future<Map<String, dynamic>> post({
     required String url,

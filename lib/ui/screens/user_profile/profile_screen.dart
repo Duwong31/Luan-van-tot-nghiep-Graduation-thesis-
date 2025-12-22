@@ -1,13 +1,22 @@
 import 'package:Celes/app/app_theme.dart';
+import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/language/language_selection_screen.dart';
 import 'package:Celes/ui/screens/main_activity.dart';
+import 'package:Celes/ui/screens/user_profile/change_password_screen.dart';
+import 'package:Celes/ui/screens/user_profile/edit_profile_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
+import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/ui_utils.dart';
+import 'package:Celes/utils/hive_keys.dart';
+import 'package:Celes/data/models/user.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,10 +34,42 @@ class _ProfileScreenState extends State<ProfileScreen>
   ValueNotifier isDarkTheme = ValueNotifier(false);
   ValueNotifier isFaceIDEnabled = ValueNotifier(false);
   bool isExpanded = false;
+  final AuthRepository _authRepository = AuthRepository();
+  bool _isLoggingOut = false;
+  User? _user;
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+    _getProfile();
+  }
+
+  Future<void> _loadUserData() async {
+    final Map<String, dynamic> data =
+        Map<String, dynamic>.from(Hive.box(HiveKeys.userDetailsBox).toMap());
+    if (data.containsKey('id')) {
+      try {
+        setState(() {
+          _user = User.fromJson(data);
+        });
+      } catch (e) {
+        debugPrint("Error parsing cached user: $e");
+      }
+    }
+  }
+
+  Future<void> _getProfile() async {
+    try {
+      final response = await _authRepository.getProfile();
+      if (response.success && response.data != null) {
+        setState(() {
+          _user = response.data!;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile: $e");
+    }
   }
 
   @override
@@ -111,12 +152,32 @@ class _ProfileScreenState extends State<ProfileScreen>
                 color: context.color.territoryColor.withValues(alpha: 0.3),
                 width: 2,
               ),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-                ),
-                fit: BoxFit.cover,
-              ),
+            ),
+            child: ClipOval(
+              child: _user?.avatarUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: _user!.avatarUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: context.color.territoryColor,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) {
+                        debugPrint("Error loading image: $url - $error");
+                        return Icon(
+                          Icons.person,
+                          size: 40,
+                          color: context.color.textColorDark,
+                        );
+                      },
+                    )
+                  : Icon(
+                      Icons.person,
+                      size: 40,
+                      color: context.color.textColorDark,
+                    ),
             ),
           ),
 
@@ -129,17 +190,28 @@ class _ProfileScreenState extends State<ProfileScreen>
               children: [
                 Row(
                   children: [
-                    CustomText(
-                      "Angelina",
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: context.color.textColorDark,
+                    Flexible(
+                      child: CustomText(
+                        _user?.name ?? "Guest",
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: context.color.textColorDark,
+                        maxLines: 1,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     // Edit Icon
                     GestureDetector(
-                      onTap: () {
-                        // Handle edit profile
+                      onTap: () async {
+                        final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const EditProfileScreen(),
+                          ),
+                        );
+                        // Reload profile if updated successfully
+                        if (result == true) {
+                          _getProfile();
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.all(6),
@@ -156,7 +228,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
                 Row(
                   children: [
                     Icon(
@@ -166,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     const SizedBox(width: 6),
                     CustomText(
-                      "(704) 555-0127",
+                      _user?.phone ?? "No phone number",
                       fontSize: 13,
                       color: context.color.textColorDark.withValues(alpha: 0.7),
                     ),
@@ -182,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     const SizedBox(width: 6),
                     CustomText(
-                      "angelina@example.com",
+                      _user?.email ?? "No email",
                       fontSize: 13,
                       color: context.color.textColorDark.withValues(alpha: 0.7),
                     ),
@@ -236,7 +307,11 @@ class _ProfileScreenState extends State<ProfileScreen>
           iconPath: AppIcons.lock,
           title: Tr.of(context)!.changePassword,
           onTap: () {
-            // Navigate to change password
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ChangePasswordScreen(),
+              ),
+            );
           },
         ),
         const SizedBox(height: 12),
@@ -244,7 +319,134 @@ class _ProfileScreenState extends State<ProfileScreen>
           iconPath: AppIcons.Face_ID,
           title: Tr.of(context)!.faceIdTouchId,
         ),
+        const SizedBox(height: 12),
+        _buildLogoutButton(),
       ],
+    );
+  }
+
+  void _handleLogout() async {
+    // Show confirmation dialog
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: context.color.secondaryColor,
+        title: CustomText(
+          'Logout',
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: context.color.textColorDark,
+        ),
+        content: CustomText(
+          'Are you sure you want to logout?',
+          fontSize: 16,
+          color: context.color.textColorDark,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: CustomText(
+              'Cancel',
+              fontSize: 16,
+              color: context.color.textColorDark,
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: CustomText(
+              'Logout',
+              fontSize: 16,
+              color: context.color.territoryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout != true) return;
+
+    setState(() => _isLoggingOut = true);
+
+    try {
+      final response = await _authRepository.logout();
+
+      if (response.success) {
+        if (mounted) {
+          // Navigate to login screen and clear navigation stack
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.signIn,
+            (route) => false,
+          );
+        }
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() => _isLoggingOut = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoggingOut = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildLogoutButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: context.color.secondaryColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isLoggingOut ? null : _handleLogout,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomText(
+                    _isLoggingOut ? 'Logging out...' : 'Logout',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
