@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Celes/settings.dart';
 import 'package:Celes/utils/constant.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/hive_utils.dart';
@@ -19,23 +20,28 @@ class ApiException implements Exception {
 }
 
 class Api {
+  /// API Key - Import từ AppSettings
+  static String get apiKey => AppSettings.apiKey;
+
   static Map<String, dynamic> headers() {
+    // Base headers - luôn có X-Api-Key và Accept
+    Map<String, dynamic> baseHeaders = {
+      "X-Api-Key": apiKey,
+      "Accept": "application/json",
+    };
+
     if (HiveUtils.isUserAuthenticated()) {
       String? jwtToken = HiveUtils.getJWT();
-      debugPrint('Bearer token: ${jwtToken}');
-      return {
-        "Authorization": "Bearer $jwtToken",
-        "Accept": "application/json",
-        "Content-Language": HiveUtils.getLanguage()['code'] ?? ""
-      };
-    } else if (HiveUtils.getLanguage() != null ||
-        HiveUtils.getLanguage()?['data'] != null) {
-      return {
-        "Accept": "application/json",
-        "Content-Language": HiveUtils.getLanguage()['code'] ?? ""
-      };
+      debugPrint('Bearer token: $jwtToken');
+      baseHeaders["Authorization"] = "Bearer $jwtToken";
     }
-    return {};
+
+    final language = HiveUtils.getLanguage();
+    if (language != null && language['code'] != null) {
+      baseHeaders["Language"] = language['code'];
+    }
+
+    return baseHeaders;
   }
 
   // ==================== API ENDPOINTS ====================

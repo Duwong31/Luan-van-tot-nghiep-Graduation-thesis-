@@ -12,6 +12,6 @@ class AppSettings {
 
   static const int apiDataLoadLimit = 20;
   static const int maxCategoryShowLengthInHomeScreen = 5;
-
+  static const String apiKey = "SKT-T1";
   static final String baseUrl = "${HelperUtils.checkHost(hostUrl)}api/";
 }
