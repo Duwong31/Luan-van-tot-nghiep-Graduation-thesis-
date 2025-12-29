@@ -1,107 +1,231 @@
+import 'package:Celes/data/cubits/movie/movie_detail_cubit.dart';
+import 'package:Celes/data/models/movie_detail_model.dart';
+import 'package:Celes/data/models/movie_model.dart';
 import 'package:Celes/ui/components/avatar_card.dart';
+import 'package:Celes/ui/screens/movie_detail/widgets/trailer_player_dialog.dart';
 import 'package:Celes/ui/screens/select_seat/select_datetime_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  const MovieDetailScreen({super.key});
+  final Movie? movie;
+
+  const MovieDetailScreen({super.key, this.movie});
 
   @override
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
 
   static Route route(RouteSettings routeSettings) {
+    final movie = routeSettings.arguments as Movie?;
     return MaterialPageRoute(
-      builder: (_) => const MovieDetailScreen(),
+      builder: (_) => MovieDetailScreen(movie: movie),
     );
   }
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   bool _isStorylineExpanded = false;
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch movie detail when screen loads
+    if (widget.movie != null) {
+      context.read<MovieDetailCubit>().fetchMovieDetail(widget.movie!.id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final movie = {
-      'title': 'Avengers: Infinity War',
-      'imageUrl':
-          'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg',
-      'rating': 4.8,
-      'ratingCount': '1,327',
-      'duration': '2h 29m',
-      'genres': 'Action, adventure, sci-fi',
-      'censorship': '13+',
-      'language': 'English',
-    };
-
-    const double cardOverlap = 120;
-
     return Scaffold(
       backgroundColor: context.color.primaryColor,
-      body: SingleChildScrollView(
+      body: BlocBuilder<MovieDetailCubit, MovieDetailState>(
+        builder: (context, state) {
+          if (state is MovieDetailLoading) {
+            return _buildLoadingState(context);
+          } else if (state is MovieDetailLoaded) {
+            return _buildLoadedState(context, state.movieDetail);
+          } else if (state is MovieDetailError) {
+            return _buildErrorState(context, state.errorMessage);
+          }
+          // Initial state - show loading or basic info from movie
+          return _buildLoadingState(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadingState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: context.color.territoryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Đang tải thông tin phim...',
+            style: TextStyle(
+              color: context.color.textDefaultColor,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String errorMessage) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Không thể tải thông tin phim',
+              style: TextStyle(
+                color: context.color.textDefaultColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              errorMessage,
+              style: TextStyle(
+                color: context.color.descriptionColor,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Poster + gradient
-                AspectRatio(
-                  aspectRatio: 17 / 10,
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: context.color.textDefaultColor,
+                    side: BorderSide(color: context.color.descriptionColor),
+                  ),
+                  child: const Text('Quay lại'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    if (widget.movie != null) {
+                      context
+                          .read<MovieDetailCubit>()
+                          .fetchMovieDetail(widget.movie!.id);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.color.territoryColor,
+                  ),
+                  child: const Text('Thử lại'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadedState(BuildContext context, MovieDetail movie) {
+    const double cardOverlap = 120;
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Poster + gradient
+              AspectRatio(
+                aspectRatio: 17 / 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(movie.posterUrl ?? ''),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(movie['imageUrl'] as String? ?? ''),
-                        fit: BoxFit.cover,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          context.color.primaryColor.withValues( alpha: 0.8),
+                        ],
                       ),
                     ),
                   ),
                 ),
+              ),
 
-                Positioned(
-                    top: 16,
-                    left: 16,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: context.color.backgroundColor
-                              .withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: SvgPicture.asset(
-                          AppIcons.arrow_left,
-                          width: 32,
-                          height: 32,
-                          colorFilter: ColorFilter.mode(
-                            context.color.textDefaultColor,
-                            BlendMode.srcIn,
-                          ),
-                        ),
+              // Back button
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 8,
+                left: 16,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: context.color.backgroundColor.withValues( alpha: 0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: SvgPicture.asset(
+                      AppIcons.arrow_left,
+                      width: 32,
+                      height: 32,
+                      colorFilter: ColorFilter.mode(
+                        context.color.textDefaultColor,
+                        BlendMode.srcIn,
                       ),
-                    )),
+                    ),
+                  ),
+                ),
+              ),
 
-                Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: -cardOverlap,
+              Transform.translate(
+                offset: const Offset(0, 130), // cardOverlap
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: _buildMovieHeaderCard(context, movie),
                 ),
-              ],
-            ),
-            const SizedBox(height: cardOverlap + 16),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildMovieInfoSection(context, movie),
-                  const SizedBox(height: 24),
+              ),
+            ],
+          ),
+          const SizedBox(height: cardOverlap + 16),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildMovieInfoSection(context, movie),
+                const SizedBox(height: 24),
 
-                  // Storyline
+                // Storyline
+                if (movie.description != null &&
+                    movie.description!.isNotEmpty) ...[
                   Text(
                     'Storyline',
                     style: TextStyle(
@@ -115,7 +239,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _getMovieStoryline(movie['title'] as String?),
+                        movie.description!,
                         style: TextStyle(
                           fontSize: 16,
                           height: 1.6,
@@ -144,10 +268,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 32),
+                ],
 
-                  // Director section
+                // Director section
+                if (movie.directors.isNotEmpty) ...[
                   Text(
                     'Director',
                     style: TextStyle(
@@ -157,29 +282,27 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       color: context.color.textDefaultColor,
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: _getDirectors((movie['title'] as String?))
-                          .map((director) {
+                      children: movie.directors.map((director) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: PersonChip(
-                            firstName: director['firstName'] ?? '',
-                            lastName: director['lastName'] ?? '',
-                            imageUrl: director['imageUrl'] ?? '',
+                            firstName: director.firstName,
+                            lastName: director.lastName,
+                            imageUrl: director.avatarUrl ?? '',
                           ),
                         );
                       }).toList(),
                     ),
                   ),
-
                   const SizedBox(height: 32),
+                ],
 
-                  // Actor section
+                // Actor section
+                if (movie.actors.isNotEmpty) ...[
                   Text(
                     'Actor',
                     style: TextStyle(
@@ -189,89 +312,92 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       color: context.color.textDefaultColor,
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children:
-                          _getActors((movie['title'] as String?)).map((actor) {
+                      children: movie.actors.map((actor) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: PersonChip(
-                            firstName: actor['firstName'] ?? '',
-                            lastName: actor['lastName'] ?? '',
-                            imageUrl: actor['imageUrl'] ?? '',
+                            firstName: actor.firstName,
+                            lastName: actor.lastName,
+                            imageUrl: actor.avatarUrl ?? '',
                           ),
                         );
                       }).toList(),
                     ),
                   ),
-
                   const SizedBox(height: 32),
+                ],
 
-                  // Continue button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SelectDateTimeScreen(
-                              movieTitle: movie['title']?.toString() ?? 'Movie',
-                            ),
+                // Continue button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectDateTimeScreen(
+                            movieTitle: movie.title,
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: context.color.territoryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
                         ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.color.territoryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                      child: const Text(
-                        'Continue',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xffF2F2F2),
-                        ),
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xffF2F2F2),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildMovieInfoSection(
     BuildContext context,
-    Map<String, dynamic> movie,
+    MovieDetail movie,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoRow(
-          label: 'Movie genre:',
-          value: movie['genres'] as String? ?? 'Unknown',
-        ),
-        const SizedBox(height: 16),
-        _buildInfoRow(
-          label: 'Censorship:',
-          value: movie['censorship'] as String? ?? '13+',
-        ),
-        const SizedBox(height: 16),
-        _buildInfoRow(
-          label: 'Language:',
-          value: movie['language'] as String? ?? 'English',
-        ),
+        if (movie.genre != null && movie.genre!.isNotEmpty)
+          _buildInfoRow(
+            label: 'Movie genre:',
+            value: movie.genre!,
+          ),
+        if (movie.genre != null && movie.genre!.isNotEmpty)
+          const SizedBox(height: 16),
+        if (movie.ageClassification != null &&
+            movie.ageClassification!.isNotEmpty)
+          _buildInfoRow(
+            label: 'Censorship:',
+            value: movie.ageClassification!,
+          ),
+        if (movie.ageClassification != null &&
+            movie.ageClassification!.isNotEmpty)
+          const SizedBox(height: 16),
+        if (movie.language != null && movie.language!.isNotEmpty)
+          _buildInfoRow(
+            label: 'Language:',
+            value: movie.language!,
+          ),
       ],
     );
   }
@@ -309,7 +435,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Widget _buildMovieHeaderCard(
     BuildContext context,
-    Map<String, dynamic> movie,
+    MovieDetail movie,
   ) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -322,7 +448,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            (movie['title'] as String?) ?? 'Unknown Movie',
+            movie.title,
             style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -331,84 +457,92 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '${movie['duration']} • 16.12.2022',
+            _buildSubtitle(movie),
             style: TextStyle(
               fontSize: 16,
               color: context.color.descriptionColor,
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 24),
+          // Watch Trailer and Favorite buttons
           Row(
             children: [
-              Text(
-                'Review',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: context.color.textDefaultColor,
-                    height: 1.2),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.star, color: Color(0xffFCC434), size: 16),
-              const SizedBox(width: 4),
-              Text(
-                '${movie['rating']}',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: context.color.textDefaultColor,
-                ),
-              ),
-              if (movie['ratingCount'] != null) ...[
-                const SizedBox(width: 4),
-                Text(
-                  '(${movie['ratingCount']})',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.color.descriptionColor,
-                  ),
-                ),
-              ],
-            ],
-          ),
-          Row(
-            children: [
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Icon(
-                      Icons.star,
-                      size: 32,
-                      color: Color(0xff575757),
+              Expanded(
+                child: GestureDetector(
+                  onTap: movie.hasTrailer
+                  ? () {
+                      TrailerPlayerDialog.show(
+                        context,
+                        trailerUrl: movie.trailerUrl!,
+                        movieTitle: movie.title,
+                      );
+                    }
+                  : null,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.color.textDefaultColor,
+                      side: BorderSide(color: context.color.descriptionColor),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: null,
+                    // onPressed: movie.hasTrailer
+                    //     ? () {
+                    //         TrailerPlayerDialog.show(
+                    //           context,
+                    //           trailerUrl: movie.trailerUrl!,
+                    //           movieTitle: movie.title,
+                    //         );
+                    //       }
+                    //     : null,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          AppIcons.play,
+                          width: 20,
+                          height: 20,
+                          colorFilter: ColorFilter.mode(
+                            movie.hasTrailer
+                                ? context.color.textDefaultColor
+                                : context.color.descriptionColor,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Watch Trailer',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: movie.hasTrailer
+                                ? context.color.textDefaultColor
+                                : context.color.descriptionColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-              const Spacer(),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: context.color.descriptionColor,
-                  side: BorderSide(color: context.color.descriptionColor),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+              const SizedBox(width: 16),
+              // Favorite button
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isFavorite = !_isFavorite;
+                  });
+                },
+                icon: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color:
+                      _isFavorite ? Colors.red : context.color.textDefaultColor,
+                  size: 24,
                 ),
-                onPressed: () {},
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SvgPicture.asset(AppIcons.play, width: 16, height: 16),
-                    SizedBox(width: 4),
-                    const Text(
-                      'Watch trailer',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.all(12),
+                constraints: const BoxConstraints(),
               ),
             ],
           ),
@@ -417,53 +551,23 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  String _getMovieStoryline(String? title) {
-    return 'As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain. The heroes must be willing to sacrifice everything in an attempt to defeat the powerful Thanos before his blitz of devastation and ruin puts an end to the universe.';
+  String _buildSubtitle(MovieDetail movie) {
+    List<String> parts = [];
+    if (movie.formattedDuration.isNotEmpty) {
+      parts.add(movie.formattedDuration);
+    }
+    if (movie.releaseDate != null) {
+      parts.add(_formatReleaseDate(movie.releaseDate!));
+    }
+    return parts.join(' • ');
   }
 
-  List<Map<String, String>> _getDirectors(String? title) {
-    return [
-      {
-        'firstName': 'Anthony',
-        'lastName': 'Russo',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/bKqrshBbUAS6TAetMjdPZAbnMPL.jpg',
-      },
-      {
-        'firstName': 'Joe',
-        'lastName': 'Russo',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/mKBWQqLFjWFVn63b9tVsUggmgUW.jpg',
-      },
-    ];
-  }
-
-  List<Map<String, String>> _getActors(String? title) {
-    return [
-      {
-        'firstName': 'Robert',
-        'lastName': 'Downey Jr.',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg',
-      },
-      {
-        'firstName': 'Chris',
-        'lastName': 'Evans',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/3bOGNsHlrswhyW79uvIHH1V43JI.jpg',
-      },
-      {
-        'firstName': 'Mark',
-        'lastName': 'Ruffalo',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/z3dvKqMNDQWk3QLxzumloQVR0pv.jpg',
-      },
-      {
-        'firstName': 'Chris',
-        'lastName': 'Hemsworth',
-        'imageUrl':
-            'https://image.tmdb.org/t/p/w200/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg',
-      },
-    ];
+  String _formatReleaseDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    } catch (e) {
+      return dateString;
+    }
   }
 }

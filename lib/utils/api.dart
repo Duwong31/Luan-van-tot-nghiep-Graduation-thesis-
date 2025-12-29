@@ -65,6 +65,9 @@ class Api {
   // Home APIs
   static const String home = 'home';
 
+  // Movie APIs
+  static String movieDetail(int movieId) => 'movies/$movieId';
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,
