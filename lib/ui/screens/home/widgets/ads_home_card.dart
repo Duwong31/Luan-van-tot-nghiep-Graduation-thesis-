@@ -76,13 +76,6 @@ class AdsHomeCard extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
@@ -108,35 +101,6 @@ class AdsHomeCard extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Extension method để tạo data mẫu
-extension AdsHomeCardData on AdsHomeCard {
-  static AdsHomeCard promoDiscount({VoidCallback? onSeeAllTap}) {
-    final List<Map<String, dynamic>> promoAds = [
-      {
-        'title': 'CGV Movie Vouchers',
-        'description': '30% OFF Movie vouchers',
-        'image': 'https://tse4.mm.bing.net/th/id/OIP.jpLiFt3G7SsUwjrZyWRV3QHaD0?pid=Api&P=0&h=220https://tse4.mm.bing.net/th/id/OIP.jpLiFt3G7SsUwjrZyWRV3QHaD0?pid=Api&P=0&h=220',
-      },
-      {
-        'title': 'Lotte Cinema Deal',
-        'description': '25% OFF Weekend special',
-        'image': 'https://tse3.mm.bing.net/th/id/OIP.5vv8Fa8gT-C8GK-sYTm2YwHaEO?pid=Api&P=0&h=220https://tse3.mm.bing.net/th/id/OIP.5vv8Fa8gT-C8GK-sYTm2YwHaEO?pid=Api&P=0&h=220',
-      },
-      {
-        'title': 'Galaxy Cinema Promo',
-        'description': '40% OFF Student discount',
-        'image': 'https://tse1.mm.bing.net/th/id/OIP.ltLBG9cE4L5zd-Zs9VoqjAHaDt?pid=Api&P=0&h=220',
-      },
-    ];
-
-    return AdsHomeCard(
-      title: 'Promo & Discount',
-      ads: promoAds,
-      onSeeAllTap: onSeeAllTap,
     );
   }
 }

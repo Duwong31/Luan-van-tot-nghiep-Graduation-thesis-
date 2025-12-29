@@ -1,4 +1,4 @@
-import 'role.dart';
+import 'package:Celes/data/models/role_model.dart';
 
 /// Model cho User
 class User {

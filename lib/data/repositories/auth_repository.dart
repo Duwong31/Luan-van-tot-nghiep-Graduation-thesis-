@@ -1,5 +1,5 @@
 import 'package:Celes/data/models/api_response.dart';
-import 'package:Celes/data/models/user.dart';
+import 'package:Celes/data/models/user_model.dart';
 import 'package:Celes/utils/api.dart';
 import 'package:Celes/utils/hive_utils.dart';
 

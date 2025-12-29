@@ -62,6 +62,9 @@ class Api {
   // Media APIs
   static const String mediaUploadImage = 'media/upload-image';
 
+  // Home APIs
+  static const String home = 'home';
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,

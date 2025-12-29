@@ -14,7 +14,7 @@ import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:Celes/utils/hive_keys.dart';
-import 'package:Celes/data/models/user.dart';
+import 'package:Celes/data/models/user_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';

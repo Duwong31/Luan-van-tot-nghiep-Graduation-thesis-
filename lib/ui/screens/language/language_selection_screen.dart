@@ -97,7 +97,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
         border: Border.all(
           color: isSelected
               ? context.color.territoryColor
-              : context.color.textColorDark.withOpacity(0.1),
+              : context.color.textColorDark.withValues(alpha: 0.1),
           width: isSelected ? 2 : 1,
         ),
       ),

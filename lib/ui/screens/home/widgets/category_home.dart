@@ -1,3 +1,4 @@
+import 'package:Celes/data/models/movie_model.dart';
 import 'package:Celes/ui/components/movie_card.dart';
 import 'package:Celes/ui/components/see_all_button.dart';
 import 'package:Celes/ui/theme/theme.dart';
@@ -7,7 +8,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class CategoryHome extends StatelessWidget {
   final String title;
-  final List<Map<String, dynamic>> movies;
+  final List<Movie> movies;
   final VoidCallback? onSeeAllTap;
 
   const CategoryHome({
@@ -44,17 +45,17 @@ class CategoryHome extends StatelessWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Movie cards carousel
         SizedBox(
-          height: 340, 
+          height: 340,
           child: CarouselSlider.builder(
             itemCount: movies.length,
             options: CarouselOptions(
               height: 340,
-              viewportFraction: 0.45, // Show ~2.2 cards
+              viewportFraction: 0.45,
               enableInfiniteScroll: false,
               autoPlay: false,
               enlargeCenterPage: false,
@@ -63,21 +64,21 @@ class CategoryHome extends StatelessWidget {
             ),
             itemBuilder: (context, index, realIndex) {
               final movie = movies[index];
-              
+
               return Container(
                 margin: EdgeInsets.only(
                   left: index == 0 ? 16 : 8,
                   right: index == movies.length - 1 ? 16 : 8,
                 ),
                 child: MovieCard(
-                  imageUrl: movie['image'] ?? '',
-                  title: movie['title'] ?? '',
-                  genres: movie['genres'],
-                  releaseDate: movie['releaseDate'],
+                  imageUrl: movie.posterUrl ?? '',
+                  title: movie.title,
+                  genres: movie.genre ?? movie.genres?.join(', '),
+                  releaseDate: movie.releaseDate,
                   width: double.infinity,
-                  // height: 220, 
                   onTap: () {
-                    Navigator.pushNamed(context, '/movieDetail');
+                    Navigator.pushNamed(context, '/movieDetail',
+                        arguments: movie);
                   },
                 ),
               );
@@ -85,79 +86,6 @@ class CategoryHome extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Extension method để tạo data mẫu
-extension CategoryHomeData on CategoryHome {
-  static CategoryHome comingSoon({VoidCallback? onSeeAllTap}) {
-    final List<Map<String, dynamic>> comingSoonMovies = [
-      {
-        'title': 'Avatar 2: The Way Of Water',
-        'genres': 'Adventure, Sci-fi',
-        'releaseDate': '20.12.2022',
-        'image': 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg',
-      },
-      {
-        'title': 'Ant Man Wasp: Quantumania',
-        'genres': 'Adventure, Sci-fi',
-        'releaseDate': '15.02.2023',
-        'image': 'https://image.tmdb.org/t/p/w500/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg',
-      },
-      {
-        'title': 'Fox In: The Henhouse',
-        'genres': 'Adventure',
-        'releaseDate': '08.03.2023',
-        'image': 'https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
-      },
-      {
-        'title': 'John Wick: Chapter 4',
-        'genres': 'Action, Thriller',
-        'releaseDate': '24.03.2023',
-        'image': 'https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
-      },
-      {
-        'title': 'Fast X',
-        'genres': 'Action, Adventure',
-        'releaseDate': '19.05.2023',
-        'image': 'https://image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdclSiC.jpg',
-      },
-    ];
-
-    return CategoryHome(
-      title: 'Coming soon',
-      movies: comingSoonMovies,
-      onSeeAllTap: onSeeAllTap,
-    );
-  }
-  
-  static CategoryHome popular({VoidCallback? onSeeAllTap}) {
-    final List<Map<String, dynamic>> popularMovies = [
-      {
-        'title': 'Top Gun: Maverick',
-        'genres': 'Action, Drama',
-        'releaseDate': '27.05.2022',
-        'image': 'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
-      },
-      {
-        'title': 'Minions: The Rise of Gru',
-        'genres': 'Animation, Comedy',
-        'releaseDate': '01.07.2022',
-        'image': 'https://image.tmdb.org/t/p/w500/wKiOkZTN9lUUUNZLmtnwubZYONg.jpg',
-      },
-      {
-        'title': 'Elvis',
-        'genres': 'Biography, Drama',
-        'releaseDate': '24.06.2022',
-        'image': 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/o76PioEyp6XLLnqJUQpt0VLd2nC.jpg',
-      },
-    ];
-
-    return CategoryHome(
-      title: 'Popular movies',
-      movies: popularMovies,
-      onSeeAllTap: onSeeAllTap,
     );
   }
 }

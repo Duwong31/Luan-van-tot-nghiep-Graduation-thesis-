@@ -1,3 +1,4 @@
+import 'package:Celes/data/models/news_model.dart';
 import 'package:Celes/ui/components/see_all_button.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -6,7 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class NewsHomeCard extends StatelessWidget {
   final String title;
-  final List<Map<String, dynamic>> news;
+  final List<News> news;
   final VoidCallback? onSeeAllTap;
 
   const NewsHomeCard({
@@ -43,17 +44,17 @@ class NewsHomeCard extends StatelessWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // News carousel
         SizedBox(
-          height: 220, 
+          height: 220,
           child: CarouselSlider.builder(
             itemCount: news.length,
             options: CarouselOptions(
               height: 220,
-              viewportFraction: 0.75, 
+              viewportFraction: 0.75,
               enableInfiniteScroll: false,
               autoPlay: false,
               enlargeCenterPage: false,
@@ -62,7 +63,7 @@ class NewsHomeCard extends StatelessWidget {
             ),
             itemBuilder: (context, index, realIndex) {
               final newsItem = news[index];
-              
+
               return Container(
                 margin: EdgeInsets.only(
                   left: index == 0 ? 16 : 8,
@@ -70,29 +71,24 @@ class NewsHomeCard extends StatelessWidget {
                 ),
                 child: GestureDetector(
                   onTap: () {
-      
+                    // Navigate to news detail
+                    Navigator.pushNamed(context, '/newsDetail',
+                        arguments: newsItem);
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Image container
                       Container(
-                        height: 140, 
+                        height: 140,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
-                            newsItem['image'] ?? '',
+                            newsItem.thumbnail?.url ?? '',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
@@ -107,24 +103,41 @@ class NewsHomeCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 12),
-                      
-                      // Description text
+
+                      // Title text
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            newsItem['description'] ?? '',
+                            newsItem.title,
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               color: context.color.textDefaultColor,
                               height: 1.3,
                             ),
-                            maxLines: 3,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                      ),
+
+                      // Summary text
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Text(
+                          newsItem.summary,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color:
+                                context.color.textDefaultColor.withValues(alpha: 0.7),
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -135,35 +148,6 @@ class NewsHomeCard extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// Extension method để tạo data mẫu
-extension NewsHomeCardData on NewsHomeCard {
-  static NewsHomeCard movieNews({VoidCallback? onSeeAllTap}) {
-    final List<Map<String, dynamic>> movieNews = [
-      {
-        'title': 'Batman News',
-        'description': 'When The Batman 2 Starts Filming Reportedly Revealed',
-        'image': 'https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      },
-      {
-        'title': 'MCU Updates',
-        'description': '6 Epic Hulk Fights That Could Happen In The MCU',
-        'image': 'https://images.unsplash.com/photo-1608889175250-c3b0c1667d3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      },
-      {
-        'title': 'Marvel News',
-        'description': 'Latest Marvel Studios Updates and Announcements',
-        'image': 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-      },
-    ];
-
-    return NewsHomeCard(
-      title: 'Movie news',
-      news: movieNews,
-      onSeeAllTap: onSeeAllTap,
     );
   }
 }

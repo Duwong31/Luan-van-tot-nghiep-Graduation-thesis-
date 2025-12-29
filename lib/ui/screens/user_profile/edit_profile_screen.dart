@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:Celes/data/models/user.dart';
 import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
@@ -34,7 +33,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _avatarUrl;
   int? _avatarId;
   File? _selectedImage;
-  User? _currentUser;
+  // User? _currentUser;
 
   final List<String> _genders = ['male', 'female', 'other'];
 
@@ -61,7 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final response = await _authRepository.getProfile();
       if (response.success && response.data != null) {
         setState(() {
-          _currentUser = response.data!;
+          // _currentUser = response.data!;
           _nameController.text = response.data!.name;
           _emailController.text = response.data!.email;
           _phoneController.text = response.data!.phone;
@@ -470,7 +469,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: _selectedGender,
+                          initialValue: _selectedGender,
                           decoration: InputDecoration(
                             labelText: 'Gender',
                             labelStyle: TextStyle(

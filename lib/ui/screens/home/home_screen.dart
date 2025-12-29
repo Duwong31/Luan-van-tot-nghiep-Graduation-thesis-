@@ -1,6 +1,5 @@
-import 'package:Celes/ui/screens/home/widgets/ads_home_card.dart';
+import 'package:Celes/data/cubits/home/home_cubit.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
-import 'package:Celes/ui/screens/home/widgets/cinema_section.dart';
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
 import 'package:Celes/ui/screens/home/widgets/news_home.dart';
@@ -9,18 +8,20 @@ import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const double sidePadding = 10;
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.from});
   final String? from;
   @override
   State<HomeScreen> createState() => HomeScreenState();
 }
-  
-class HomeScreenState extends State<HomeScreen> 
-with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
+
+class HomeScreenState extends State<HomeScreen>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen> {
   @override
   bool get wantKeepAlive => true;
 
@@ -32,10 +33,12 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
   void initState() {
     super.initState();
     notificationPermissionChecker();
+    context.read<HomeCubit>().fetchHomeData();
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -92,7 +95,7 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
                   ),
                 ),
                 // Right side - Profile/Notification icon
-                Container(
+                SizedBox(
                   width: 32,
                   height: 32,
                   child: UiUtils.getSvg(
@@ -111,77 +114,125 @@ with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen>{
           key: _refreshIndicatorKey,
           color: context.color.territoryColor,
           onRefresh: () async {
+            await context.read<HomeCubit>().refreshHomeData();
           },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            shrinkWrap: true,
-            controller: _scrollController,
-            padding: EdgeInsetsDirectional.only(bottom: 30),
-            children: [
-              homeScreenContent()
-            ],
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (state is HomeLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (state is HomeError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: context.color.textDefaultColor
+                            .withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        state.errorMessage,
+                        style: TextStyle(
+                          color: context.color.textDefaultColor
+                              .withValues(alpha: 0.7),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<HomeCubit>().fetchHomeData();
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              if (state is HomeLoaded) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  controller: _scrollController,
+                  padding: const EdgeInsetsDirectional.only(bottom: 30),
+                  children: [
+                    homeScreenContent(state),
+                  ],
+                );
+              }
+
+              // Initial state - show loading
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget homeScreenContent() {
+  Widget homeScreenContent(HomeLoaded state) {
+    final homeData = state.homeData;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const HomeSearchField(),
         const SizedBox(height: 24),
-        const MainSlider(),
-        const SizedBox(height: 32),
-        
-        // Coming soon section
-        CategoryHomeData.comingSoon(
+        MainSlider(
+          movies: homeData.nowShowing,
           onSeeAllTap: () {
+            
+          },
+        ),
 
-          },
-        ),
-        
-        const SizedBox(height: 32),
-        
-        // Promo & Discount section
-        AdsHomeCardData.promoDiscount(
-          onSeeAllTap: () {
+        // Coming Soon section
+        if (homeData.comingSoon.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          CategoryHome(
+            title: 'Coming Soon',
+            movies: homeData.comingSoon,
+            onSeeAllTap: () {
+            
+            },
+          ),
+        ],
 
-          },
-        ),
-        
-        const SizedBox(height: 32),
-        
-        // Popular movies section
-        CategoryHomeData.popular(
-          onSeeAllTap: () {
+        // Upcoming section
+        if (homeData.upcoming.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          CategoryHome(
+            title: 'Upcoming',
+            movies: homeData.upcoming,
+            onSeeAllTap: () {
+              // Navigate to all upcoming movies
+            },
+          ),
+        ],
 
-          },
-        ),
-        
-        const SizedBox(height: 32),
-        
-        // Cinemas section
-        CinemaSectionData.cinemas(
-          onSeeAllTap: () {
-  
-          },
-        ),
-        
-        const SizedBox(height: 32),
-        
         // Movie News section
-        NewsHomeCardData.movieNews(
-          onSeeAllTap: () {
-
-          },
-        ),
+        if (homeData.news.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          NewsHomeCard(
+            title: 'Movie News',
+            news: homeData.news,
+            onSeeAllTap: () {
+              // Navigate to all news
+            },
+          ),
+        ],
       ],
     );
   }
 }
-
 
 Future<void> notificationPermissionChecker() async {
   if (!(await Permission.notification.isGranted)) {
