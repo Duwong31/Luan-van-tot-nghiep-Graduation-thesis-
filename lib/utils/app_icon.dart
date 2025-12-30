@@ -44,12 +44,8 @@ class AppIcons {
 
 class MainIcons {
   static String _base(String path) {
-    return "assets/Icons/$path";
+    return "assets/$path";
   }
 
-  ////////
-  String appIcon = _base("AppIcon/icon.png");
-  String splashIcon = _base("SplashIcon/icon.png");
-  String placeHolder = _base("Placeholder/icon.png");
-  String homeIcon = _base("HomeIcon/icon.png");
+  String appIcon = _base("logo.png");
 }

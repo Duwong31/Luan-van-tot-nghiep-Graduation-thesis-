@@ -1,3 +1,5 @@
+import 'package:Celes/data/models/room_model.dart';
+
 /// Model cho Showtime (Suất chiếu)
 class Showtime {
   final int id;
@@ -6,8 +8,9 @@ class Showtime {
   final String endTime;
   final int price;
   final String status;
-  final String createdAt;
-  final String updatedAt;
+  final Room? room;
+  final String? createdAt;
+  final String? updatedAt;
 
   Showtime({
     required this.id,
@@ -16,8 +19,9 @@ class Showtime {
     required this.endTime,
     required this.price,
     required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    this.room,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory Showtime.fromJson(Map<String, dynamic> json) {
@@ -28,8 +32,11 @@ class Showtime {
       endTime: json['end_time'] as String,
       price: json['price'] as int,
       status: json['status'] as String,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
+      room: json['room'] != null
+          ? Room.fromJson(json['room'] as Map<String, dynamic>)
+          : null,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
   }
 
@@ -41,12 +48,13 @@ class Showtime {
       'end_time': endTime,
       'price': price,
       'status': status,
+      'room': room?.toJson(),
       'created_at': createdAt,
       'updated_at': updatedAt,
     };
   }
 
-  /// Format price as currency
+  /// Format price as currency (VND)
   String get formattedPrice => '${price.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
         (Match m) => '${m[1]}.',
@@ -54,4 +62,22 @@ class Showtime {
 
   /// Get time range string
   String get timeRange => '$startTime - $endTime';
+
+  /// Get room name
+  String get roomName => room?.name ?? '';
+
+  /// Get cinema name
+  String get cinemaName => room?.getCinemaName ?? '';
+
+  /// Get cinema location
+  String? get cinemaLocation => room?.cinemaLocation;
+
+  /// Get cinema address
+  String? get cinemaAddress => room?.cinemaAddress;
+
+  /// Check if showtime is ongoing
+  bool get isOngoing => status == 'ongoing';
+
+  /// Check if showtime is available for booking
+  bool get isAvailable => status == 'ongoing' || status == 'available';
 }

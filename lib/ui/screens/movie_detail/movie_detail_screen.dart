@@ -172,7 +172,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          context.color.primaryColor.withValues( alpha: 0.8),
+                          context.color.primaryColor.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -189,7 +189,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: context.color.backgroundColor.withValues( alpha: 0.3),
+                      color:
+                          context.color.backgroundColor.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: SvgPicture.asset(
@@ -214,7 +215,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
             ],
           ),
-          const SizedBox(height: cardOverlap + 16),
+          const SizedBox(height: cardOverlap - 20),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             child: Column(
@@ -342,6 +343,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         MaterialPageRoute(
                           builder: (context) => SelectDateTimeScreen(
                             movieTitle: movie.title,
+                            movieId: movie.id,
                           ),
                         ),
                       );
@@ -470,14 +472,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               Expanded(
                 child: GestureDetector(
                   onTap: movie.hasTrailer
-                  ? () {
-                      TrailerPlayerDialog.show(
-                        context,
-                        trailerUrl: movie.trailerUrl!,
-                        movieTitle: movie.title,
-                      );
-                    }
-                  : null,
+                      ? () {
+                          TrailerPlayerDialog.show(
+                            context,
+                            trailerUrl: movie.trailerUrl!,
+                            movieTitle: movie.title,
+                          );
+                        }
+                      : null,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.color.textDefaultColor,
