@@ -69,6 +69,9 @@ class Api {
   static String movieDetail(int movieId) => 'movies/$movieId';
   static String movieShowtimes(int movieId) => 'movies/$movieId/showtimes';
 
+  // Showtime APIs
+  static String showtimeSeats(int showtimeId) => 'showtimes/$showtimeId/seats';
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,

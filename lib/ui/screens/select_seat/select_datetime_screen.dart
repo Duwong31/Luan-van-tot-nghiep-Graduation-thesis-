@@ -292,8 +292,10 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                                 builder: (context) => SelectSeatScreen(
                                   cinemaName: showtime.cinemaName,
                                   showTime: showtime.startTime,
+                                  endTime: showtime.endTime,
                                   selectedDate: selectedDate,
                                   roomNumber: showtime.room?.id ?? 1,
+                                  showtimeId: showtime.id,
                                 ),
                               ),
                             );
