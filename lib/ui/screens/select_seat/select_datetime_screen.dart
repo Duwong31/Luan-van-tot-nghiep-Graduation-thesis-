@@ -12,11 +12,15 @@ import 'package:flutter_svg/svg.dart';
 class SelectDateTimeScreen extends StatefulWidget {
   final String movieTitle;
   final int movieId;
+  final String? movieImage;
+  final String genres;
 
   const SelectDateTimeScreen({
     super.key,
     required this.movieTitle,
     required this.movieId,
+    this.movieImage,
+    required this.genres,
   });
 
   @override
@@ -26,12 +30,16 @@ class SelectDateTimeScreen extends StatefulWidget {
     final args = routeSettings.arguments as Map<String, dynamic>?;
     final movieTitle = args?['movieTitle'] as String? ?? 'Movie';
     final movieId = args?['movieId'] as int? ?? 0;
+    final movieImage = args?['movieImage'] as String?;
+    final genres = args?['genres'] as String? ?? '';
     return MaterialPageRoute(
       builder: (_) => BlocProvider(
         create: (_) => MovieShowtimesCubit(),
         child: SelectDateTimeScreen(
           movieTitle: movieTitle,
           movieId: movieId,
+          movieImage: movieImage,
+          genres: genres,
         ),
       ),
     );
@@ -296,6 +304,9 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                                   selectedDate: selectedDate,
                                   roomNumber: showtime.room?.id ?? 1,
                                   showtimeId: showtime.id,
+                                  movieTitle: widget.movieTitle,
+                                  movieImage: widget.movieImage,
+                                  genres: widget.genres,
                                 ),
                               ),
                             );
@@ -312,8 +323,8 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: showtime.isAvailable
-                              ? context.color.descriptionColor.withOpacity(0.3)
-                              : context.color.descriptionColor.withOpacity(0.1),
+                              ? context.color.descriptionColor.withValues(alpha: 0.3)
+                              : context.color.descriptionColor.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),

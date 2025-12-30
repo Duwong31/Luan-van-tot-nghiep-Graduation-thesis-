@@ -1,16 +1,82 @@
+import 'package:Celes/data/cubits/booking/booking_cubit.dart';
+import 'package:Celes/data/cubits/booking/calculate_price_cubit.dart';
+import 'package:Celes/data/models/seat_model.dart';
+import 'package:Celes/settings.dart';
+import 'package:Celes/ui/theme/theme.dart';
+import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/extensions/lib/build_context.dart';
+import 'package:Celes/utils/helper_utils.dart';
+import 'package:Celes/utils/payment/gateaways/payment_webview.dart';
+import 'package:Celes/utils/payment/gateaways/stripe_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'dart:async';
 import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
 
+/// Data class for payment screen
+class PaymentData {
+  final String movieTitle;
+  final String? movieImage;
+  final String genres;
+  final String cinemaName;
+  final String showtime;
+  final String date;
+  final List<Seat> selectedSeats;
+  final int ticketPrice;
+  final int showtimeId;
+  final int roomNumber;
+
+  PaymentData({
+    required this.movieTitle,
+    this.movieImage,
+    required this.genres,
+    required this.cinemaName,
+    required this.showtime,
+    required this.date,
+    required this.selectedSeats,
+    required this.ticketPrice,
+    required this.showtimeId,
+    required this.roomNumber,
+  });
+
+  /// Get formatted seat labels (e.g., "A1, A2, B5")
+  String get seatLabels => selectedSeats.map((s) => s.label).join(', ');
+
+  /// Get total price
+  int get totalPrice => selectedSeats.length * ticketPrice;
+
+  /// Get formatted total price
+  String get formattedTotalPrice {
+    return '${totalPrice.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        )} VND';
+  }
+}
+
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  final PaymentData paymentData;
+
+  const PaymentScreen({
+    Key? key,
+    required this.paymentData,
+  }) : super(key: key);
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 
   static Route route(RouteSettings routeSettings) {
+    final args = routeSettings.arguments as PaymentData?;
+    if (args == null) {
+      return MaterialPageRoute(
+        builder: (_) => const Scaffold(
+          body: Center(child: Text('Payment data is required')),
+        ),
+      );
+    }
     return MaterialPageRoute(
-      builder: (_) => const PaymentScreen(),
+      builder: (_) => PaymentScreen(paymentData: args),
     );
   }
 }
@@ -18,23 +84,26 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   final TextEditingController _discountController = TextEditingController();
   String? _selectedPaymentMethod;
-  int _remainingSeconds = 900; // 15:00 minutes
+  int _remainingSeconds = 600; // 10:00 minutes
   Timer? _timer;
+  bool _isProcessing = false;
+  int? _currentBookingId;
 
-  // Hardcoded movie data for demonstration
-  final String movieTitle = 'Avengers: Infinity War';
-  final String movieImage =
-      'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg';
-  final List<String> genres = ['Action', 'adventure', 'sci-fi'];
-  final String showtime = '10.12.2022 - 14:15';
-  final String orderId = '78889377726';
-  final String seat = 'H7, H8';
-  final double totalPrice = 189.000;
+  PaymentData get data => widget.paymentData;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    _calculatePrice();
+  }
+
+  void _calculatePrice({String? voucherCode}) {
+    context.read<CalculatePriceCubit>().calculatePrice(
+          showtimeId: data.showtimeId,
+          seatIds: data.selectedSeats.map((s) => s.id).toList(),
+          voucherCode: voucherCode,
+        );
   }
 
   void _startTimer() {
@@ -85,6 +154,117 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocListener<BookingCubit, BookingState>(
+      listener: (context, state) {
+        if (state is BookingLoading) {
+          setState(() => _isProcessing = true);
+        } else {
+          setState(() => _isProcessing = false);
+        }
+
+        if (state is BookingCreated) {
+          _handlePaymentCreated(state);
+        } else if (state is BookingError) {
+          HelperUtils.showSnackBarMessage(context, state.errorMessage);
+        }
+      },
+      child: _buildBody(),
+    );
+  }
+
+  void _handlePaymentCreated(BookingCreated state) {
+    final payment = state.payment;
+
+    // Save booking ID for later navigation
+    _currentBookingId = state.booking.id;
+
+    // Check if we have checkout URL (works for both VNPay and Stripe Checkout)
+    if (payment.hasCheckoutUrl) {
+      // Open WebView for payment
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentWebView(
+            authorizationUrl: payment.checkoutUrl!,
+            reference: state.bookingCode,
+            onSuccess: (ref) => _onPaymentSuccess(ref),
+            onFailed: (ref) => _onPaymentFailed(ref),
+            onCancel: () => _onPaymentCancelled(),
+          ),
+        ),
+      );
+    } else if (payment.isStripe && payment.hasClientSecret) {
+      // Open Stripe Payment Sheet (when API returns client_secret)
+      StripeService.payWithPaymentSheet(
+        context: context,
+        clientSecret: payment.clientSecret!,
+        merchantDisplayName: AppSettings.applicationName,
+        onPaymentResult: (success, message) {
+          if (success) {
+            _onPaymentSuccess(state.bookingCode);
+          } else {
+            _onPaymentFailed(state.bookingCode);
+          }
+        },
+      );
+    } else {
+      // No valid payment URL
+      HelperUtils.showSnackBarMessage(
+        context,
+        'Không thể mở trang thanh toán. Vui lòng thử lại.',
+      );
+    }
+  }
+
+  void _onPaymentSuccess(String bookingCode) {
+    if (!mounted) return;
+
+    HelperUtils.showSnackBarMessage(context, 'Thanh toán thành công!');
+
+    // Navigate to ticket screen with booking ID
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      if (_currentBookingId != null) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => MyTicketScreen(bookingId: _currentBookingId!),
+          ),
+          (route) => route.isFirst,
+        );
+      }
+    });
+  }
+
+  void _onPaymentFailed(String bookingCode) {
+    if (!mounted) return;
+    HelperUtils.showSnackBarMessage(context, 'Thanh toán thất bại!');
+  }
+
+  void _onPaymentCancelled() {
+    if (!mounted) return;
+    HelperUtils.showSnackBarMessage(context, 'Bạn đã hủy thanh toán');
+  }
+
+  void _processPayment() {
+    if (_selectedPaymentMethod == null) return;
+
+    // Get voucher code if applied
+    final priceState = context.read<CalculatePriceCubit>().state;
+    String? voucherCode;
+    if (priceState is CalculatePriceLoaded && priceState.hasVoucher) {
+      voucherCode = priceState.voucherCode;
+    }
+
+    // Create booking
+    context.read<BookingCubit>().createBooking(
+          showtimeId: data.showtimeId,
+          seatIds: data.selectedSeats.map((s) => s.id).toList(),
+          paymentMethod: _selectedPaymentMethod!,
+          voucherCode: voucherCode,
+        );
+  }
+
+  Widget _buildBody() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -137,36 +317,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Payment Options
+              // Payment Options - Stripe & VNPay
               _buildPaymentOption(
-                'Zalo Pay',
-                'assets/images/zalopay.png',
-                'zalopay',
-              ),
-              const SizedBox(height: 12),
-              _buildPaymentOption(
-                'MoMo',
-                'assets/images/momo.png',
-                'momo',
-              ),
-              const SizedBox(height: 12),
-              _buildPaymentOption(
-                'Shopee Pay',
-                'assets/images/shopeepay.png',
-                'shopeepay',
-              ),
-              const SizedBox(height: 12),
-              _buildPaymentOption(
-                'ATM Card',
-                'assets/images/atm.png',
-                'atm',
-              ),
-              const SizedBox(height: 12),
-              _buildPaymentOption(
-                'International payments',
-                'assets/images/cards.png',
-                'international',
+                'Stripe',
+                AppIcons.stripe,
+                'stripe',
                 subtitle: 'Visa, Master, JCB, Amex',
+              ),
+              const SizedBox(height: 12),
+              _buildPaymentOption(
+                'VNPay',
+                AppIcons.vnpay,
+                'vnpay',
+                subtitle: 'ATM, QR Code, Ví điện tử',
               ),
               const SizedBox(height: 24),
 
@@ -196,20 +359,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
           // Movie Poster
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              movieImage,
-              width: 60,
-              height: 80,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 60,
-                  height: 80,
-                  color: Colors.grey[800],
-                  child: const Icon(Icons.movie, color: Colors.white54),
-                );
-              },
-            ),
+            child: data.movieImage != null
+                ? Image.network(
+                    data.movieImage!,
+                    width: 60,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildMoviePlaceholder();
+                    },
+                  )
+                : _buildMoviePlaceholder(),
           ),
           const SizedBox(width: 12),
           // Movie Details
@@ -218,9 +378,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  movieTitle,
-                  style: const TextStyle(
-                    color: Color(0xFFFFA726),
+                  data.movieTitle,
+                  style: TextStyle(
+                    color: context.color.textDefaultColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -234,7 +394,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        genres.join(', '),
+                        data.genres,
                         style: const TextStyle(
                           color: Colors.white54,
                           fontSize: 12,
@@ -251,11 +411,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const Icon(Icons.location_on,
                         size: 14, color: Colors.white54),
                     const SizedBox(width: 4),
-                    const Text(
-                      'Vincom Ocean Park CGV',
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
+                    Expanded(
+                      child: Text(
+                        '${data.cinemaName} - Rạp ${data.roomNumber}',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -267,7 +431,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         size: 14, color: Colors.white54),
                     const SizedBox(width: 4),
                     Text(
-                      showtime,
+                      '${data.date} - ${data.showtime}',
                       style: const TextStyle(
                         color: Colors.white54,
                         fontSize: 12,
@@ -283,12 +447,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  Widget _buildMoviePlaceholder() {
+    return Container(
+      width: 60,
+      height: 80,
+      color: Colors.grey[800],
+      child: const Icon(Icons.movie, color: Colors.white54),
+    );
+  }
+
   Widget _buildOrderDetails() {
     return Column(
       children: [
-        _buildDetailRow('Order ID', orderId),
+        _buildDetailRow('Số ghế', '${data.selectedSeats.length}'),
         const SizedBox(height: 8),
-        _buildDetailRow('Seat', seat),
+        _buildDetailRow('Ghế', data.seatLabels),
+        const SizedBox(height: 8),
+        _buildDetailRow(
+          'Giá vé',
+          '${data.ticketPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND/ghế',
+        ),
       ],
     );
   }
@@ -304,12 +482,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
             fontSize: 14,
           ),
         ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.right,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -317,79 +500,212 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildDiscountSection() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1C1C1C),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
+    return BlocBuilder<CalculatePriceCubit, CalculatePriceState>(
+      builder: (context, state) {
+        final bool isLoading = state is CalculatePriceLoading;
+        final bool hasVoucher =
+            state is CalculatePriceLoaded && state.hasVoucher;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                const Icon(Icons.discount, color: Colors.white54, size: 20),
-                const SizedBox(width: 8),
                 Expanded(
-                  child: TextField(
-                    controller: _discountController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: 'discount code',
-                      hintStyle: TextStyle(color: Colors.white38),
-                      border: InputBorder.none,
+                  child: Container(
+                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C1C1C),
+                      borderRadius: BorderRadius.circular(8),
+                      border: hasVoucher
+                          ? Border.all(color: Colors.green, width: 1)
+                          : null,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          hasVoucher ? Icons.check_circle : Icons.discount,
+                          color: hasVoucher ? Colors.green : Colors.white54,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: _discountController,
+                            enabled: !hasVoucher,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              hintText: hasVoucher
+                                  ? _discountController.text
+                                  : 'Mã giảm giá',
+                              hintStyle: TextStyle(
+                                color:
+                                    hasVoucher ? Colors.green : Colors.white38,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: isLoading
+                      ? null
+                      : () {
+                          if (hasVoucher) {
+                            // Remove voucher
+                            _discountController.clear();
+                            context.read<CalculatePriceCubit>().removeVoucher();
+                          } else if (_discountController.text.isNotEmpty) {
+                            // Apply voucher
+                            context
+                                .read<CalculatePriceCubit>()
+                                .applyVoucher(_discountController.text.trim());
+                          }
+                        },
+                  child: Container(
+                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    decoration: BoxDecoration(
+                      color: hasVoucher
+                          ? Colors.red
+                          : context.color.territoryColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              hasVoucher ? 'Hủy' : 'Áp dụng',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFA726),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Center(
-            child: Text(
-              'Apply',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+            // Error message
+            if (state is CalculatePriceError)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  state.errorMessage,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
   Widget _buildTotalPrice() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Total',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Text(
-          '${totalPrice.toStringAsFixed(3)} VND',
-          style: const TextStyle(
-            color: Color(0xFFFFA726),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+    return BlocBuilder<CalculatePriceCubit, CalculatePriceState>(
+      builder: (context, state) {
+        String totalPriceText = data.formattedTotalPrice;
+        int originalPrice = data.totalPrice;
+        int discount = 0;
+        bool hasVoucher = false;
+
+        if (state is CalculatePriceLoaded) {
+          totalPriceText = state.formattedTotalPrice;
+          originalPrice = state.price;
+          discount = state.discount;
+          hasVoucher = state.hasVoucher;
+        }
+
+        return Column(
+          children: [
+            // Original price
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Giá gốc',
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  '${originalPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            // Discount
+            if (hasVoucher) ...[
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Giảm giá',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    '-${discount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 12),
+            const Divider(color: Colors.white24, height: 1),
+            const SizedBox(height: 12),
+            // Total
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Tổng cộng',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  totalPriceText,
+                  style: TextStyle(
+                    color: context.color.territoryColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -423,10 +739,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Container(
               width: 48,
               height: 32,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-              ),
               child: Center(
                 child: _buildPaymentIcon(value),
               ),
@@ -458,54 +770,44 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            // Arrow Icon
-            const Icon(
-              Icons.chevron_right,
-              color: Colors.white54,
-            ),
+            // Check icon for selected
+            if (isSelected)
+              Icon(
+                Icons.check_circle,
+                color: context.color.territoryColor,
+                size: 24,
+              )
+            else
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.white54,
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPaymentIcon(String value) {
-    // Placeholder icons - replace with actual images
-    switch (value) {
-      case 'zalopay':
-        return const Text('Zalo',
-            style: TextStyle(
-                fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue));
-      case 'momo':
-        return const Text('momo',
-            style: TextStyle(
-                fontSize: 10, fontWeight: FontWeight.bold, color: Colors.pink));
-      case 'shopeepay':
-        return const Text('Shopee',
-            style: TextStyle(
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange));
-      case 'atm':
-        return const Icon(Icons.credit_card, size: 20, color: Colors.blue);
-      case 'international':
-        return const Icon(Icons.credit_card, size: 20, color: Colors.grey);
-      default:
-        return const Icon(Icons.payment, size: 20);
-    }
+  Widget _buildPaymentIcon(String iconPath) {
+    return SvgPicture.asset(
+      iconPath,
+      width: 32,
+      height: 24,
+      fit: BoxFit.contain,
+    );
   }
 
   Widget _buildTimer() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
+        color: const Color(0xff260D08),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
           const Text(
-            'Complete your payment in',
+            'Hoàn tất thanh toán trong',
             style: TextStyle(
               color: Colors.white54,
               fontSize: 14,
@@ -514,8 +816,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const Spacer(),
           Text(
             _formatTime(_remainingSeconds),
-            style: const TextStyle(
-              color: Color(0xFFFFA726),
+            style: TextStyle(
+              color: context.color.territoryColor,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -526,38 +828,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildContinueButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _selectedPaymentMethod != null
-            ? () {
-                // Navigate to payment processing or ticket screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyTicketScreen(),
+    return BlocBuilder<BookingCubit, BookingState>(
+      builder: (context, state) {
+        final bool isLoading = state is BookingLoading || _isProcessing;
+
+        return SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: (_selectedPaymentMethod != null && !isLoading)
+                ? _processPayment
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.color.territoryColor,
+              disabledBackgroundColor: Colors.grey[800],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            child: isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text(
+                    'Thanh toán',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                );
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF3D00),
-          disabledBackgroundColor: Colors.grey[800],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
           ),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Continue',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -35,7 +35,14 @@ class AppIcons {
   static String shopping_cart = _svgPath("shopping_cart");
   static String ticket_2 = _svgPath("ticket_2");
   static String translate = _svgPath("translate");
-
+  static String stripe = _svgPath("stripe");
+  static String vnpay = _svgPath("vnpay");
+  static String clock = _svgPath("clock");
+  static String location = _svgPath("location");
+  static String moneySend = _svgPath("money-send");
+  static String note = _svgPath("note");
+  static String seat = _svgPath("seat");
+  static String video = _svgPath("video");
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";

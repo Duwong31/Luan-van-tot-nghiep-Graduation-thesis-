@@ -72,6 +72,11 @@ class Api {
   // Showtime APIs
   static String showtimeSeats(int showtimeId) => 'showtimes/$showtimeId/seats';
 
+  // Booking APIs
+  static const String bookingCalculatePrice = 'bookings/calculate-price';
+  static const String bookingCreate = 'bookings';
+  static String bookingDetail(int bookingId) => 'bookings/$bookingId';
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,

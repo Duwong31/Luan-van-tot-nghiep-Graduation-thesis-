@@ -344,6 +344,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           builder: (context) => SelectDateTimeScreen(
                             movieTitle: movie.title,
                             movieId: movie.id,
+                            movieImage: movie.posterUrl,
+                            genres: movie.genre ?? '',
                           ),
                         ),
                       );

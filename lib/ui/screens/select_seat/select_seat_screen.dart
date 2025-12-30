@@ -1,5 +1,6 @@
 import 'package:Celes/data/cubits/showtime/showtime_seats_cubit.dart';
 import 'package:Celes/data/models/seat_model.dart';
+import 'package:Celes/ui/screens/payment/payment_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -16,14 +17,21 @@ class SelectSeatScreen extends StatefulWidget {
   final DateTime selectedDate;
   final int roomNumber;
   final int showtimeId;
+  // Movie info for payment
+  final String movieTitle;
+  final String? movieImage;
+  final String genres;
 
-  const SelectSeatScreen({
+  const SelectSeatScreen({                                                                                                                                                                                                                                        
     super.key,
     required this.cinemaName,
     required this.showTime,
     required this.endTime,
     required this.selectedDate,
     required this.showtimeId,
+    required this.movieTitle,
+    this.movieImage,
+    required this.genres,
     this.roomNumber = 1,
   });
 
@@ -40,6 +48,9 @@ class SelectSeatScreen extends StatefulWidget {
         selectedDate: args?['selectedDate'] ?? DateTime.now(),
         roomNumber: args?['roomNumber'] ?? 1,
         showtimeId: args?['showtimeId'] ?? 0,
+        movieTitle: args?['movieTitle'] ?? 'Movie',
+        movieImage: args?['movieImage'],
+        genres: args?['genres'] ?? '',
       ),
     );
   }
@@ -138,7 +149,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            const Color(0xffFF1E00).withOpacity(0.21),
+                            const Color(0xffFF1E00).withValues(alpha: 0.21),
                             const Color(0xff000000)
                           ],
                           stops: const [0.0, 1.0],
@@ -154,7 +165,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                     color: const Color(0xffFF1E00),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xffFF1E00).withOpacity(0.25),
+                        color: const Color(0xffFF1E00).withValues(alpha: 0.25),
                         blurRadius: 4,
                         spreadRadius: 0,
                         offset: const Offset(0, 4),
@@ -335,7 +346,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xffFF1E00).withOpacity(0.5),
+                        color: const Color(0xffFF1E00).withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 1,
                       ),
@@ -388,11 +399,15 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
         int totalPrice = 0;
         int selectedCount = 0;
         bool hasSelection = false;
+        int ticketPrice = 0;
+        List<Seat> selectedSeats = [];
 
         if (state is ShowtimeSeatsLoaded) {
           totalPrice = state.totalPrice;
           selectedCount = state.selectedSeatIds.length;
           hasSelection = selectedCount > 0;
+          ticketPrice = state.ticketPrice;
+          selectedSeats = state.selectedSeats;
         }
 
         return Container(
@@ -441,13 +456,32 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                   child: ElevatedButton(
                     onPressed: hasSelection
                         ? () {
-                            // TODO: Navigate to payment screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentScreen(
+                                  paymentData: PaymentData(
+                                    movieTitle: widget.movieTitle,
+                                    movieImage: widget.movieImage,
+                                    genres: widget.genres,
+                                    cinemaName: widget.cinemaName,
+                                    showtime:
+                                        '${_formatTime(widget.showTime)} ~ ${_formatTime(widget.endTime)}',
+                                    date: _formatDate(widget.selectedDate),
+                                    selectedSeats: selectedSeats,
+                                    ticketPrice: ticketPrice,
+                                    showtimeId: widget.showtimeId,
+                                    roomNumber: widget.roomNumber,
+                                  ),
+                                ),
+                              ),
+                            );
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffFF1E00),
                       disabledBackgroundColor:
-                          const Color(0xffFF1E00).withOpacity(0.5),
+                          const Color(0xffFF1E00).withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
                       ),

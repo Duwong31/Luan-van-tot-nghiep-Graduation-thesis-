@@ -1,5 +1,8 @@
 import 'package:Celes/data/cubits/auth/auth_cubit.dart';
 import 'package:Celes/data/cubits/auth/login_cubit.dart';
+import 'package:Celes/data/cubits/auth/profile_cubit.dart';
+import 'package:Celes/data/cubits/booking/booking_cubit.dart';
+import 'package:Celes/data/cubits/booking/calculate_price_cubit.dart';
 import 'package:Celes/data/cubits/home/home_cubit.dart';
 import 'package:Celes/data/cubits/movie/movie_detail_cubit.dart';
 import 'package:Celes/data/cubits/movie/movie_showtimes_cubit.dart';
@@ -13,10 +16,13 @@ class RegisterCubits {
   List<SingleChildWidget> providers = [
     BlocProvider(create: (context) => AuthCubit()),
     BlocProvider(create: (context) => LoginCubit()),
+    BlocProvider(create: (context) => ProfileCubit()),
     BlocProvider(create: (context) => HomeCubit()),
     BlocProvider(create: (context) => MovieDetailCubit()),
     BlocProvider(create: (context) => MovieShowtimesCubit()),
     BlocProvider(create: (context) => ShowtimeSeatsCubit()),
+    BlocProvider(create: (context) => CalculatePriceCubit()),
+    BlocProvider(create: (context) => BookingCubit()),
     BlocProvider(create: (context) => AppThemeCubit()),
     BlocProvider(create: (context) => LanguageCubit()),
   ];

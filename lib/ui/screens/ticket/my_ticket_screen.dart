@@ -1,28 +1,49 @@
+import 'package:Celes/data/cubits/booking/booking_cubit.dart';
+import 'package:Celes/data/models/booking_model.dart';
+import 'package:Celes/ui/theme/theme.dart';
+import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/extensions/lib/build_context.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MyTicketScreen extends StatefulWidget {
-  const MyTicketScreen({Key? key}) : super(key: key);
+  final int bookingId;
+
+  const MyTicketScreen({
+    Key? key,
+    required this.bookingId,
+  }) : super(key: key);
 
   @override
   State<MyTicketScreen> createState() => _MyTicketScreenState();
 
   static Route route(RouteSettings routeSettings) {
+    final bookingId = routeSettings.arguments as int?;
+    if (bookingId == null) {
+      return MaterialPageRoute(
+        builder: (_) => const Scaffold(
+          body: Center(child: Text('Booking ID is required')),
+        ),
+      );
+    }
     return MaterialPageRoute(
-      builder: (_) => const MyTicketScreen(),
+      builder: (_) => MyTicketScreen(bookingId: bookingId),
     );
   }
 }
 
 class _MyTicketScreenState extends State<MyTicketScreen> {
-  // Hardcoded movie data for demonstration
-  final String movieTitle = 'Avengers: Infinity War';
-  final String movieImage =
-      'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg';
-  final List<String> genres = ['Action', 'adventure', 'sci-fi'];
-  final String showtime = '10.12.2022 - 14:15';
-  final String orderId = '78889377726';
-  final String seat = 'H7, H8';
-  final double price = 210.000;
+  @override
+  void initState() {
+    super.initState();
+    _fetchBookingDetail();
+  }
+
+  void _fetchBookingDetail() {
+    context.read<BookingCubit>().getBookingDetail(widget.bookingId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,80 +53,95 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'My ticket',
+          'My Ticket',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Ticket Card
-                _buildTicketCard(context),
-                const SizedBox(height: 32),
-              ],
-            ),
-          ),
+      body: BlocBuilder<BookingCubit, BookingState>(
+        builder: (context, state) {
+          if (state is BookingDetailLoading) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
+          } else if (state is BookingDetailLoaded) {
+            return _buildBody(state.booking);
+          } else if (state is BookingDetailError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    state.errorMessage,
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _fetchBookingDetail,
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody(Booking booking) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: _buildTicketCard(context, booking),
         ),
       ),
     );
   }
 
-  Widget _buildTicketCard(BuildContext context) {
+  Widget _buildTicketCard(BuildContext context, Booking booking) {
     return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 380),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.1),
-            blurRadius: 20,
-            spreadRadius: 5,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(32),
       ),
       child: Column(
         children: [
           // Top Section - Movie Info
-          Container(
+          Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Movie Poster and Info
+                // Movie Poster and Title
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Movie Poster
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        movieImage,
-                        width: 80,
-                        height: 110,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 80,
-                            height: 110,
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.movie, color: Colors.grey),
-                          );
-                        },
-                      ),
+                      borderRadius: BorderRadius.circular(13.36),
+                      child: booking.moviePoster != null
+                          ? Image.network(
+                              booking.moviePoster!,
+                              width: 125,
+                              height: 177,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildPosterPlaceholder();
+                              },
+                            )
+                          : _buildPosterPlaceholder(),
                     ),
                     const SizedBox(width: 16),
                     // Movie Details
@@ -114,51 +150,115 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            movieTitle,
+                            booking.movieTitle ?? 'Unknown Movie',
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              height: 1.25,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
-                          Row(
+                          // Duration
+                          if (booking.movieDuration != null)
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  AppIcons.clock,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                // Icon(
+                                //   Icons.access_time,
+                                //   size: 20,
+                                //   color: Colors.grey[800],
+                                // ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    booking.movieDuration!,
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 14,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          const SizedBox(height: 4),
+                          // Genres
+                          if (booking.movieGenre != null)
+                            Row(
+                              children: [
+                                // Icon(
+                                //   Icons.movie,
+                                //   size: 20,
+                                //   color: Colors.grey[800],
+                                // ),
+                                SvgPicture.asset(
+                                  AppIcons.video,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    booking.movieGenre!,
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 14,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Date and Seat Info
+                Row(
+                  children: [
+                    // Date and Time
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // Icon(
+                          //   Icons.calendar_today,
+                          //   size: 48,
+                          //   color: Colors.grey[800],
+                          // ),
+                          SvgPicture.asset(
+                            AppIcons.calendar,
+                            width: 48,
+                            height: 48,
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
-                                Icons.access_time,
-                                size: 14,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 4),
                               Text(
-                                showtime.split(' - ').first,
+                                booking.showtimeTime ?? '',
                                 style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.25,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.theaters,
-                                size: 14,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  genres.join(', '),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                              const SizedBox(height: 8),
+                              Text(
+                                booking.showtimeDate ?? '',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.25,
                                 ),
                               ),
                             ],
@@ -166,43 +266,176 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    // Seat Info
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // Icon(
+                          //   Icons.event_seat,
+                          //   size: 48,
+                          //   color: Colors.grey[800],
+                          // ),
+                          SvgPicture.asset(
+                            AppIcons.seat,
+                            width: 48,
+                            height: 48,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  booking.roomName ?? 'Room',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.25,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Seat ${booking.seatLabels}',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.25,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // Ticket Details
+                // Divider line
+                Container(
+                  height: 0.5,
+                  color: Colors.grey[300],
+                ),
+                const SizedBox(height: 16),
+
+                // Price
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildTicketInfo(
-                        Icons.calendar_today,
-                        _extractDate(showtime),
-                        _extractTime(showtime),
-                      ),
+                    // Icon(
+                    //   Icons.attach_money,
+                    //   size: 24,
+                    //   color: Colors.grey[800],
+                    // ),
+                    SvgPicture.asset(
+                      AppIcons.moneySend,
+                      width: 24,
+                      height: 24,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildTicketInfo(
-                        Icons.event_seat,
-                        'Section 4',
-                        'Seat $seat',
+                    const SizedBox(width: 10),
+                    Text(
+                      booking.formattedTotalPrice,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.25,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-                // Price and Location
-                _buildInfoRow(
-                  Icons.attach_money,
-                  '${price.toStringAsFixed(3)} VND',
+                // Cinema Location
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      AppIcons.location,
+                      width: 24,
+                      height: 24,
+                    ),
+                    // Icon(
+                    //   Icons.location_on,
+                    //   size: 24,
+                    //   color: Colors.grey[800],
+                    // ),
+                    const SizedBox(width: 8),
+                    Text(
+                      booking.showtime?.cinemaName ?? 'Cinema',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Celes Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: context.color.territoryColor),
+                      ),
+                      child: Text(
+                        'Celes',
+                        style: TextStyle(
+                          color: context.color.territoryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                _buildLocationInfo(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-                // QR Code Note
-                _buildQRNote(),
+                // Address
+                if (booking.showtime?.cinemaAddress != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 32),
+                    child: Text(
+                      booking.showtime!.cinemaAddress!,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+
+                // QR Note
+                Row(
+                  children: [
+                    // Icon(
+                    //   Icons.note_alt_outlined,
+                    //   size: 24,
+                    //   color: Colors.grey[800],
+                    // ),
+                    SvgPicture.asset(
+                      AppIcons.note,
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Xuất trình mã này tại quầy vé để nhận vé của bạn',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -211,42 +444,30 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
           _buildDivider(),
 
           // Bottom Section - Barcode
-          Container(
+          Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                // QR Code
+                // Barcode placeholder
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: _buildBarcode(booking.code),
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                // Barcode
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      Text(
-                        'Order ID: $orderId',
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                // Order ID
+                Text(
+                  'Order ID: ${booking.code}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    height: 1.5,
                   ),
                 ),
               ],
@@ -257,127 +478,24 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
     );
   }
 
-  Widget _buildTicketInfo(IconData icon, String title, String subtitle) {
+  Widget _buildPosterPlaceholder() {
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 24, color: Colors.black54),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 11,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+      width: 125,
+      height: 177,
+      color: Colors.grey[300],
+      child: const Icon(Icons.movie, color: Colors.grey, size: 50),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 16, color: Colors.black54),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLocationInfo() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF3D00),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: const Text(
-              'CGV',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Expanded(
-            child: Text(
-              '4th floor, Vincom Ocean Park, Da Ton, Gia Lam, Ha Noi',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQRNote() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.qr_code, size: 20, color: Colors.blue),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              'Show this QR code to the ticket counter to receive your ticket',
-              style: TextStyle(
-                color: Colors.blue,
-                fontSize: 11,
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildBarcode(String code) {
+    return BarcodeWidget(
+      barcode: Barcode.code39(),
+      data: code,
+      width: double.infinity,
+      height: 80,
+      drawText: false,
+      color: Colors.black,
+      backgroundColor: Colors.white,
     );
   }
 
@@ -422,22 +540,6 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
         ),
       ],
     );
-  }
-
-  String _extractDate(String showtime) {
-    // Extract date from showtime string like "10.12.2022 - 14:15"
-    if (showtime.contains(' - ')) {
-      return showtime.split(' - ').first;
-    }
-    return showtime;
-  }
-
-  String _extractTime(String showtime) {
-    // Extract time from showtime string
-    if (showtime.contains(' - ')) {
-      return showtime.split(' - ').last;
-    }
-    return '';
   }
 }
 
