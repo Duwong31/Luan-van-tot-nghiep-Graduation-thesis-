@@ -139,4 +139,13 @@ class Showtime {
 
   /// Check if showtime is available for booking
   bool get isAvailable => status == 'ongoing' || status == 'available';
+
+  /// Get cinema latitude
+  double? get cinemaLat => room?.cinemaLat;
+
+  /// Get cinema longitude
+  double? get cinemaLng => room?.cinemaLng;
+
+  /// Check if cinema has coordinates
+  bool get hasCinemaCoordinates => room?.hasCinemaCoordinates ?? false;
 }

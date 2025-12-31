@@ -249,6 +249,21 @@ class Booking {
 
   /// Get cinema/room name
   String? get roomName => showtime?.room?.name;
+
+  /// Get cinema name
+  String? get cinemaName => showtime?.cinemaName;
+
+  /// Get cinema address
+  String? get cinemaAddress => showtime?.cinemaAddress;
+
+  /// Get cinema latitude
+  double? get cinemaLat => showtime?.cinemaLat;
+
+  /// Get cinema longitude
+  double? get cinemaLng => showtime?.cinemaLng;
+
+  /// Check if cinema has coordinates
+  bool get hasCinemaCoordinates => showtime?.hasCinemaCoordinates ?? false;
 }
 
 /// Model cho BookingResponse

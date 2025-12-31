@@ -73,4 +73,13 @@ class Room {
 
   /// Get cinema address
   String? get cinemaAddress => cinema?.address;
+
+  /// Get cinema latitude
+  double? get cinemaLat => cinema?.lat;
+
+  /// Get cinema longitude
+  double? get cinemaLng => cinema?.lng;
+
+  /// Check if cinema has coordinates
+  bool get hasCinemaCoordinates => cinema?.hasCoordinates ?? false;
 }

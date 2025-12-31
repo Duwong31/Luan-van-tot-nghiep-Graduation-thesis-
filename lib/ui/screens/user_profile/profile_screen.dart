@@ -146,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: context.color.territoryColor.withOpacity(0.3),
+                    color: context.color.territoryColor.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -239,13 +239,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Icon(
                           Icons.phone_outlined,
                           size: 14,
-                          color: context.color.textColorDark.withOpacity(0.6),
+                          color: context.color.textColorDark.withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         CustomText(
                           user?.phone ?? "No phone number",
                           fontSize: 13,
-                          color: context.color.textColorDark.withOpacity(0.7),
+                          color: context.color.textColorDark.withValues(alpha: 0.7),
                         ),
                       ],
                     ),
@@ -255,13 +255,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Icon(
                           Icons.email_outlined,
                           size: 14,
-                          color: context.color.textColorDark.withOpacity(0.6),
+                          color: context.color.textColorDark.withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         CustomText(
                           user?.email ?? "No email",
                           fontSize: 13,
-                          color: context.color.textColorDark.withOpacity(0.7),
+                          color: context.color.textColorDark.withValues(alpha: 0.7),
                         ),
                       ],
                     ),
@@ -402,7 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       height: 40,
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: isLoggingOut
@@ -464,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   height: 40,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: context.color.territoryColor.withOpacity(0.1),
+                    color: context.color.territoryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SvgPicture.asset(
@@ -524,7 +524,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               height: 40,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: context.color.territoryColor.withOpacity(0.1),
+                color: context.color.territoryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SvgPicture.asset(
@@ -585,7 +585,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               height: 40,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: context.color.territoryColor.withOpacity(0.1),
+                color: context.color.territoryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SvgPicture.asset(

@@ -7,6 +7,7 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyTicketScreen extends StatefulWidget {
   final int bookingId;
@@ -43,6 +44,45 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
 
   void _fetchBookingDetail() {
     context.read<BookingCubit>().getBookingDetail(widget.bookingId);
+  }
+
+  /// Open Google Maps with destination coordinates
+  Future<void> _openGoogleMaps(double lat, double lng, String? label) async {
+    final Uri googleMapsUrl = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
+
+    // Alternative: Use directions mode
+    // final Uri googleMapsUrl = Uri.parse(
+    //   'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
+    // );
+
+    try {
+      if (await canLaunchUrl(googleMapsUrl)) {
+        await launchUrl(
+          googleMapsUrl,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Không thể mở Google Maps'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -237,6 +277,10 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
                             AppIcons.calendar,
                             width: 48,
                             height: 48,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Column(
@@ -395,16 +439,44 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
                 ),
                 const SizedBox(height: 8),
 
-                // Address
+                // Address - Tappable to open Google Maps
                 if (booking.showtime?.cinemaAddress != null)
                   Padding(
                     padding: const EdgeInsets.only(left: 32),
-                    child: Text(
-                      booking.showtime!.cinemaAddress!,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        height: 1.5,
+                    child: GestureDetector(
+                      onTap: booking.hasCinemaCoordinates
+                          ? () => _openGoogleMaps(
+                                booking.cinemaLat!,
+                                booking.cinemaLng!,
+                                booking.cinemaName,
+                              )
+                          : null,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              booking.showtime!.cinemaAddress!,
+                              style: TextStyle(
+                                color: booking.hasCinemaCoordinates
+                                    ? context.color.territoryColor
+                                    : Colors.black,
+                                fontSize: 14,
+                                height: 1.5,
+                                decoration: booking.hasCinemaCoordinates
+                                    ? TextDecoration.underline
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          if (booking.hasCinemaCoordinates) ...[
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.open_in_new,
+                              size: 16,
+                              color: context.color.territoryColor,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   ),
