@@ -251,5 +251,10 @@
   "qrCode": "QR Code",
   "stripePaymentSubtitle": "Visa, Master, JCB, Amex",
   "vnpayPaymentSubtitle": "ATM, QR Code, E-Wallet",
-  "discountLabel": "Discount"
+  "discountLabel": "Discount",
+  "favorites": "Favorites",
+  "noFavorites": "No favorite movies yet",
+  "addToFavoritesSuccess": "Added to favorites",
+  "removeFromFavoritesSuccess": "Removed from favorites",
+  "favoriteActionFailed": "Action failed. Please try again."
 }

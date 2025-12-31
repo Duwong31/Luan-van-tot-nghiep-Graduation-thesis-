@@ -1236,6 +1236,36 @@ abstract class Tr {
   /// In en, this message translates to:
   /// **'Discount'**
   String get discountLabel;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @noFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite movies yet'**
+  String get noFavorites;
+
+  /// No description provided for @addToFavoritesSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get addToFavoritesSuccess;
+
+  /// No description provided for @removeFromFavoritesSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites'**
+  String get removeFromFavoritesSuccess;
+
+  /// No description provided for @favoriteActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action failed. Please try again.'**
+  String get favoriteActionFailed;
 }
 
 class _TrDelegate extends LocalizationsDelegate<Tr> {

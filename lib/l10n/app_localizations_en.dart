@@ -592,4 +592,19 @@ class TrEn extends Tr {
 
   @override
   String get discountLabel => 'Discount';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get noFavorites => 'No favorite movies yet';
+
+  @override
+  String get addToFavoritesSuccess => 'Added to favorites';
+
+  @override
+  String get removeFromFavoritesSuccess => 'Removed from favorites';
+
+  @override
+  String get favoriteActionFailed => 'Action failed. Please try again.';
 }
