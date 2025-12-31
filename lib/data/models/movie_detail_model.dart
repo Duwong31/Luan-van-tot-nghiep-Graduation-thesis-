@@ -21,6 +21,7 @@ class MovieDetail {
   final List<Person> directors;
   final List<Person> actors;
   final List<Review> reviews;
+  final bool isFavorited;
   final String? createdAt;
   final String? updatedAt;
 
@@ -42,6 +43,7 @@ class MovieDetail {
     this.directors = const [],
     this.actors = const [],
     this.reviews = const [],
+    this.isFavorited = false,
     this.createdAt,
     this.updatedAt,
   });
@@ -81,6 +83,7 @@ class MovieDetail {
               ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      isFavorited: json['is_favorited'] as bool? ?? false,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -105,6 +108,7 @@ class MovieDetail {
       'directors': directors.map((e) => e.toJson()).toList(),
       'actors': actors.map((e) => e.toJson()).toList(),
       'reviews': reviews.map((e) => e.toJson()).toList(),
+      'is_favorited': isFavorited,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };

@@ -4,10 +4,10 @@ import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/otp_confirm_screen.dart';
 import 'package:Celes/utils/api_exception.dart';
-import 'package:Celes/utils/app_icon.dart';
+// import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

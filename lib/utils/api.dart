@@ -77,6 +77,11 @@ class Api {
   static const String bookingCreate = 'bookings';
   static String bookingDetail(int bookingId) => 'bookings/$bookingId';
 
+  // Favorite APIs  
+  static String favoriteAdd(int movieId) => 'favorites/$movieId';
+  static String favoriteRemove(int movieId) => 'favorites/$movieId';
+  static const String favoritesList = 'favorites';
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,

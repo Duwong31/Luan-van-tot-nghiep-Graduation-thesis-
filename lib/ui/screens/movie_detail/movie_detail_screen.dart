@@ -1,3 +1,4 @@
+import 'package:Celes/data/cubits/favorite/favorite_cubit.dart';
 import 'package:Celes/data/cubits/movie/movie_detail_cubit.dart';
 import 'package:Celes/data/models/movie_detail_model.dart';
 import 'package:Celes/data/models/movie_model.dart';
@@ -31,7 +32,7 @@ class MovieDetailScreen extends StatefulWidget {
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   bool _isStorylineExpanded = false;
-  bool _isFavorite = false;
+  bool _isLoadingFavorite = false;
 
   @override
   void initState() {
@@ -39,6 +40,41 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     // Fetch movie detail when screen loads
     if (widget.movie != null) {
       context.read<MovieDetailCubit>().fetchMovieDetail(widget.movie!.id);
+    }
+  }
+
+  void _toggleFavorite(MovieDetail movie) async {
+    if (_isLoadingFavorite) return;
+
+    setState(() {
+      _isLoadingFavorite = true;
+    });
+
+    try {
+      await context
+          .read<FavoriteCubit>()
+          .toggleFavorite(movie.id, movie.isFavorited);
+
+      // Refresh movie detail to get updated favorite status
+      if (mounted) {
+        context.read<MovieDetailCubit>().fetchMovieDetail(movie.id);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(Tr.of(context)!.favoriteActionFailed),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingFavorite = false;
+        });
+      }
     }
   }
 
@@ -542,20 +578,52 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ),
               const SizedBox(width: 16),
               // Favorite button
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isFavorite = !_isFavorite;
-                  });
+              BlocListener<FavoriteCubit, FavoriteState>(
+                listener: (context, state) {
+                  if (state is FavoriteActionSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Colors.green,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  } else if (state is FavoriteActionError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 },
-                icon: Icon(
-                  _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color:
-                      _isFavorite ? Colors.red : context.color.textDefaultColor,
-                  size: 24,
+                child: IconButton(
+                  onPressed: _isLoadingFavorite
+                      ? null
+                      : () => _toggleFavorite(movie),
+                  icon: _isLoadingFavorite
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.red),
+                          ),
+                        )
+                      : Icon(
+                          movie.isFavorited
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: movie.isFavorited
+                              ? Colors.red
+                              : context.color.textDefaultColor,
+                          size: 24,
+                        ),
+                  padding: const EdgeInsets.all(12),
+                  constraints: const BoxConstraints(),
                 ),
-                padding: const EdgeInsets.all(12),
-                constraints: const BoxConstraints(),
               ),
             ],
           ),

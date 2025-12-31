@@ -592,4 +592,19 @@ class TrVi extends Tr {
 
   @override
   String get discountLabel => 'Giảm giá';
+
+  @override
+  String get favorites => 'Yêu thích';
+
+  @override
+  String get noFavorites => 'Chưa có phim yêu thích';
+
+  @override
+  String get addToFavoritesSuccess => 'Đã thêm vào yêu thích';
+
+  @override
+  String get removeFromFavoritesSuccess => 'Đã xóa khỏi yêu thích';
+
+  @override
+  String get favoriteActionFailed => 'Thao tác thất bại. Vui lòng thử lại.';
 }

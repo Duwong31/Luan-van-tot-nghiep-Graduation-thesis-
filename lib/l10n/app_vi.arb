@@ -212,5 +212,10 @@
   "qrCode": "Mã QR",
   "stripePaymentSubtitle": "Visa, Master, JCB, Amex",
   "vnpayPaymentSubtitle": "ATM, QR Code, Ví điện tử",
-  "discountLabel": "Giảm giá"
+  "discountLabel": "Giảm giá",
+  "favorites": "Yêu thích",
+  "noFavorites": "Chưa có phim yêu thích",
+  "addToFavoritesSuccess": "Đã thêm vào yêu thích",
+  "removeFromFavoritesSuccess": "Đã xóa khỏi yêu thích",
+  "favoriteActionFailed": "Thao tác thất bại. Vui lòng thử lại."
 }

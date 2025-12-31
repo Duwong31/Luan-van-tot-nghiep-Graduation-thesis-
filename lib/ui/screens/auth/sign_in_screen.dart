@@ -7,6 +7,8 @@ import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/data/cubits/auth/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:Celes/utils/app_icon.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool? isDeleteAccount;
@@ -76,17 +78,17 @@ class LoginScreenState extends State<LoginScreen> {
         );
   }
 
-  void _onFacebookLogin() {
-    // Handle Facebook login
-    print('Facebook login pressed');
-    _showSnackBar('Facebook login not implemented');
-  }
+  // void _onFacebookLogin() {
+  //   // Handle Facebook login
+  //   print('Facebook login pressed');
+  //   _showSnackBar('Facebook login not implemented');
+  // }
 
-  void _onGoogleLogin() {
-    // Handle Google login
-    print('Google login pressed');
-    _showSnackBar('Google login not implemented');
-  }
+  // void _onGoogleLogin() {
+  //   // Handle Google login
+  //   print('Google login pressed');
+  //   _showSnackBar('Google login not implemented');
+  // }
 
   void _onSignUp() {
     Navigator.of(context).pushNamed(Routes.signUp);
@@ -105,11 +107,11 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+  // void _showSnackBar(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text(message)),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
