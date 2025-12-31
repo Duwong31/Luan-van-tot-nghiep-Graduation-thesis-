@@ -58,6 +58,7 @@ class Api {
   static const String authLogout = 'auth/logout';
   static const String authGetProfile = 'auth/me';
   static const String authUpdateProfile = 'auth/me';
+  static const String authFcmToken = 'auth/fcm-token';
 
   // Media APIs
   static const String mediaUploadImage = 'media/upload-image';

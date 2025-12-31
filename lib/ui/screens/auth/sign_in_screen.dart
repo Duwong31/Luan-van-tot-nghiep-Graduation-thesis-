@@ -1,10 +1,12 @@
 import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/cubits/auth/login_cubit.dart';
+import 'package:Celes/data/cubits/system/notification_cubit.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/custom_text.dart';
 // import 'package:Celes/utils/app_icon.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
@@ -106,6 +108,14 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<void> _sendFcmTokenToServer() async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null && mounted) {
+      print('FCM Token: $fcmToken');
+      context.read<NotificationCubit>().sendFcmToken(fcmToken);
+    }
+  }
+
   // void _showSnackBar(String message) {
   //   ScaffoldMessenger.of(context).showSnackBar(
   //     SnackBar(content: Text(message)),
@@ -114,47 +124,53 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
-      listener: (context, state) {
-        if (state is LoginSuccess) {
-          final userData = state.data['user'] as Map<String, dynamic>?;
-          print('✅ Login successful');
-          print('User: ${userData?['name']}');
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginCubit, LoginState>(
+          listener: (context, state) {
+            if (state is LoginSuccess) {
+              final userData = state.data['user'] as Map<String, dynamic>?;
+              print('✅ Login successful');
+              print('User: ${userData?['name']}');
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+              _sendFcmTokenToServer();
 
-          // Navigate to main screen
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            Routes.main,
-            (route) => false,
-            arguments: {
-              'from': 'login',
-              'slug': null,
-            },
-          );
-        } else if (state is LoginFailure) {
-          String errorMessage = state.errorMessage;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.green,
+                ),
+              );
 
-          // Handle specific error codes
-          if (state.errorCode == 'INVALID_CREDENTIALS') {
-            errorMessage = Tr.of(context)!.invalidCredentials;
-          } else if (state.errorCode == 'ACCOUNT_NOT_VERIFIED') {
-            errorMessage = Tr.of(context)!.accountNotVerified;
-          }
+              // Navigate to main screen
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.main,
+                (route) => false,
+                arguments: {
+                  'from': 'login',
+                  'slug': null,
+                },
+              );
+            } else if (state is LoginFailure) {
+              String errorMessage = state.errorMessage;
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      },
+              // Handle specific error codes
+              if (state.errorCode == 'INVALID_CREDENTIALS') {
+                errorMessage = Tr.of(context)!.invalidCredentials;
+              } else if (state.errorCode == 'ACCOUNT_NOT_VERIFIED') {
+                errorMessage = Tr.of(context)!.accountNotVerified;
+              }
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<LoginCubit, LoginState>(
         builder: (context, state) {
           final isLoading = state is LoginInProgress;

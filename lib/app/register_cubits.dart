@@ -10,7 +10,9 @@ import 'package:Celes/data/cubits/movie/movie_showtimes_cubit.dart';
 import 'package:Celes/data/cubits/showtime/showtime_seats_cubit.dart';
 import 'package:Celes/data/cubits/system/app_theme_cubit.dart';
 import 'package:Celes/data/cubits/system/language_cubit.dart';
+import 'package:Celes/data/cubits/system/notification_cubit.dart';
 import 'package:Celes/data/repositories/favorite_repository.dart';
+import 'package:Celes/data/repositories/fcm_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
 
@@ -26,6 +28,7 @@ class RegisterCubits {
     BlocProvider(create: (context) => CalculatePriceCubit()),
     BlocProvider(create: (context) => BookingCubit()),
     BlocProvider(create: (context) => FavoriteCubit(FavoriteRepository())),
+    BlocProvider(create: (context) => NotificationCubit(FcmRepository())),
     BlocProvider(create: (context) => AppThemeCubit()),
     BlocProvider(create: (context) => LanguageCubit()),
   ];
