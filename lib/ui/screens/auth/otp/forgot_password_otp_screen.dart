@@ -1,5 +1,6 @@
 import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
@@ -115,10 +116,10 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
         if (resetToken != null) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('OTP verified successfully!'),
+              SnackBar(
+                content: Text(Tr.of(context)!.otpVerifiedSuccess),
                 backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
               ),
             );
 
@@ -158,8 +159,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -214,8 +215,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to resend OTP. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.failedToResendOtp),
             backgroundColor: Colors.red,
           ),
         );
@@ -256,18 +257,18 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
             const SizedBox(height: 20),
 
             // Title
-            const CustomText(
-              'Verify OTP Code',
+            CustomText(
+              Tr.of(context)!.verifyOtpCode,
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFFFB800),
+              color: const Color(0xFFE50914),
             ),
 
             const SizedBox(height: 16),
 
             // Description
             CustomText(
-              'Enter the OTP code sent to ${widget.email}',
+              Tr.of(context)!.otpSentTo(widget.email),
               fontSize: 13,
               color: Colors.white70,
               maxLines: 3,
@@ -313,13 +314,14 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
                     onPressed: canResend && !_isResending ? _onResendOtp : null,
                     child: CustomText(
                       _isResending
-                          ? 'Sending...'
+                          ? Tr.of(context)!.sendingOtp
                           : canResend
-                              ? 'Resend OTP'
-                              : 'Resend OTP in ${_timerAnimation.value}s',
+                              ? Tr.of(context)!.resendOtp
+                              : Tr.of(context)!
+                                  .resendOtpIn(_timerAnimation.value),
                       fontSize: 14,
                       color: canResend && !_isResending
-                          ? const Color(0xFFFFB800)
+                          ? const Color(0xFFE50914)
                           : Colors.grey,
                       fontWeight: FontWeight.w500,
                     ),
@@ -332,7 +334,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
 
             // Continue Button
             CustomButton(
-              label: _isLoading ? 'Verifying...' : 'Continue',
+              label: _isLoading
+                  ? Tr.of(context)!.verifying
+                  : Tr.of(context)!.continue_,
               onPressed: _isLoading ? () {} : _onContinue,
               colorType: ButtonColorType.territory,
               height: 56,

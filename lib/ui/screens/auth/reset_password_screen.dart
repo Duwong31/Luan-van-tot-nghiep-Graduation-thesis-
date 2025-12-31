@@ -1,4 +1,5 @@
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/api_exception.dart';
@@ -106,8 +107,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -139,8 +140,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const CustomText(
-          'Reset Password',
+        title: CustomText(
+          Tr.of(context)!.resetPassword,
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -156,18 +157,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const SizedBox(height: 40),
 
               // Title
-              const CustomText(
-                'Create New Password',
+              CustomText(
+                Tr.of(context)!.createNewPassword,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFFB800),
+                color: const Color(0xFFE50914),
               ),
 
               const SizedBox(height: 16),
 
               // Description
               CustomText(
-                'Your new password must be different from previously used passwords.',
+                Tr.of(context)!.createNewPasswordDescription,
                 fontSize: 14,
                 color: Colors.white70,
                 maxLines: 2,
@@ -188,7 +189,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               // New Password Field
               CustomTextField(
                 controller: _passwordController,
-                label: 'New Password',
+                label: Tr.of(context)!.newPassword,
                 hintText: '••••••',
                 isPassword: true,
                 colorType: TextFieldColorType.dark,
@@ -202,7 +203,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               // Confirm Password Field
               CustomTextField(
                 controller: _confirmPasswordController,
-                label: 'Confirm Password',
+                label: Tr.of(context)!.confirmNewPassword,
                 hintText: '••••••',
                 isPassword: true,
                 colorType: TextFieldColorType.dark,
@@ -243,7 +244,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
               // Reset Password Button
               CustomButton(
-                label: _isLoading ? 'Resetting...' : 'Reset Password',
+                label: _isLoading
+                    ? Tr.of(context)!.resettingPassword
+                    : Tr.of(context)!.resetPassword,
                 onPressed: _isLoading ? () {} : _handleResetPassword,
                 colorType: ButtonColorType.territory,
                 height: 56,
@@ -260,10 +263,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 child: GestureDetector(
                   onTap: () =>
                       Navigator.of(context).popUntil((route) => route.isFirst),
-                  child: const CustomText(
-                    'Back to Login',
+                  child: CustomText(
+                    Tr.of(context)!.backToLogin,
                     fontSize: 16,
-                    color: Color(0xFFFFB800),
+                    color: const Color(0xFFE50914),
                     showUnderline: true,
                   ),
                 ),

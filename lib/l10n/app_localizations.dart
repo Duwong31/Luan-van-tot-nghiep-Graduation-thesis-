@@ -97,43 +97,49 @@ abstract class Tr {
     Locale('vi')
   ];
 
-  /// The main title of the application shown on the app bar and task switcher
+  /// The main title of the application
   ///
   /// In en, this message translates to:
   /// **'Celes'**
   String get appTitle;
 
-  /// Text for the login button
+  /// No description provided for @login.
   ///
   /// In en, this message translates to:
   /// **'Login'**
   String get login;
 
-  /// Text for the logout button
+  /// No description provided for @logout.
   ///
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
 
-  /// Label for the email input field
+  /// No description provided for @loggingOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging out...'**
+  String get loggingOut;
+
+  /// No description provided for @email.
   ///
   /// In en, this message translates to:
   /// **'Email'**
   String get email;
 
-  /// Label for the password input field
+  /// No description provided for @password.
   ///
   /// In en, this message translates to:
   /// **'Password'**
   String get password;
 
-  /// Label for confirming the user's password during registration
+  /// No description provided for @confirmPassword.
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get confirmPassword;
 
-  /// Greeting message shown when the user successfully logs in
+  /// No description provided for @welcomeMessage.
   ///
   /// In en, this message translates to:
   /// **'Welcome back!'**
@@ -163,65 +169,1073 @@ abstract class Tr {
   /// **'Search for movies...'**
   String get searchHint;
 
-  /// Title for the profile screen
+  /// No description provided for @profile.
   ///
   /// In en, this message translates to:
   /// **'Profile'**
   String get profile;
 
-  /// Menu item for viewing user tickets
+  /// No description provided for @myTicket.
   ///
   /// In en, this message translates to:
   /// **'My ticket'**
   String get myTicket;
 
-  /// Menu item for viewing payment history
+  /// No description provided for @paymentHistory.
   ///
   /// In en, this message translates to:
   /// **'Payment history'**
   String get paymentHistory;
 
-  /// Menu item for changing app language
+  /// No description provided for @changeLanguage.
   ///
   /// In en, this message translates to:
   /// **'Change language'**
   String get changeLanguage;
 
-  /// Menu item for changing password
+  /// No description provided for @changePassword.
   ///
   /// In en, this message translates to:
   /// **'Change password'**
   String get changePassword;
 
-  /// Menu item for Face ID / Touch ID settings
+  /// No description provided for @faceIdTouchId.
   ///
   /// In en, this message translates to:
   /// **'Face ID / Touch ID'**
   String get faceIdTouchId;
 
-  /// Title for language selection screen
+  /// No description provided for @selectLanguage.
   ///
   /// In en, this message translates to:
   /// **'Select Language'**
   String get selectLanguage;
 
-  /// Vietnamese language name
+  /// No description provided for @vietnamese.
   ///
   /// In en, this message translates to:
   /// **'Vietnamese'**
   String get vietnamese;
 
-  /// English language name
+  /// No description provided for @english.
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get english;
 
-  /// Message shown when user presses back button
+  /// No description provided for @pressAgainToExit.
   ///
   /// In en, this message translates to:
   /// **'Press again to exit'**
   String get pressAgainToExit;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @logIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get logIn;
+
+  /// No description provided for @logInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get logInTitle;
+
+  /// No description provided for @signUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up'**
+  String get signUpTitle;
+
+  /// No description provided for @logInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to experience more!'**
+  String get logInSubtitle;
+
+  /// No description provided for @rememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get rememberMe;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// No description provided for @loggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in...'**
+  String get loggingIn;
+
+  /// No description provided for @haveNotAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Have not got an account?'**
+  String get haveNotAccount;
+
+  /// No description provided for @signUpNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up Now'**
+  String get signUpNow;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get or;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @creatingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating account...'**
+  String get creatingAccount;
+
+  /// No description provided for @termsAndPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy'**
+  String get termsAndPrivacy;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @resetYourPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Your Password'**
+  String get resetYourPassword;
+
+  /// No description provided for @resetPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we will send you instructions to reset your password.'**
+  String get resetPasswordDescription;
+
+  /// No description provided for @sending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
+
+  /// No description provided for @confirmOtpCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm OTP code'**
+  String get confirmOtpCode;
+
+  /// No description provided for @otpDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You just need to enter the OTP sent to the registered email {email}'**
+  String otpDescription(String email);
+
+  /// No description provided for @verifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying...'**
+  String get verifying;
+
+  /// No description provided for @continue_.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continue_;
+
+  /// No description provided for @resendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP'**
+  String get resendOtp;
+
+  /// No description provided for @resendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in {seconds}s'**
+  String resendOtpIn(int seconds);
+
+  /// No description provided for @sendingOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sendingOtp;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @createNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Password'**
+  String get createNewPassword;
+
+  /// No description provided for @createNewPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new password must be different from your previous password.'**
+  String get createNewPasswordDescription;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordMismatch;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully!'**
+  String get resetPasswordSuccess;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// No description provided for @savingPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get savingPassword;
+
+  /// No description provided for @savePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Password'**
+  String get savePassword;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully!'**
+  String get passwordChangedSuccess;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @profileUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully!'**
+  String get profileUpdatedSuccess;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get paymentMethod;
+
+  /// No description provided for @numberOfSeats.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of seats'**
+  String get numberOfSeats;
+
+  /// No description provided for @seats.
+  ///
+  /// In en, this message translates to:
+  /// **'Seats'**
+  String get seats;
+
+  /// No description provided for @ticketPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket price'**
+  String get ticketPrice;
+
+  /// No description provided for @perSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'/seat'**
+  String get perSeat;
+
+  /// No description provided for @discountCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount code'**
+  String get discountCode;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @originalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Original price'**
+  String get originalPrice;
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @timesUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Time\'s Up!'**
+  String get timesUp;
+
+  /// No description provided for @paymentSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment session has expired.'**
+  String get paymentSessionExpired;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @paymentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment successful!'**
+  String get paymentSuccess;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment failed!'**
+  String get paymentFailed;
+
+  /// No description provided for @paymentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'You have cancelled the payment'**
+  String get paymentCancelled;
+
+  /// No description provided for @cannotOpenPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot open payment page. Please try again.'**
+  String get cannotOpenPayment;
+
+  /// No description provided for @completePaymentIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete payment in'**
+  String get completePaymentIn;
+
+  /// No description provided for @payNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay Now'**
+  String get payNow;
+
+  /// No description provided for @selectPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a payment method'**
+  String get selectPaymentMethod;
+
+  /// No description provided for @selectDateTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date & Time'**
+  String get selectDateTime;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @noShowtimes.
+  ///
+  /// In en, this message translates to:
+  /// **'No showtimes available'**
+  String get noShowtimes;
+
+  /// No description provided for @selectShowtime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a showtime'**
+  String get selectShowtime;
+
+  /// No description provided for @selectSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Seat'**
+  String get selectSeat;
+
+  /// No description provided for @available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// No description provided for @selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get selected;
+
+  /// No description provided for @sold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get sold;
+
+  /// No description provided for @vip.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP'**
+  String get vip;
+
+  /// No description provided for @couple.
+  ///
+  /// In en, this message translates to:
+  /// **'Couple'**
+  String get couple;
+
+  /// No description provided for @selectAtLeastOneSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one seat'**
+  String get selectAtLeastOneSeat;
+
+  /// No description provided for @buyTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Ticket'**
+  String get buyTicket;
+
+  /// No description provided for @seatSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seat(s) selected'**
+  String seatSelected(int count);
+
+  /// No description provided for @myTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Ticket'**
+  String get myTicketTitle;
+
+  /// No description provided for @bookingIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID is required'**
+  String get bookingIdRequired;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @scanQrNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Present this code at the ticket counter to receive your ticket'**
+  String get scanQrNote;
+
+  /// No description provided for @orderId.
+  ///
+  /// In en, this message translates to:
+  /// **'Order ID'**
+  String get orderId;
+
+  /// No description provided for @room.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get room;
+
+  /// No description provided for @seat.
+  ///
+  /// In en, this message translates to:
+  /// **'Seat'**
+  String get seat;
+
+  /// No description provided for @minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get minutes;
+
+  /// No description provided for @cannotOpenGoogleMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot open Google Maps'**
+  String get cannotOpenGoogleMaps;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @movieDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Movie Detail'**
+  String get movieDetail;
+
+  /// No description provided for @nowShowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Now Showing'**
+  String get nowShowing;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @movieNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Movie News'**
+  String get movieNews;
+
+  /// No description provided for @watchTrailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Trailer'**
+  String get watchTrailer;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @bookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get bookNow;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @genre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre'**
+  String get genre;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @releaseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Date'**
+  String get releaseDate;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @cast.
+  ///
+  /// In en, this message translates to:
+  /// **'Cast'**
+  String get cast;
+
+  /// No description provided for @director.
+  ///
+  /// In en, this message translates to:
+  /// **'Director'**
+  String get director;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Celes'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your favorite movie tickets easily'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @noPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone number'**
+  String get noPhoneNumber;
+
+  /// No description provided for @noEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'No email'**
+  String get noEmail;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// No description provided for @darkTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Theme'**
+  String get darkTheme;
+
+  /// No description provided for @hi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name}'**
+  String hi(String name);
+
+  /// No description provided for @pleaseEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get pleaseEnterEmail;
+
+  /// No description provided for @pleaseEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get pleaseEnterPassword;
+
+  /// No description provided for @pleaseEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterName;
+
+  /// No description provided for @pleaseEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your phone number'**
+  String get pleaseEnterPhone;
+
+  /// No description provided for @pleaseEnterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your address'**
+  String get pleaseEnterAddress;
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @pleaseEnterCompleteOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the complete OTP code'**
+  String get pleaseEnterCompleteOtp;
+
+  /// No description provided for @invalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get invalidCredentials;
+
+  /// No description provided for @accountNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email first'**
+  String get accountNotVerified;
+
+  /// No description provided for @emailAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered'**
+  String get emailAlreadyRegistered;
+
+  /// No description provided for @invalidOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid OTP code. Please try again.'**
+  String get invalidOtp;
+
+  /// No description provided for @otpExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP code has expired. Please request a new one.'**
+  String get otpExpired;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with this email'**
+  String get userNotFound;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email first'**
+  String get emailNotVerified;
+
+  /// No description provided for @registrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration successful! Please sign in to continue.'**
+  String get registrationSuccess;
+
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again.'**
+  String get anErrorOccurred;
+
+  /// No description provided for @failedToResendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to resend OTP. Please try again.'**
+  String get failedToResendOtp;
+
+  /// No description provided for @logoutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutConfirmTitle;
+
+  /// No description provided for @logoutConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmMessage;
+
+  /// No description provided for @loadingMovieInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading movie info...'**
+  String get loadingMovieInfo;
+
+  /// No description provided for @cannotLoadMovieInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot load movie info'**
+  String get cannotLoadMovieInfo;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @storyline.
+  ///
+  /// In en, this message translates to:
+  /// **'Storyline'**
+  String get storyline;
+
+  /// No description provided for @seeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See more'**
+  String get seeMore;
+
+  /// No description provided for @seeLess.
+  ///
+  /// In en, this message translates to:
+  /// **'See less'**
+  String get seeLess;
+
+  /// No description provided for @verifyOtpCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP Code'**
+  String get verifyOtpCode;
+
+  /// No description provided for @otpSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the OTP code sent to {email}'**
+  String otpSentTo(String email);
+
+  /// No description provided for @otpVerifiedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP verified successfully!'**
+  String get otpVerifiedSuccess;
+
+  /// No description provided for @resettingPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Resetting...'**
+  String get resettingPassword;
+
+  /// No description provided for @failedToLoadProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load profile'**
+  String get failedToLoadProfile;
+
+  /// No description provided for @failedToPickImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image'**
+  String get failedToPickImage;
+
+  /// No description provided for @paymentDataRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment data is required'**
+  String get paymentDataRequired;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @chooseCinema.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Cinema'**
+  String get chooseCinema;
+
+  /// No description provided for @screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen'**
+  String get screen;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @movieTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movie Title'**
+  String get movieTitle;
+
+  /// No description provided for @cinemaLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cinema Location'**
+  String get cinemaLocation;
+
+  /// No description provided for @seatNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Seat Number'**
+  String get seatNumber;
+
+  /// No description provided for @price.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// No description provided for @bookingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Code'**
+  String get bookingCode;
+
+  /// No description provided for @qrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code'**
+  String get qrCode;
+
+  /// No description provided for @stripePaymentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Visa, Master, JCB, Amex'**
+  String get stripePaymentSubtitle;
+
+  /// No description provided for @vnpayPaymentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM, QR Code, E-Wallet'**
+  String get vnpayPaymentSubtitle;
+
+  /// No description provided for @discountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discountLabel;
 }
 
 class _TrDelegate extends LocalizationsDelegate<Tr> {

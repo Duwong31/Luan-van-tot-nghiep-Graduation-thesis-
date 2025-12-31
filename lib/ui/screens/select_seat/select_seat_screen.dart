@@ -1,5 +1,6 @@
 import 'package:Celes/data/cubits/showtime/showtime_seats_cubit.dart';
 import 'package:Celes/data/models/seat_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/payment/payment_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
@@ -22,7 +23,7 @@ class SelectSeatScreen extends StatefulWidget {
   final String? movieImage;
   final String genres;
 
-  const SelectSeatScreen({                                                                                                                                                                                                                                        
+  const SelectSeatScreen({
     super.key,
     required this.cinemaName,
     required this.showTime,
@@ -103,7 +104,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Rạp ${widget.roomNumber}, $formattedDate, $startTime ~ $endTime',
+              '${Tr.of(context)!.room} ${widget.roomNumber}, $formattedDate, $startTime ~ $endTime',
               style: TextStyle(
                 color: context.color.descriptionColor,
                 fontSize: 13,
@@ -222,7 +223,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xffFF1E00),
                                   ),
-                                  child: const Text('Thử lại'),
+                                  child: Text(Tr.of(context)!.retry),
                                 ),
                               ],
                             ),
@@ -282,9 +283,11 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildLegendItem('Available', const Color(0xff1C1C1C)),
-                _buildLegendItem('Reserved', const Color(0xFFF6F5FA)),
-                _buildLegendItem('Selected', const Color(0xFFFF1E00)),
+                _buildLegendItem(
+                    Tr.of(context)!.available, const Color(0xff1C1C1C)),
+                _buildLegendItem(Tr.of(context)!.sold, const Color(0xFFF6F5FA)),
+                _buildLegendItem(
+                    Tr.of(context)!.selected, const Color(0xFFFF1E00)),
               ],
             ),
           ),
@@ -487,9 +490,9 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Buy ticket',
-                      style: TextStyle(
+                    child: Text(
+                      Tr.of(context)!.buyTicket,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

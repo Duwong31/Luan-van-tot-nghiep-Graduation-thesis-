@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/theme/theme.dart';
@@ -83,8 +84,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to load profile'),
+          SnackBar(
+            content: Text(Tr.of(context)!.failedToLoadProfile),
             backgroundColor: Colors.red,
           ),
         );
@@ -114,8 +115,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to pick image'),
+          SnackBar(
+            content: Text(Tr.of(context)!.failedToPickImage),
             backgroundColor: Colors.red,
           ),
         );
@@ -254,8 +255,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -282,7 +283,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: CustomText(
-          'Edit Profile',
+          Tr.of(context)!.editProfile,
           color: context.color.textColorDark,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -377,7 +378,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Name Field
                       CustomTextField(
                         controller: _nameController,
-                        label: 'Full Name',
+                        label: Tr.of(context)!.fullName,
                         hintText: 'Enter your full name',
                         keyboardType: TextInputType.name,
                         colorType: TextFieldColorType.dark,
@@ -399,7 +400,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       IgnorePointer(
                         child: CustomTextField(
                           controller: _emailController,
-                          label: 'Email',
+                          label: Tr.of(context)!.email,
                           hintText: 'Enter your email',
                           keyboardType: TextInputType.emailAddress,
                           colorType: TextFieldColorType.dark,
@@ -417,7 +418,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Phone Field
                       CustomTextField(
                         controller: _phoneController,
-                        label: 'Phone Number',
+                        label: Tr.of(context)!.phoneNumber,
                         hintText: 'Enter your phone number',
                         keyboardType: TextInputType.phone,
                         colorType: TextFieldColorType.dark,
@@ -441,7 +442,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: AbsorbPointer(
                           child: CustomTextField(
                             controller: _dateOfBirthController,
-                            label: 'Date of Birth',
+                            label: Tr.of(context)!.dateOfBirth,
                             hintText: 'Select your date of birth',
                             keyboardType: TextInputType.datetime,
                             colorType: TextFieldColorType.dark,
@@ -471,7 +472,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: DropdownButtonFormField<String>(
                           initialValue: _selectedGender,
                           decoration: InputDecoration(
-                            labelText: 'Gender',
+                            labelText: Tr.of(context)!.gender,
                             labelStyle: TextStyle(
                               fontSize: 10,
                               color: context.color.textColorDark
@@ -509,7 +510,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Address Field
                       CustomTextField(
                         controller: _addressController,
-                        label: 'Address',
+                        label: Tr.of(context)!.address,
                         hintText: 'Enter your address',
                         keyboardType: TextInputType.streetAddress,
                         colorType: TextFieldColorType.dark,
@@ -529,7 +530,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                       // Update Button
                       CustomButton(
-                        label: _isLoading ? 'Updating...' : 'Update Profile',
+                        label: _isLoading
+                            ? Tr.of(context)!.saving
+                            : Tr.of(context)!.save,
                         onPressed: _isLoading ? () {} : _handleUpdateProfile,
                         colorType: ButtonColorType.territory,
                         height: 56,

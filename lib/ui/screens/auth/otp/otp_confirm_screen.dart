@@ -1,5 +1,6 @@
 import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
@@ -98,7 +99,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
   // }
   void _onContinue() async {
     if (!_isOtpComplete()) {
-      _showError('Please enter the complete OTP code');
+      _showError(Tr.of(context)!.pleaseEnterCompleteOtp);
       return;
     }
 
@@ -114,11 +115,10 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
       if (response.success) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Registration successful! Please sign in to continue.'),
+            SnackBar(
+              content: Text(Tr.of(context)!.registrationSuccess),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
 
@@ -135,9 +135,9 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
 
         // Handle specific error codes
         if (e.code == 'INVALID_OTP') {
-          errorMessage = 'Invalid OTP code. Please try again.';
+          errorMessage = Tr.of(context)!.invalidOtp;
         } else if (e.code == 'OTP_EXPIRED') {
-          errorMessage = 'OTP code has expired. Please request a new one.';
+          errorMessage = Tr.of(context)!.otpExpired;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -150,8 +150,8 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -203,8 +203,8 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to resend OTP. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.failedToResendOtp),
             backgroundColor: Colors.red,
           ),
         );
@@ -237,102 +237,109 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
 
-            // Title
-            const CustomText(
-              'Confirm OTP code',
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFFB800), // Orange/yellow color
-            ),
+              // Title
+              CustomText(
+                Tr.of(context)!.confirmOtpCode,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Description
-            CustomText(
-              'You just need to enter the OTP sent to the registered email ${widget.email}',
-              fontSize: 13,
-              color: Colors.white70,
-              maxLines: 3,
-            ),
+              // Description
+              CustomText(
+                Tr.of(context)!.otpDescription(widget.email),
+                fontSize: 13,
+                color: Colors.white70,
+                maxLines: 3,
+              ),
 
-            const SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-            // OTP Input Fields
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) => _buildOtpField(index)),
-            ),
+              // OTP Input Fields
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(6, (index) => _buildOtpField(index)),
+              ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Timer
-            AnimatedBuilder(
-              animation: _timerAnimation,
-              builder: (context, child) {
-                final minutes = _timerAnimation.value ~/ 60;
-                final seconds = _timerAnimation.value % 60;
-                return Align(
-                  alignment: Alignment.centerRight,
-                  child: CustomText(
-                    '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                );
-              },
-            ),
-
-            const Spacer(),
-
-            // Resend OTP Button
-            AnimatedBuilder(
-              animation: _timerAnimation,
-              builder: (context, child) {
-                final canResend = _timerAnimation.value == 0;
-                return Center(
-                  child: TextButton(
-                    onPressed: canResend && !_isResending ? _onResendOtp : null,
+              // Timer
+              AnimatedBuilder(
+                animation: _timerAnimation,
+                builder: (context, child) {
+                  final minutes = _timerAnimation.value ~/ 60;
+                  final seconds = _timerAnimation.value % 60;
+                  return Align(
+                    alignment: Alignment.centerRight,
                     child: CustomText(
-                      _isResending
-                          ? 'Sending...'
-                          : canResend
-                              ? 'Resend OTP'
-                              : 'Resend OTP in ${_timerAnimation.value}s',
-                      fontSize: 14,
-                      color: canResend && !_isResending
-                          ? const Color(0xFFFFB800)
-                          : Colors.grey,
+                      '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+                      fontSize: 16,
+                      color: Colors.white,
                       fontWeight: FontWeight.w500,
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
 
-            const SizedBox(height: 16),
+              const Spacer(),
 
-            // Continue Button
-            CustomButton(
-              label: _isLoading ? 'Verifying...' : 'Continue',
-              onPressed: _isLoading ? () {} : _onContinue,
-              colorType: ButtonColorType.territory,
-              height: 56,
-              borderRadius: 28,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              textColor: Colors.white,
-            ),
+              // Resend OTP Button
+              AnimatedBuilder(
+                animation: _timerAnimation,
+                builder: (context, child) {
+                  final canResend = _timerAnimation.value == 0;
+                  return Center(
+                    child: TextButton(
+                      onPressed:
+                          canResend && !_isResending ? _onResendOtp : null,
+                      child: CustomText(
+                        _isResending
+                            ? Tr.of(context)!.sendingOtp
+                            : canResend
+                                ? Tr.of(context)!.resendOtp
+                                : Tr.of(context)!
+                                    .resendOtpIn(_timerAnimation.value),
+                        fontSize: 14,
+                        color: canResend && !_isResending
+                            ? const Color(0xFFE50914)
+                            : Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                },
+              ),
 
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 16),
+
+              // Continue Button
+              CustomButton(
+                label: _isLoading
+                    ? Tr.of(context)!.verifying
+                    : Tr.of(context)!.continue_,
+                onPressed: _isLoading ? () {} : _onContinue,
+                colorType: ButtonColorType.territory,
+                height: 56,
+                borderRadius: 28,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                textColor: Colors.white,
+              ),
+
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -347,7 +354,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
-              ? const Color(0xFFFFB800)
+              ? const Color(0xFFE50914)
               : Colors.grey.withValues(alpha: 0.5),
           width: 1.5,
         ),

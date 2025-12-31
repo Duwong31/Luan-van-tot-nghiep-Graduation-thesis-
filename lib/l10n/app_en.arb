@@ -3,81 +3,253 @@
 
   "appTitle": "Celes",
   "@appTitle": {
-    "description": "The main title of the application shown on the app bar and task switcher"
+    "description": "The main title of the application"
   },
 
   "login": "Login",
-  "@login": {
-    "description": "Text for the login button"
-  },
-
   "logout": "Logout",
-  "@logout": {
-    "description": "Text for the logout button"
-  },
-
+  "loggingOut": "Logging out...",
   "email": "Email",
-  "@email": {
-    "description": "Label for the email input field"
-  },
-
   "password": "Password",
-  "@password": {
-    "description": "Label for the password input field"
-  },
-
   "confirmPassword": "Confirm Password",
-  "@confirmPassword": {
-    "description": "Label for confirming the user's password during registration"
-  },
-
   "welcomeMessage": "Welcome back!",
-  "@welcomeMessage": {
-    "description": "Greeting message shown when the user successfully logs in"
-  },
+
   "home": "Home",
   "ticket": "Ticket",
   "cinema": "Cinema",
   "searchHint": "Search for movies...",
   "profile": "Profile",
-  "@profile": {
-    "description": "Title for the profile screen"
-  },
   "myTicket": "My ticket",
-  "@myTicket": {
-    "description": "Menu item for viewing user tickets"
-  },
   "paymentHistory": "Payment history",
-  "@paymentHistory": {
-    "description": "Menu item for viewing payment history"
-  },
   "changeLanguage": "Change language",
-  "@changeLanguage": {
-    "description": "Menu item for changing app language"
-  },
   "changePassword": "Change password",
-  "@changePassword": {
-    "description": "Menu item for changing password"
-  },
   "faceIdTouchId": "Face ID / Touch ID",
-  "@faceIdTouchId": {
-    "description": "Menu item for Face ID / Touch ID settings"
-  },
   "selectLanguage": "Select Language",
-  "@selectLanguage": {
-    "description": "Title for language selection screen"
-  },
   "vietnamese": "Vietnamese",
-  "@vietnamese": {
-    "description": "Vietnamese language name"
-  },
   "english": "English",
-  "@english": {
-    "description": "English language name"
-  },
   "pressAgainToExit": "Press again to exit",
-  "@pressAgainToExit": {
-    "description": "Message shown when user presses back button"
-  }
 
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "logIn": "Log In",
+  "logInTitle": "Log In",
+  "signUpTitle": "Sign up",
+  "logInSubtitle": "Please log in to experience more!",
+  "rememberMe": "Remember me",
+  "forgotPassword": "Forgot Password?",
+  "loggingIn": "Logging in...",
+  "haveNotAccount": "Have not got an account?",
+  "signUpNow": "Sign Up Now",
+  "or": "Or",
+  "orContinueWith": "Or continue with",
+
+  "fullName": "Full Name",
+  "phoneNumber": "Phone Number",
+  "address": "Address",
+  "creatingAccount": "Creating account...",
+  "termsAndPrivacy": "By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy",
+
+  "forgotPasswordTitle": "Forgot Password",
+  "resetYourPassword": "Reset Your Password",
+  "resetPasswordDescription": "Enter your email address and we will send you instructions to reset your password.",
+  "sending": "Sending...",
+  "submit": "Submit",
+  "backToLogin": "Back to Login",
+
+  "confirmOtpCode": "Confirm OTP code",
+  "otpDescription": "You just need to enter the OTP sent to the registered email {email}",
+  "@otpDescription": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verifying": "Verifying...",
+  "continue_": "Continue",
+  "resendOtp": "Resend OTP",
+  "resendOtpIn": "Resend OTP in {seconds}s",
+  "@resendOtpIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "sendingOtp": "Sending...",
+
+  "resetPassword": "Reset Password",
+  "createNewPassword": "Create New Password",
+  "createNewPasswordDescription": "Your new password must be different from your previous password.",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "passwordMismatch": "Passwords do not match",
+  "resetPasswordSuccess": "Password reset successfully!",
+
+  "changePasswordTitle": "Change Password",
+  "currentPassword": "Current Password",
+  "savingPassword": "Saving...",
+  "savePassword": "Save Password",
+  "passwordChangedSuccess": "Password changed successfully!",
+
+  "editProfile": "Edit Profile",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "saving": "Saving...",
+  "save": "Save",
+  "profileUpdatedSuccess": "Profile updated successfully!",
+
+  "payment": "Payment",
+  "paymentMethod": "Payment Method",
+  "numberOfSeats": "Number of seats",
+  "seats": "Seats",
+  "ticketPrice": "Ticket price",
+  "perSeat": "/seat",
+  "discountCode": "Discount code",
+  "apply": "Apply",
+  "cancel": "Cancel",
+  "originalPrice": "Original price",
+  "discount": "Discount",
+  "total": "Total",
+  "timesUp": "Time's Up!",
+  "paymentSessionExpired": "Your payment session has expired.",
+  "ok": "OK",
+  "paymentSuccess": "Payment successful!",
+  "paymentFailed": "Payment failed!",
+  "paymentCancelled": "You have cancelled the payment",
+  "cannotOpenPayment": "Cannot open payment page. Please try again.",
+  "completePaymentIn": "Complete payment in",
+  "payNow": "Pay Now",
+  "selectPaymentMethod": "Please select a payment method",
+
+  "selectDateTime": "Select Date & Time",
+  "today": "Today",
+  "noShowtimes": "No showtimes available",
+  "selectShowtime": "Please select a showtime",
+
+  "selectSeat": "Select Seat",
+  "available": "Available",
+  "selected": "Selected",
+  "sold": "Sold",
+  "vip": "VIP",
+  "couple": "Couple",
+  "selectAtLeastOneSeat": "Please select at least one seat",
+  "buyTicket": "Buy Ticket",
+  "seatSelected": "{count} seat(s) selected",
+  "@seatSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "myTicketTitle": "My Ticket",
+  "bookingIdRequired": "Booking ID is required",
+  "retry": "Retry",
+  "scanQrNote": "Present this code at the ticket counter to receive your ticket",
+  "orderId": "Order ID",
+  "room": "Room",
+  "seat": "Seat",
+  "minutes": "minutes",
+  "cannotOpenGoogleMaps": "Cannot open Google Maps",
+  "error": "Error",
+
+  "movieDetail": "Movie Detail",
+  "nowShowing": "Now Showing",
+  "comingSoon": "Coming Soon",
+  "upcoming": "Upcoming",
+  "movieNews": "Movie News",
+  "watchTrailer": "Watch Trailer",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
+  "bookNow": "Book Now",
+  "duration": "Duration",
+  "genre": "Genre",
+  "language": "Language",
+  "releaseDate": "Release Date",
+  "description": "Description",
+  "cast": "Cast",
+  "director": "Director",
+
+  "welcomeTitle": "Welcome to Celes",
+  "welcomeSubtitle": "Book your favorite movie tickets easily",
+  "getStarted": "Get Started",
+  "skip": "Skip",
+
+  "noPhoneNumber": "No phone number",
+  "noEmail": "No email",
+  "guest": "Guest",
+  "darkTheme": "Dark Theme",
+
+  "hi": "Hi, {name}",
+  "@hi": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseEnterEmail": "Please enter your email",
+  "pleaseEnterPassword": "Please enter your password",
+  "pleaseEnterName": "Please enter your name",
+  "pleaseEnterPhone": "Please enter your phone number",
+  "pleaseEnterAddress": "Please enter your address",
+  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "pleaseEnterCompleteOtp": "Please enter the complete OTP code",
+  "invalidCredentials": "Invalid email or password",
+  "accountNotVerified": "Please verify your email first",
+  "emailAlreadyRegistered": "This email is already registered",
+  "invalidOtp": "Invalid OTP code. Please try again.",
+  "otpExpired": "OTP code has expired. Please request a new one.",
+  "userNotFound": "No account found with this email",
+  "emailNotVerified": "Please verify your email first",
+  "registrationSuccess": "Registration successful! Please sign in to continue.",
+  "anErrorOccurred": "An error occurred. Please try again.",
+  "failedToResendOtp": "Failed to resend OTP. Please try again.",
+
+  "logoutConfirmTitle": "Logout",
+  "logoutConfirmMessage": "Are you sure you want to logout?",
+
+  "loadingMovieInfo": "Loading movie info...",
+  "cannotLoadMovieInfo": "Cannot load movie info",
+  "back": "Back",
+  "storyline": "Storyline",
+  "seeMore": "See more",
+  "seeLess": "See less",
+
+  "verifyOtpCode": "Verify OTP Code",
+  "otpSentTo": "Enter the OTP code sent to {email}",
+  "@otpSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otpVerifiedSuccess": "OTP verified successfully!",
+  "resettingPassword": "Resetting...",
+
+  "failedToLoadProfile": "Failed to load profile",
+  "failedToPickImage": "Failed to pick image",
+  "paymentDataRequired": "Payment data is required",
+  "close": "Close",
+  "chooseCinema": "Choose Cinema",
+  "cinema": "Cinema",
+  "screen": "Screen",
+  "time": "Time",
+  "date": "Date",
+  "movieTitle": "Movie Title",
+  "cinemaLocation": "Cinema Location",
+  "seatNumber": "Seat Number",
+  "price": "Price",
+  "bookingCode": "Booking Code",
+  "qrCode": "QR Code",
+  "stripePaymentSubtitle": "Visa, Master, JCB, Amex",
+  "vnpayPaymentSubtitle": "ATM, QR Code, E-Wallet",
+  "discountLabel": "Discount"
 }

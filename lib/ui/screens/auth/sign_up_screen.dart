@@ -1,4 +1,5 @@
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/otp_confirm_screen.dart';
@@ -38,23 +39,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void _handleRegister() async {
     // Validate fields
     if (_nameController.text.trim().isEmpty) {
-      _showError('Please enter your name');
+      _showError(Tr.of(context)!.pleaseEnterName);
       return;
     }
     if (_emailController.text.trim().isEmpty) {
-      _showError('Please enter your email');
+      _showError(Tr.of(context)!.pleaseEnterEmail);
       return;
     }
     if (_passwordController.text.trim().isEmpty) {
-      _showError('Please enter your password');
+      _showError(Tr.of(context)!.pleaseEnterPassword);
       return;
     }
     if (_phoneController.text.trim().isEmpty) {
-      _showError('Please enter your phone number');
+      _showError(Tr.of(context)!.pleaseEnterPhone);
       return;
     }
     if (_addressController.text.trim().isEmpty) {
-      _showError('Please enter your address');
+      _showError(Tr.of(context)!.pleaseEnterAddress);
       return;
     }
 
@@ -95,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         // Handle specific error codes
         if (e.code == 'EMAIL_EXISTS') {
-          errorMessage = 'This email is already registered';
+          errorMessage = Tr.of(context)!.emailAlreadyRegistered;
         } else if (e.code == 'VALIDATION_ERROR' && e.errors != null) {
           // Get first validation error
           errorMessage = e.errors!.values.first.toString();
@@ -111,8 +112,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -145,8 +146,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const CustomText(
-          'Sign up',
+        title: CustomText(
+          Tr.of(context)!.signUpTitle,
           color: Colors.white,
           fontSize: 25,
           fontWeight: FontWeight.w600,
@@ -163,7 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Name Field
               CustomTextField(
                 controller: _nameController,
-                label: 'Full Name',
+                label: Tr.of(context)!.fullName,
                 keyboardType: TextInputType.name,
                 colorType: TextFieldColorType.dark,
                 height: 56,
@@ -178,7 +179,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Email Field
               CustomTextField(
                 controller: _emailController,
-                label: 'Email',
+                label: Tr.of(context)!.email,
                 keyboardType: TextInputType.emailAddress,
                 colorType: TextFieldColorType.dark,
                 height: 56,
@@ -193,7 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Password Field
               CustomTextField(
                 controller: _passwordController,
-                label: 'Password',
+                label: Tr.of(context)!.password,
                 keyboardType: TextInputType.visiblePassword,
                 isPassword: true,
                 colorType: TextFieldColorType.dark,
@@ -209,7 +210,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Phone Field
               CustomTextField(
                 controller: _phoneController,
-                label: 'Phone Number',
+                label: Tr.of(context)!.phoneNumber,
                 keyboardType: TextInputType.phone,
                 colorType: TextFieldColorType.dark,
                 height: 56,
@@ -224,7 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Address Field
               CustomTextField(
                 controller: _addressController,
-                label: 'Address',
+                label: Tr.of(context)!.address,
                 keyboardType: TextInputType.streetAddress,
                 colorType: TextFieldColorType.dark,
                 height: 56,
@@ -238,7 +239,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               // Register Button
               CustomButton(
-                label: _isLoading ? 'Creating account...' : 'Sign Up',
+                label: _isLoading
+                    ? Tr.of(context)!.creatingAccount
+                    : Tr.of(context)!.signUp,
                 onPressed: _isLoading ? () {} : _handleRegister,
                 colorType: ButtonColorType.territory,
                 height: 54,
@@ -247,88 +250,88 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 fontWeight: FontWeight.w600,
                 textColor: Colors.white,
               ),
-              const SizedBox(height: 32),
-              // Divider
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 1,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: CustomText(
-                      'Or continue with',
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 1,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
+              // const SizedBox(height: 32),
+              // // Divider
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: Container(
+              //         height: 1,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //     const Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: 16.0),
+              //       child: CustomText(
+              //         'Or continue with',
+              //         color: Colors.white,
+              //         fontSize: 12,
+              //       ),
+              //     ),
+              //     Expanded(
+              //       child: Container(
+              //         height: 1,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 18),
 
-              // Facebook Button
-              CustomButton(
-                label: 'Facebook',
-                onPressed: () {},
-                styleType: ButtonStyleType.outlined,
-                borderColor: Colors.grey.withValues(alpha: 0.3),
-                borderWidth: 1.0,
-                textColor: Colors.white,
-                height: 52,
-                borderRadius: 26,
-                leftWidget: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: Center(
-                    child: SvgPicture.asset(
-                      AppIcons.facebook,
-                      width: 20,
-                      height: 20,
-                    ),
-                  ),
-                ),
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              const SizedBox(height: 14),
+              // // Facebook Button
+              // CustomButton(
+              //   label: 'Facebook',
+              //   onPressed: () {},
+              //   styleType: ButtonStyleType.outlined,
+              //   borderColor: Colors.grey.withValues(alpha: 0.3),
+              //   borderWidth: 1.0,
+              //   textColor: Colors.white,
+              //   height: 52,
+              //   borderRadius: 26,
+              //   leftWidget: SizedBox(
+              //     width: 20,
+              //     height: 20,
+              //     child: Center(
+              //       child: SvgPicture.asset(
+              //         AppIcons.facebook,
+              //         width: 20,
+              //         height: 20,
+              //       ),
+              //     ),
+              //   ),
+              //   fontSize: 15,
+              //   fontWeight: FontWeight.w500,
+              // ),
+              // const SizedBox(height: 14),
 
-              // Google Button
-              CustomButton(
-                label: 'Google',
-                onPressed: () {},
-                styleType: ButtonStyleType.outlined,
-                borderColor: Colors.grey.withValues(alpha: 0.3),
-                borderWidth: 1.0,
-                textColor: Colors.white,
-                height: 52,
-                borderRadius: 26,
-                leftWidget: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: Center(
-                    child: SvgPicture.asset(
-                      AppIcons.google,
-                      width: 26,
-                      height: 26,
-                    ),
-                  ),
-                ),
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
+              // // Google Button
+              // CustomButton(
+              //   label: 'Google',
+              //   onPressed: () {},
+              //   styleType: ButtonStyleType.outlined,
+              //   borderColor: Colors.grey.withValues(alpha: 0.3),
+              //   borderWidth: 1.0,
+              //   textColor: Colors.white,
+              //   height: 52,
+              //   borderRadius: 26,
+              //   leftWidget: SizedBox(
+              //     width: 20,
+              //     height: 20,
+              //     child: Center(
+              //       child: SvgPicture.asset(
+              //         AppIcons.google,
+              //         width: 26,
+              //         height: 26,
+              //       ),
+              //     ),
+              //   ),
+              //   fontSize: 15,
+              //   fontWeight: FontWeight.w500,
+              // ),
               const SizedBox(height: 32),
               // Terms and Privacy
-              const CustomText(
-                'By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy',
+              CustomText(
+                Tr.of(context)!.termsAndPrivacy,
                 textAlign: TextAlign.center,
                 color: Colors.grey,
                 fontSize: 11,

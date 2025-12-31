@@ -198,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ),
                                 )
                               : CustomText(
-                                  user?.name ?? "Guest",
+                                  user?.name ?? Tr.of(context)!.guest,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: context.color.textColorDark,
@@ -239,13 +239,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Icon(
                           Icons.phone_outlined,
                           size: 14,
-                          color: context.color.textColorDark.withValues(alpha: 0.6),
+                          color: context.color.textColorDark
+                              .withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         CustomText(
-                          user?.phone ?? "No phone number",
+                          user?.phone ?? Tr.of(context)!.noPhoneNumber,
                           fontSize: 13,
-                          color: context.color.textColorDark.withValues(alpha: 0.7),
+                          color: context.color.textColorDark
+                              .withValues(alpha: 0.7),
                         ),
                       ],
                     ),
@@ -255,13 +257,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Icon(
                           Icons.email_outlined,
                           size: 14,
-                          color: context.color.textColorDark.withValues(alpha: 0.6),
+                          color: context.color.textColorDark
+                              .withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         CustomText(
-                          user?.email ?? "No email",
+                          user?.email ?? Tr.of(context)!.noEmail,
                           fontSize: 13,
-                          color: context.color.textColorDark.withValues(alpha: 0.7),
+                          color: context.color.textColorDark
+                              .withValues(alpha: 0.7),
                         ),
                       ],
                     ),
@@ -308,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         const SizedBox(height: 12),
         _buildThemeSwitchItem(
           iconPath: AppIcons.darkTheme,
-          title: "Dark Theme",
+          title: Tr.of(context)!.darkTheme,
         ),
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
@@ -339,13 +343,13 @@ class _ProfileScreenState extends State<ProfileScreen>
       builder: (dialogContext) => AlertDialog(
         backgroundColor: context.color.secondaryColor,
         title: CustomText(
-          'Logout',
+          Tr.of(context)!.logoutConfirmTitle,
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: context.color.textColorDark,
         ),
         content: CustomText(
-          'Are you sure you want to logout?',
+          Tr.of(context)!.logoutConfirmMessage,
           fontSize: 16,
           color: context.color.textColorDark,
         ),
@@ -353,7 +357,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: CustomText(
-              'Cancel',
+              Tr.of(context)!.cancel,
               fontSize: 16,
               color: context.color.textColorDark,
             ),
@@ -365,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               context.read<ProfileCubit>().logout();
             },
             child: CustomText(
-              'Logout',
+              Tr.of(context)!.logout,
               fontSize: 16,
               color: context.color.territoryColor,
               fontWeight: FontWeight.bold,
@@ -423,7 +427,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                     const SizedBox(width: 16),
                     Expanded(
                       child: CustomText(
-                        isLoggingOut ? 'Đang đăng xuất...' : 'Đăng xuất',
+                        isLoggingOut
+                            ? Tr.of(context)!.loggingOut
+                            : Tr.of(context)!.logout,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.red,

@@ -1,4 +1,5 @@
 import 'package:Celes/app/app_routes.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/welcome/choose_language_popup.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         print("Ngôn ngữ được chọn: $selectedLang");
                       }
                     },
-                    child: const Text(" English"),
+                    child: Text(" ${Tr.of(context)!.english}"),
                   ),
                 ],
               ),
@@ -87,18 +88,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              const Text(
-                "MBooking hello!",
-                style: TextStyle(
+              Text(
+                Tr.of(context)!.welcomeTitle,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                "Enjoy your favorite movies",
-                style: TextStyle(
+              Text(
+                Tr.of(context)!.welcomeSubtitle,
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 16,
                 ),
@@ -127,9 +128,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       onPressed: () {
                         Navigator.of(context).pushNamed(Routes.signIn);
                       },
-                      child: const Text(
-                        "Sign in",
-                        style: TextStyle(
+                      child: Text(
+                        Tr.of(context)!.signIn,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -152,9 +153,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       onPressed: () {
                         Navigator.of(context).pushNamed(Routes.signUp);
                       },
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(
+                      child: Text(
+                        Tr.of(context)!.signUp,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -164,9 +165,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              const Text(
-                "By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy",
-                style: TextStyle(
+              Text(
+                Tr.of(context)!.termsAndPrivacy,
+                style: const TextStyle(
                   color: Colors.white54,
                   fontSize: 12,
                 ),

@@ -1,4 +1,5 @@
 import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/forgot_password_otp_screen.dart';
@@ -28,13 +29,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final email = _emailController.text.trim();
 
     if (email.isEmpty) {
-      _showError('Please enter your email');
+      _showError(Tr.of(context)!.pleaseEnterEmail);
       return;
     }
 
     // Basic email validation
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-      _showError('Please enter a valid email address');
+      _showError(Tr.of(context)!.pleaseEnterValidEmail);
       return;
     }
 
@@ -69,9 +70,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         // Handle specific error codes
         if (e.code == 'USER_NOT_FOUND') {
-          errorMessage = 'No account found with this email';
+          errorMessage = Tr.of(context)!.userNotFound;
         } else if (e.code == 'EMAIL_NOT_VERIFIED') {
-          errorMessage = 'Please verify your email first';
+          errorMessage = Tr.of(context)!.emailNotVerified;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -84,8 +85,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -117,8 +118,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const CustomText(
-          'Forgot Password',
+        title: CustomText(
+          Tr.of(context)!.forgotPasswordTitle,
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -134,18 +135,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 40),
 
               // Title
-              const CustomText(
-                'Reset Your Password',
+              CustomText(
+                Tr.of(context)!.resetYourPassword,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFFB800),
+                color: const Color(0xFFE50914),
               ),
 
               const SizedBox(height: 16),
 
               // Description
-              const CustomText(
-                'Enter your email address and we will send you instructions to reset your password.',
+              CustomText(
+                Tr.of(context)!.resetPasswordDescription,
                 fontSize: 14,
                 color: Colors.white70,
                 maxLines: 3,
@@ -157,7 +158,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               // Email Field
               CustomTextField(
                 controller: _emailController,
-                label: 'Email',
+                label: Tr.of(context)!.email,
                 hintText: 'example@gmail.com',
                 keyboardType: TextInputType.emailAddress,
                 colorType: TextFieldColorType.dark,
@@ -170,7 +171,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               // Send Reset Link Button
               CustomButton(
-                label: _isLoading ? 'Sending...' : 'Submit',
+                label: _isLoading
+                    ? Tr.of(context)!.sending
+                    : Tr.of(context)!.submit,
                 onPressed: _isLoading ? () {} : _handleForgotPassword,
                 colorType: ButtonColorType.territory,
                 height: 56,
@@ -186,10 +189,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               Center(
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const CustomText(
-                    'Back to Login',
+                  child: CustomText(
+                    Tr.of(context)!.backToLogin,
                     fontSize: 16,
-                    color: Color(0xFFFFB800),
+                    color: const Color(0xFFE50914),
                     showUnderline: true,
                   ),
                 ),

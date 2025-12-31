@@ -1,6 +1,7 @@
 import 'package:Celes/data/cubits/booking/booking_cubit.dart';
 import 'package:Celes/data/cubits/booking/calculate_price_cubit.dart';
 import 'package:Celes/data/models/seat_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/settings.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
@@ -70,8 +71,8 @@ class PaymentScreen extends StatefulWidget {
     final args = routeSettings.arguments as PaymentData?;
     if (args == null) {
       return MaterialPageRoute(
-        builder: (_) => const Scaffold(
-          body: Center(child: Text('Payment data is required')),
+        builder: (context) => Scaffold(
+          body: Center(child: Text(Tr.of(context)!.paymentDataRequired)),
         ),
       );
     }
@@ -124,15 +125,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Time\'s Up!'),
-        content: const Text('Your payment session has expired.'),
+        title: Text(Tr.of(context)!.timesUp),
+        content: Text(Tr.of(context)!.paymentSessionExpired),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
             },
-            child: const Text('OK'),
+            child: Text(Tr.of(context)!.ok),
           ),
         ],
       ),
@@ -211,7 +212,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       // No valid payment URL
       HelperUtils.showSnackBarMessage(
         context,
-        'Không thể mở trang thanh toán. Vui lòng thử lại.',
+        Tr.of(context)!.cannotOpenPayment,
       );
     }
   }
@@ -219,7 +220,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void _onPaymentSuccess(String bookingCode) {
     if (!mounted) return;
 
-    HelperUtils.showSnackBarMessage(context, 'Thanh toán thành công!');
+    HelperUtils.showSnackBarMessage(context, Tr.of(context)!.paymentSuccess);
 
     // Navigate to ticket screen with booking ID
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -237,12 +238,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void _onPaymentFailed(String bookingCode) {
     if (!mounted) return;
-    HelperUtils.showSnackBarMessage(context, 'Thanh toán thất bại!');
+    HelperUtils.showSnackBarMessage(context, Tr.of(context)!.paymentFailed);
   }
 
   void _onPaymentCancelled() {
     if (!mounted) return;
-    HelperUtils.showSnackBarMessage(context, 'Bạn đã hủy thanh toán');
+    HelperUtils.showSnackBarMessage(context, Tr.of(context)!.paymentCancelled);
   }
 
   void _processPayment() {
@@ -274,9 +275,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Payment',
-          style: TextStyle(
+        title: Text(
+          Tr.of(context)!.payment,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -307,9 +308,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: 24),
 
               // Payment Method Section
-              const Text(
-                'Payment Method',
-                style: TextStyle(
+              Text(
+                Tr.of(context)!.paymentMethod,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -322,14 +323,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 'Stripe',
                 AppIcons.stripe,
                 'stripe',
-                subtitle: 'Visa, Master, JCB, Amex',
+                subtitle: Tr.of(context)!.stripePaymentSubtitle,
               ),
               const SizedBox(height: 12),
               _buildPaymentOption(
                 'VNPay',
                 AppIcons.vnpay,
                 'vnpay',
-                subtitle: 'ATM, QR Code, Ví điện tử',
+                subtitle: Tr.of(context)!.vnpayPaymentSubtitle,
               ),
               const SizedBox(height: 24),
 
@@ -459,13 +460,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget _buildOrderDetails() {
     return Column(
       children: [
-        _buildDetailRow('Số ghế', '${data.selectedSeats.length}'),
+        _buildDetailRow(
+            Tr.of(context)!.numberOfSeats, '${data.selectedSeats.length}'),
         const SizedBox(height: 8),
-        _buildDetailRow('Ghế', data.seatLabels),
+        _buildDetailRow(Tr.of(context)!.seats, data.seatLabels),
         const SizedBox(height: 8),
         _buildDetailRow(
-          'Giá vé',
-          '${data.ticketPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND/ghế',
+          Tr.of(context)!.ticketPrice,
+          '${data.ticketPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND${Tr.of(context)!.perSeat}',
         ),
       ],
     );
@@ -538,7 +540,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             decoration: InputDecoration(
                               hintText: hasVoucher
                                   ? _discountController.text
-                                  : 'Mã giảm giá',
+                                  : Tr.of(context)!.discountCode,
                               hintStyle: TextStyle(
                                 color:
                                     hasVoucher ? Colors.green : Colors.white38,
@@ -587,7 +589,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             )
                           : Text(
-                              hasVoucher ? 'Hủy' : 'Áp dụng',
+                              hasVoucher
+                                  ? Tr.of(context)!.cancel
+                                  : Tr.of(context)!.apply,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -638,9 +642,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Giá gốc',
-                  style: TextStyle(
+                Text(
+                  Tr.of(context)!.originalPrice,
+                  style: const TextStyle(
                     color: Colors.white54,
                     fontSize: 14,
                   ),
@@ -660,9 +664,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Giảm giá',
-                    style: TextStyle(
+                  Text(
+                    Tr.of(context)!.discountLabel,
+                    style: const TextStyle(
                       color: Colors.green,
                       fontSize: 14,
                     ),
@@ -685,9 +689,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Tổng cộng',
-                  style: TextStyle(
+                Text(
+                  Tr.of(context)!.total,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,

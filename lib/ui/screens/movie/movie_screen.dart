@@ -1,3 +1,4 @@
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/movie_card.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -29,7 +30,8 @@ class _MovieScreenState extends State<MovieScreen>
   // Hardcoded movie data for demonstration
   final List<Map<String, dynamic>> nowPlayingMovies = [
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg', // Spider-Man: Far From Home
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg', // Spider-Man: Far From Home
       'title': 'Spider-Man: Far From Home',
       'rating': 4.0,
       'ratingCount': '982',
@@ -38,7 +40,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '2023-12-15',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg', // Black Adam
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/pFlaoHTZeyNkG83vxsAJiGzfSsa.jpg', // Black Adam
       'title': 'Black Adam',
       'rating': 4.0,
       'ratingCount': '682',
@@ -47,7 +50,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '2023-11-20',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/6KErczPBROQty7QoIsaa6wJYXZi.jpg', // Avengers: Infinity War
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/6KErczPBROQty7QoIsaa6wJYXZi.jpg', // Avengers: Infinity War
       'title': 'Avengers: Infinity War',
       'rating': 4.5,
       'ratingCount': '1245',
@@ -56,7 +60,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '2023-10-10',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg', // Guardians of the Galaxy
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg', // Guardians of the Galaxy
       'title': 'Guardians of the Galaxy',
       'rating': 4.2,
       'ratingCount': '897',
@@ -68,7 +73,8 @@ class _MovieScreenState extends State<MovieScreen>
 
   final List<Map<String, dynamic>> comingSoonMovies = [
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg', // Avatar 2: The Way Of Water
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg', // Avatar 2: The Way Of Water
       'title': 'Avatar 2: The Way Of Water',
       'rating': null,
       'ratingCount': null,
@@ -77,7 +83,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '20.12.2022',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg', // Ant-Man and the Wasp: Quantumania
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/ngl2FKBlU4fhbdsrtdom9LVLBXw.jpg', // Ant-Man and the Wasp: Quantumania
       'title': 'Ant Man Wasp: Quantumania',
       'rating': null,
       'ratingCount': null,
@@ -86,7 +93,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '15.02.2023',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/5M0j0B18abtBI5gi2RhfjjurTqb.jpg', // Shazam! Fury of the Gods
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/5M0j0B18abtBI5gi2RhfjjurTqb.jpg', // Shazam! Fury of the Gods
       'title': 'Shazam!: Fury of the Gods',
       'rating': null,
       'ratingCount': null,
@@ -95,7 +103,8 @@ class _MovieScreenState extends State<MovieScreen>
       'releaseDate': '17.03.2023',
     },
     {
-      'imageUrl': 'https://image.tmdb.org/t/p/w500/vgpXmVaVyUL7GGiDeiK1mKEKzcX.jpg', // Puss in Boots: The Last Wish
+      'imageUrl':
+          'https://image.tmdb.org/t/p/w500/vgpXmVaVyUL7GGiDeiK1mKEKzcX.jpg', // Puss in Boots: The Last Wish
       'title': 'Puss in Boots: The Last Wish',
       'rating': null,
       'ratingCount': null,
@@ -113,7 +122,7 @@ class _MovieScreenState extends State<MovieScreen>
         backgroundColor: context.color.primaryColor,
         elevation: 0,
         centerTitle: false,
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(20),
           child: Container(
@@ -144,14 +153,16 @@ class _MovieScreenState extends State<MovieScreen>
                 tabs: [
                   Tab(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: const Text('Now playing'),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: Text(Tr.of(context)!.nowShowing),
                     ),
                   ),
                   Tab(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: const Text('Coming soon'),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: Text(Tr.of(context)!.comingSoon),
                     ),
                   ),
                 ],
@@ -177,7 +188,7 @@ class _MovieScreenState extends State<MovieScreen>
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.48, 
+            childAspectRatio: 0.48,
             crossAxisSpacing: 16,
             mainAxisSpacing: 20,
           ),

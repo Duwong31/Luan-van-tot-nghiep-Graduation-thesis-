@@ -17,6 +17,10 @@ class HiveUtils {
     return Hive.box(HiveKeys.userDetailsBox).get("id").toString();
   }
 
+  static String? getUserName() {
+    return Hive.box(HiveKeys.userDetailsBox).get("name") as String?;
+  }
+
   static AppTheme getCurrentTheme() {
     var current = Hive.box(HiveKeys.themeBox).get(HiveKeys.currentTheme);
 

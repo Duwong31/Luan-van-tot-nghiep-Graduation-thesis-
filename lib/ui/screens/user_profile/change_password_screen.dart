@@ -111,8 +111,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An error occurred. Please try again.'),
+          SnackBar(
+            content: Text(Tr.of(context)!.anErrorOccurred),
             backgroundColor: Colors.red,
           ),
         );
@@ -187,7 +187,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                 // Title
                 CustomText(
-                  'Change Your Password',
+                  Tr.of(context)!.changePasswordTitle,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: context.color.territoryColor,
@@ -209,7 +209,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 // Current Password Field
                 CustomTextField(
                   controller: _currentPasswordController,
-                  label: 'Current Password',
+                  label: Tr.of(context)!.currentPassword,
                   hintText: 'Enter your current password',
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
@@ -231,7 +231,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 // New Password Field
                 CustomTextField(
                   controller: _newPasswordController,
-                  label: 'New Password',
+                  label: Tr.of(context)!.newPassword,
                   hintText: 'Enter your new password',
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
@@ -248,7 +248,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 // Confirm Password Field
                 CustomTextField(
                   controller: _confirmPasswordController,
-                  label: 'Confirm New Password',
+                  label: Tr.of(context)!.confirmNewPassword,
                   hintText: 'Confirm your new password',
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
@@ -264,7 +264,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                 // Change Password Button
                 CustomButton(
-                  label: _isLoading ? 'Changing...' : 'Change Password',
+                  label: _isLoading
+                      ? Tr.of(context)!.savingPassword
+                      : Tr.of(context)!.savePassword,
                   onPressed: _isLoading ? () {} : _handleChangePassword,
                   colorType: ButtonColorType.territory,
                   height: 56,

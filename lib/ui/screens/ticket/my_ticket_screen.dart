@@ -1,5 +1,6 @@
 import 'package:Celes/data/cubits/booking/booking_cubit.dart';
 import 'package:Celes/data/models/booking_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/lib/build_context.dart';
@@ -24,8 +25,10 @@ class MyTicketScreen extends StatefulWidget {
     final bookingId = routeSettings.arguments as int?;
     if (bookingId == null) {
       return MaterialPageRoute(
-        builder: (_) => const Scaffold(
-          body: Center(child: Text('Booking ID is required')),
+        builder: (ctx) => Scaffold(
+          body: Center(
+              child: Text(
+                  Tr.of(ctx)?.bookingIdRequired ?? 'Booking ID is required')),
         ),
       );
     }
@@ -66,8 +69,8 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Không thể mở Google Maps'),
+            SnackBar(
+              content: Text(Tr.of(context)!.cannotOpenGoogleMaps),
               backgroundColor: Colors.red,
             ),
           );
@@ -77,7 +80,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Lỗi: $e'),
+            content: Text('${Tr.of(context)!.error}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -96,9 +99,9 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'My Ticket',
-          style: TextStyle(
+        title: Text(
+          Tr.of(context)!.myTicketTitle,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -127,7 +130,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _fetchBookingDetail,
-                    child: const Text('Thử lại'),
+                    child: Text(Tr.of(context)!.retry),
                   ),
                 ],
               ),

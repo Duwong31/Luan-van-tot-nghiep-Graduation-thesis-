@@ -1,6 +1,7 @@
 import 'package:Celes/data/cubits/movie/movie_detail_cubit.dart';
 import 'package:Celes/data/models/movie_detail_model.dart';
 import 'package:Celes/data/models/movie_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/avatar_card.dart';
 import 'package:Celes/ui/screens/movie_detail/widgets/trailer_player_dialog.dart';
 import 'package:Celes/ui/screens/select_seat/select_datetime_screen.dart';
@@ -70,7 +71,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Đang tải thông tin phim...',
+            Tr.of(context)!.loadingMovieInfo,
             style: TextStyle(
               color: context.color.textDefaultColor,
               fontSize: 16,
@@ -95,7 +96,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Không thể tải thông tin phim',
+              Tr.of(context)!.cannotLoadMovieInfo,
               style: TextStyle(
                 color: context.color.textDefaultColor,
                 fontSize: 18,
@@ -121,7 +122,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     foregroundColor: context.color.textDefaultColor,
                     side: BorderSide(color: context.color.descriptionColor),
                   ),
-                  child: const Text('Quay lại'),
+                  child: Text(Tr.of(context)!.back),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
@@ -135,7 +136,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.color.territoryColor,
                   ),
-                  child: const Text('Thử lại'),
+                  child: Text(Tr.of(context)!.retry),
                 ),
               ],
             ),
@@ -228,7 +229,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 if (movie.description != null &&
                     movie.description!.isNotEmpty) ...[
                   Text(
-                    'Storyline',
+                    Tr.of(context)!.storyline,
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -259,7 +260,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           });
                         },
                         child: Text(
-                          _isStorylineExpanded ? 'See less' : 'See more',
+                          _isStorylineExpanded
+                              ? Tr.of(context)!.seeLess
+                              : Tr.of(context)!.seeMore,
                           style: TextStyle(
                             fontSize: 16,
                             color: context.color.territoryColor,
@@ -275,7 +278,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 // Director section
                 if (movie.directors.isNotEmpty) ...[
                   Text(
-                    'Director',
+                    Tr.of(context)!.director,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -305,7 +308,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 // Actor section
                 if (movie.actors.isNotEmpty) ...[
                   Text(
-                    'Actor',
+                    Tr.of(context)!.cast,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -356,9 +359,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(
+                    child: Text(
+                      Tr.of(context)!.continue_,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Color(0xffF2F2F2),
@@ -517,7 +520,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Watch Trailer',
+                          Tr.of(context)!.watchTrailer,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,

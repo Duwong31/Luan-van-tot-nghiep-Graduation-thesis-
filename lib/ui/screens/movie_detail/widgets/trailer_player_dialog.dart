@@ -3,6 +3,7 @@ import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 
 class TrailerPlayerDialog extends StatefulWidget {
   final String trailerUrl;
@@ -387,7 +388,7 @@ class _TrailerPlayerDialogState extends State<TrailerPlayerDialog> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.color.territoryColor,
                 ),
-                child: const Text('Đóng'),
+                child: Text(Tr.of(context)!.close),
               ),
             ],
           ),

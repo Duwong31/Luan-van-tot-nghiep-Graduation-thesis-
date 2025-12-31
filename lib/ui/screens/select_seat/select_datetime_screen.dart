@@ -1,5 +1,6 @@
 import 'package:Celes/data/cubits/movie/movie_showtimes_cubit.dart';
 import 'package:Celes/data/models/showtime_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/select_seat/select_seat_screen.dart';
 import 'package:Celes/ui/screens/select_seat/widgets/date_selector.dart';
 import 'package:Celes/ui/theme/theme.dart';
@@ -141,7 +142,7 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: _fetchShowtimes,
-                          child: const Text('Thử lại'),
+                          child: Text(Tr.of(context)!.retry),
                         ),
                       ],
                     ),
@@ -323,8 +324,10 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: showtime.isAvailable
-                              ? context.color.descriptionColor.withValues(alpha: 0.3)
-                              : context.color.descriptionColor.withValues(alpha: 0.1),
+                              ? context.color.descriptionColor
+                                  .withValues(alpha: 0.3)
+                              : context.color.descriptionColor
+                                  .withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),

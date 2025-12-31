@@ -1,11 +1,12 @@
 import 'package:Celes/data/cubits/home/home_cubit.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
-import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
 import 'package:Celes/ui/screens/home/widgets/news_home.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,6 +43,15 @@ class HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
+  /// Get display name from Hive
+  String _getDisplayName() {
+    final fullName = HiveUtils.getUserName();
+    if (fullName == null || fullName.isEmpty) {
+      return Tr.of(context)!.guest;
+    }
+    return fullName;
+  }
+
   void addPageScrollListener() {
     //homeScreenController.addListener(pageScrollListener);
   }
@@ -69,7 +79,7 @@ class HomeScreenState extends State<HomeScreen>
                       Row(
                         children: [
                           Text(
-                            'Hi, Angelina ',
+                            Tr.of(context)!.hi(_getDisplayName()),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -81,15 +91,6 @@ class HomeScreenState extends State<HomeScreen>
                             style: TextStyle(fontSize: 18),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Welcome back',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: context.color.textDefaultColor,
-                          fontWeight: FontWeight.w500,
-                        ),
                       ),
                     ],
                   ),
@@ -149,7 +150,7 @@ class HomeScreenState extends State<HomeScreen>
                         onPressed: () {
                           context.read<HomeCubit>().fetchHomeData();
                         },
-                        child: const Text('Retry'),
+                        child: Text(Tr.of(context)!.retry),
                       ),
                     ],
                   ),
@@ -185,13 +186,11 @@ class HomeScreenState extends State<HomeScreen>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const HomeSearchField(),
-        const SizedBox(height: 24),
+        // const HomeSearchField(),
+        // const SizedBox(height: 24),
         MainSlider(
           movies: homeData.nowShowing,
-          onSeeAllTap: () {
-            
-          },
+          onSeeAllTap: () {},
         ),
 
         // Coming Soon section
@@ -200,9 +199,7 @@ class HomeScreenState extends State<HomeScreen>
           CategoryHome(
             title: 'Coming Soon',
             movies: homeData.comingSoon,
-            onSeeAllTap: () {
-            
-            },
+            onSeeAllTap: () {},
           ),
         ],
 
