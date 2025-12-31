@@ -75,6 +75,28 @@ class BookingDetailError extends BookingState {
   });
 }
 
+class MyBookingsLoading extends BookingState {}
+
+class MyBookingsLoaded extends BookingState {
+  final List<Booking> bookings;
+  final String message;
+
+  MyBookingsLoaded({
+    required this.bookings,
+    required this.message,
+  });
+}
+
+class MyBookingsError extends BookingState {
+  final String errorMessage;
+  final String? errorCode;
+
+  MyBookingsError({
+    required this.errorMessage,
+    this.errorCode,
+  });
+}
+
 // ==================== BOOKING CUBIT ====================
 
 class BookingCubit extends Cubit<BookingState> {
@@ -149,6 +171,37 @@ class BookingCubit extends Cubit<BookingState> {
       ));
     } catch (e) {
       emit(BookingDetailError(
+        errorMessage: 'Có lỗi xảy ra: ${e.toString()}',
+      ));
+    }
+  }
+
+  /// Get user bookings
+  Future<void> fetchUserBookings({String? status}) async {
+    emit(MyBookingsLoading());
+
+    try {
+      final ApiResponse<List<Booking>> response =
+          await _bookingRepository.getBookings(status: status);
+
+      if (response.success && response.data != null) {
+        emit(MyBookingsLoaded(
+          bookings: response.data!,
+          message: response.message,
+        ));
+      } else {
+        emit(MyBookingsError(
+          errorMessage: response.message,
+          errorCode: response.code,
+        ));
+      }
+    } on ApiException catch (e) {
+      emit(MyBookingsError(
+        errorMessage: e.message,
+        errorCode: e.code,
+      ));
+    } catch (e) {
+      emit(MyBookingsError(
         errorMessage: 'Có lỗi xảy ra: ${e.toString()}',
       ));
     }

@@ -224,7 +224,7 @@ class AuthRepository {
   Future<ApiResponse<dynamic>> logout() async {
     Map<String, dynamic> response = await Api.post(
       url: Api.authLogout,
-      parameter: {},
+      parameter: <String, dynamic>{},
     );
 
     // Xóa tất cả dữ liệu đã lưu

@@ -8,6 +8,7 @@ import 'package:Celes/ui/screens/select_seat/select_datetime_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
+import 'package:Celes/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -341,16 +342,21 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SelectDateTimeScreen(
-                            movieTitle: movie.title,
-                            movieId: movie.id,
-                            movieImage: movie.posterUrl,
-                            genres: movie.genre ?? '',
-                          ),
-                        ),
+                      UiUtils.checkUser(
+                        context: context,
+                        onNotGuest: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SelectDateTimeScreen(
+                                movieTitle: movie.title,
+                                movieId: movie.id,
+                                movieImage: movie.posterUrl,
+                                genres: movie.genre ?? '',
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                     style: ElevatedButton.styleFrom(

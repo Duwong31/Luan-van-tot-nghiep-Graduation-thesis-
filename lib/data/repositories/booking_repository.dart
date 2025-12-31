@@ -66,4 +66,25 @@ class BookingRepository {
       (data) => Booking.fromJson(data as Map<String, dynamic>),
     );
   }
+
+  /// Lấy danh sách booking của người dùng
+  /// GET /api/bookings
+  Future<ApiResponse<List<Booking>>> getBookings({String? status}) async {
+    Map<String, dynamic> response = await Api.get(
+      url: Api.bookingCreate, // base is 'bookings'
+      queryParameters: status != null ? {'status': status} : null,
+    );
+
+    return ApiResponse.fromJson(
+      response,
+      (data) {
+        if (data is List) {
+          return data
+              .map((e) => Booking.fromJson(e as Map<String, dynamic>))
+              .toList();
+        }
+        return [];
+      },
+    );
+  }
 }

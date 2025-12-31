@@ -7,6 +7,7 @@ import 'package:Celes/ui/screens/movie_detail/movie_detail_screen.dart';
 import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
 import 'package:Celes/ui/screens/payment/payment_screen.dart';
 import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
+import 'package:Celes/ui/screens/ticket/ticket_history_screen.dart';
 import 'package:Celes/ui/screens/welcome/welcome_screen.dart';
 import 'package:Celes/ui/screens/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ class Routes {
   static const movieDetail = '/movieDetail';
   static const payment = 'payment';
   static const myTicket = 'myTicket';
+  static const ticketHistory = 'ticketHistory';
 
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
@@ -59,6 +61,9 @@ class Routes {
         return PaymentScreen.route(routeSettings);
       case myTicket:
         return MyTicketScreen.route(routeSettings);
+      case ticketHistory:
+        return MaterialPageRoute(
+            builder: (context) => const TicketHistoryScreen());
       default:
         return CupertinoPageRoute(builder: (context) => const Scaffold());
     }

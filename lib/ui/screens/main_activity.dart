@@ -7,6 +7,7 @@ import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/home_screen.dart';
 import 'package:Celes/ui/screens/movie/movie_screen.dart';
 import 'package:Celes/ui/screens/user_profile/profile_screen.dart';
+import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/constant.dart';
@@ -119,7 +120,7 @@ class MainActivityState extends State<MainActivity>
 
   late List<Widget> pages = [
     HomeScreen(from: widget.from),
-    const Placeholder(),
+    const MyTicketScreen(),
     const MovieScreen(),
     const ProfileScreen(),
   ];
@@ -195,7 +196,7 @@ class MainActivityState extends State<MainActivity>
     //   }
     // }
     searchBody = {};
-    if (index == 3) {
+    if (index == 1 || index == 3) {
       UiUtils.checkUser(
           onNotGuest: () {
             currentTab = index;

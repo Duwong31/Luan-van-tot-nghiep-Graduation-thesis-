@@ -286,17 +286,17 @@ class _ProfileScreenState extends State<ProfileScreen>
           iconPath: AppIcons.ticket_2,
           title: Tr.of(context)!.myTicket,
           onTap: () {
-            // Navigate to my tickets
+            Navigator.of(context).pushNamed(Routes.ticketHistory);
           },
         ),
-        const SizedBox(height: 12),
-        _buildMenuItemWithSvg(
-          iconPath: AppIcons.shopping_cart,
-          title: Tr.of(context)!.paymentHistory,
-          onTap: () {
-            // Navigate to payment history
-          },
-        ),
+        // const SizedBox(height: 12),
+        // _buildMenuItemWithSvg(
+        //   iconPath: AppIcons.shopping_cart,
+        //   title: Tr.of(context)!.paymentHistory,
+        //   onTap: () {
+        //     // Navigate to payment history
+        //   },
+        // ),
         const SizedBox(height: 12),
         _buildMenuItemWithSvg(
           iconPath: AppIcons.translate,

@@ -4,10 +4,9 @@ import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/utils/custom_text.dart';
-import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/data/cubits/auth/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool? isDeleteAccount;
@@ -127,6 +126,9 @@ class LoginScreenState extends State<LoginScreen> {
               backgroundColor: Colors.green,
             ),
           );
+
+          // Update AuthCubit state
+          context.read<AuthCubit>().checkIsAuthenticated();
 
           // Navigate to main screen
           Navigator.of(context).pushNamedAndRemoveUntil(

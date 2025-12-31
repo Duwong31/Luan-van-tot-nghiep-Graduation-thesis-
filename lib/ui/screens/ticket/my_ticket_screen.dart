@@ -1,3 +1,4 @@
+import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/cubits/booking/booking_cubit.dart';
 import 'package:Celes/data/models/booking_model.dart';
 import 'package:Celes/l10n/app_localizations.dart';
@@ -11,42 +12,40 @@ import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyTicketScreen extends StatefulWidget {
-  final int bookingId;
+  final int? bookingId;
 
   const MyTicketScreen({
     Key? key,
-    required this.bookingId,
+    this.bookingId,
   }) : super(key: key);
-
-  @override
-  State<MyTicketScreen> createState() => _MyTicketScreenState();
 
   static Route route(RouteSettings routeSettings) {
     final bookingId = routeSettings.arguments as int?;
-    if (bookingId == null) {
-      return MaterialPageRoute(
-        builder: (ctx) => Scaffold(
-          body: Center(
-              child: Text(
-                  Tr.of(ctx)?.bookingIdRequired ?? 'Booking ID is required')),
-        ),
-      );
-    }
     return MaterialPageRoute(
-      builder: (_) => MyTicketScreen(bookingId: bookingId),
+      builder: (_) => BlocProvider(
+        create: (context) => BookingCubit(),
+        child: MyTicketScreen(bookingId: bookingId),
+      ),
     );
   }
+
+  @override
+  State<MyTicketScreen> createState() => _MyTicketScreenState();
 }
 
 class _MyTicketScreenState extends State<MyTicketScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchBookingDetail();
+    _fetchData();
   }
 
-  void _fetchBookingDetail() {
-    context.read<BookingCubit>().getBookingDetail(widget.bookingId);
+  void _fetchData() {
+    if (widget.bookingId != null) {
+      context.read<BookingCubit>().getBookingDetail(widget.bookingId!);
+    } else {
+      context.read<BookingCubit>().fetchUserBookings(status: 'confirmed');
+    }
   }
 
   /// Open Google Maps with destination coordinates
@@ -95,10 +94,14 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: widget.bookingId != null,
+        leading: widget.bookingId != null
+            ? IconButton(
+                icon:
+                    const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           Tr.of(context)!.myTicketTitle,
           style: const TextStyle(
@@ -111,30 +114,21 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
       ),
       body: BlocBuilder<BookingCubit, BookingState>(
         builder: (context, state) {
-          if (state is BookingDetailLoading) {
+          if (state is BookingDetailLoading || state is MyBookingsLoading) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.white),
             );
           } else if (state is BookingDetailLoaded) {
-            return _buildBody(state.booking);
+            return _buildTicketDetail(state.booking);
+          } else if (state is MyBookingsLoaded) {
+            if (state.bookings.isEmpty) {
+              return _buildEmptyState();
+            }
+            return _buildTicketList(state.bookings);
           } else if (state is BookingDetailError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    state.errorMessage,
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _fetchBookingDetail,
-                    child: Text(Tr.of(context)!.retry),
-                  ),
-                ],
-              ),
-            );
+            return _buildErrorState(state.errorMessage);
+          } else if (state is MyBookingsError) {
+            return _buildErrorState(state.errorMessage);
           }
           return const SizedBox.shrink();
         },
@@ -142,7 +136,155 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
     );
   }
 
-  Widget _buildBody(Booking booking) {
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.confirmation_number_outlined,
+            size: 80,
+            color: Colors.white.withValues(alpha: 0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No tickets found',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.5),
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 60, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _fetchData,
+              child: Text(Tr.of(context)!.retry),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTicketList(List<Booking> bookings) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: bookings.length,
+      itemBuilder: (context, index) {
+        return _buildTicketListItem(bookings[index]);
+      },
+    );
+  }
+
+  Widget _buildTicketListItem(Booking booking) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          Routes.myTicket,
+          arguments: booking.id,
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                // Movie Poster
+                SizedBox(
+                  width: 80,
+                  height: 110,
+                  child: booking.moviePoster != null
+                      ? Image.network(
+                          booking.moviePoster!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildPosterPlaceholderSmall(),
+                        )
+                      : _buildPosterPlaceholderSmall(),
+                ),
+                // Details
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          booking.movieTitle ?? 'Unknown Movie',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${booking.showtimeDate} • ${booking.showtimeTime}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          booking.cinemaName ?? 'Cinema',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: Colors.white54),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPosterPlaceholderSmall() {
+    return Container(
+      width: 80,
+      height: 110,
+      color: Colors.grey[800],
+      child: const Icon(Icons.movie, color: Colors.white24, size: 30),
+    );
+  }
+
+  Widget _buildTicketDetail(Booking booking) {
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(

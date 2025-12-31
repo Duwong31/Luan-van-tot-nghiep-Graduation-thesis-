@@ -87,33 +87,28 @@ class Api {
       final Dio dio = Dio();
       dio.interceptors.add(NetworkRequestInterceptor());
 
-      late FormData formData;
+      Map<String, dynamic> formMap = {};
 
-      if (parameter is Map<String, dynamic>) {
-        Map<String, dynamic> formMap = {};
-
+      if (parameter is Map) {
         parameter.forEach((key, value) {
           if (value is File) {
-            formMap[key] = MultipartFile.fromFileSync(value.path,
+            formMap[key.toString()] = MultipartFile.fromFileSync(value.path,
                 filename: value.path.split('/').last);
           } else if (value is List<File>) {
-            formMap[key] = value
+            formMap[key.toString()] = value
                 .map((file) => MultipartFile.fromFileSync(file.path,
                     filename: file.path.split('/').last))
                 .toList();
           } else {
-            formMap[key] = value;
+            formMap[key.toString()] = value;
           }
         });
-
-        formData = FormData.fromMap(
-          formMap,
-          ListFormat.multiCompatible,
-        );
-      } else {
-        throw ArgumentError(
-            'Invalid parameter type. Expected Map<String, dynamic>.');
       }
+
+      final formData = FormData.fromMap(
+        formMap,
+        ListFormat.multiCompatible,
+      );
 
       final response = await dio.post(
         ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,

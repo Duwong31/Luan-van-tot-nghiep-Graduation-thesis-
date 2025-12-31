@@ -23,7 +23,9 @@ class AuthFailure extends AuthState {
 }
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial()) {}
+  AuthCubit() : super(AuthInitial()) {
+    checkIsAuthenticated();
+  }
 
   void checkIsAuthenticated() {
     if (HiveUtils.isUserAuthenticated()) {
@@ -40,4 +42,3 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 }
-

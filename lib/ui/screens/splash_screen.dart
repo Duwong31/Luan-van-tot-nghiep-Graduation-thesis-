@@ -46,9 +46,6 @@ class SplashScreenState extends State<SplashScreen>
     // ✅ Check if user is authenticated
     final bool isAuthenticated = HiveUtils.isUserAuthenticated();
 
-    // ✅ Check if user is first time (for onboarding)
-    final bool isUserFirstTime = HiveUtils.isUserFirstTime();
-
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         if (isAuthenticated) {
@@ -60,12 +57,15 @@ class SplashScreenState extends State<SplashScreen>
               'slug': null,
             },
           );
-        } else if (isUserFirstTime) {
-          // First time user, show welcome/onboarding
-          Navigator.of(context).pushReplacementNamed(Routes.welcome);
         } else {
-          // Returning user but not logged in, show welcome
-          Navigator.of(context).pushReplacementNamed(Routes.welcome);
+          // Guest mode: Navigate directly to home (main)
+          Navigator.of(context).pushReplacementNamed(
+            Routes.main,
+            arguments: {
+              'from': 'splash',
+              'slug': null,
+            },
+          );
         }
       }
     });
