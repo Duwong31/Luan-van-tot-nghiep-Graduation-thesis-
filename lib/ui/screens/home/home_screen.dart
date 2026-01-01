@@ -1,6 +1,7 @@
 import 'package:Celes/data/cubits/home/home_cubit.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
+import 'package:Celes/ui/screens/home/widgets/home_search.dart';
 import 'package:Celes/ui/screens/home/widgets/main_slider.dart';
 import 'package:Celes/ui/screens/home/widgets/news_home.dart';
 import 'package:Celes/ui/theme/theme.dart';
@@ -11,6 +12,9 @@ import 'package:Celes/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:Celes/data/models/movie_model.dart';
+import 'package:Celes/data/models/home_model.dart';
+import 'package:Celes/ui/components/movie_card.dart';
 
 const double sidePadding = 10;
 
@@ -29,6 +33,8 @@ class HomeScreenState extends State<HomeScreen>
   late final ScrollController _scrollController = ScrollController();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
+
+  String _searchQuery = "";
 
   @override
   void initState() {
@@ -186,48 +192,109 @@ class HomeScreenState extends State<HomeScreen>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // const HomeSearchField(),
-        // const SizedBox(height: 24),
-        MainSlider(
-          movies: homeData.nowShowing,
-          onSeeAllTap: () {},
-        ),
-
-        // Coming Soon section
-        if (homeData.comingSoon.isNotEmpty) ...[
-          const SizedBox(height: 32),
-          CategoryHome(
-            title: 'Coming Soon',
-            movies: homeData.comingSoon,
+        HomeSearchField(onSearchChanged: (value) {
+          setState(() {
+            _searchQuery = value;
+          });
+        }),
+        const SizedBox(height: 24),
+        if (_searchQuery.isNotEmpty)
+          _buildSearchResults(homeData)
+        else ...[
+          MainSlider(
+            movies: homeData.nowShowing,
             onSeeAllTap: () {},
           ),
-        ],
 
-        // Upcoming section
-        if (homeData.upcoming.isNotEmpty) ...[
-          const SizedBox(height: 32),
-          CategoryHome(
-            title: 'Upcoming',
-            movies: homeData.upcoming,
-            onSeeAllTap: () {
-              // Navigate to all upcoming movies
-            },
-          ),
-        ],
+          // Coming Soon section
+          if (homeData.comingSoon.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            CategoryHome(
+              title: 'Coming Soon',
+              movies: homeData.comingSoon,
+              onSeeAllTap: () {},
+            ),
+          ],
 
-        // Movie News section
-        if (homeData.news.isNotEmpty) ...[
-          const SizedBox(height: 32),
-          NewsHomeCard(
-            title: 'Movie News',
-            news: homeData.news,
-            onSeeAllTap: () {
-              // Navigate to all news
-            },
-          ),
+          // Upcoming section
+          if (homeData.upcoming.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            CategoryHome(
+              title: 'Upcoming',
+              movies: homeData.upcoming,
+              onSeeAllTap: () {
+                // Navigate to all upcoming movies
+              },
+            ),
+          ],
+
+          // Movie News section
+          if (homeData.news.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            NewsHomeCard(
+              title: 'Movie News',
+              news: homeData.news,
+              onSeeAllTap: () {
+                // Navigate to all news
+              },
+            ),
+          ],
         ],
       ],
     );
+  }
+
+  Widget _buildSearchResults(HomeData homeData) {
+    // Combine all movies
+    final allMovies = <Movie>{
+      ...homeData.nowShowing,
+      ...homeData.comingSoon,
+      ...homeData.upcoming
+    }.toList();
+
+    // Filter
+    final results = allMovies
+        .where(
+            (m) => m.title.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
+
+    if (results.isEmpty) {
+      return Center(
+          child: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Text(
+          "No movies found",
+          style: TextStyle(color: context.color.textDefaultColor),
+        ),
+      ));
+    }
+
+    return GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.60,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10),
+        itemCount: results.length,
+        padding: const EdgeInsets.symmetric(horizontal: sidePadding),
+        itemBuilder: (ctx, index) {
+          final movie = results[index];
+          return Container(
+              alignment: Alignment.center,
+              child: MovieCard(
+                imageUrl: movie.posterUrl ?? '',
+                title: movie.title,
+                genres: movie.genre ?? movie.genres?.join(', '),
+                releaseDate: movie.releaseDate,
+                width: double.infinity,
+                onTap: () {
+                  Navigator.pushNamed(context, '/movieDetail',
+                      arguments: movie);
+                },
+              ));
+        });
   }
 }
 

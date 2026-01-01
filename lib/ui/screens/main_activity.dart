@@ -3,6 +3,7 @@
 import 'dart:async';
 
 //import 'package:app_links/app_links.dart';
+import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/home_screen.dart';
 import 'package:Celes/ui/screens/movie/movie_screen.dart';
@@ -14,6 +15,7 @@ import 'package:Celes/utils/constant.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/helper_utils.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -197,15 +199,13 @@ class MainActivityState extends State<MainActivity>
     // }
     searchBody = {};
     if (index == 1 || index == 3) {
-      UiUtils.checkUser(
-          onNotGuest: () {
-            currentTab = index;
-            pageController.jumpToPage(currentTab);
-            setState(
-              () {},
-            );
-          },
-          context: context);
+      if (HiveUtils.isUserAuthenticated()) {
+        currentTab = index;
+        pageController.jumpToPage(currentTab);
+        setState(() {});
+      } else {
+        Navigator.of(context).pushNamed(Routes.signIn);
+      }
     } else {
       currentTab = index;
       pageController.jumpToPage(currentTab);

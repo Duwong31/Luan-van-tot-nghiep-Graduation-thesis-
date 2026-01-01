@@ -6,6 +6,7 @@ import 'package:Celes/ui/screens/main_activity.dart';
 import 'package:Celes/ui/screens/movie_detail/movie_detail_screen.dart';
 import 'package:Celes/ui/screens/onboarding/choose_language_popup.dart';
 import 'package:Celes/ui/screens/payment/payment_screen.dart';
+import 'package:Celes/ui/screens/search/search_screen.dart';
 import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
 import 'package:Celes/ui/screens/ticket/ticket_history_screen.dart';
 import 'package:Celes/ui/screens/welcome/welcome_screen.dart';
@@ -55,6 +56,12 @@ class Routes {
       case chooseLanguage:
         return CupertinoPageRoute(
             builder: ((context) => const ChooseLanguagePopup()));
+      case searchScreenRoute:
+        Map arguments = routeSettings.arguments as Map;
+        return CupertinoPageRoute(
+            builder: ((context) => SearchScreen(
+                  autoFocus: arguments['autoFocus'] as bool,
+                )));
       case movieDetail:
         return MovieDetailScreen.route(routeSettings);
       case payment:
