@@ -1,9 +1,24 @@
 import 'package:Celes/data/models/api_response.dart';
 import 'package:Celes/data/models/movie_detail_model.dart';
+import 'package:Celes/data/models/movie_model.dart';
 import 'package:Celes/data/models/movie_showtimes_model.dart';
 import 'package:Celes/utils/api.dart';
 
 class MovieRepository {
+  /// Tìm kiếm phim
+  /// GET /api/movies/search?query=...
+  Future<ApiResponse<List<Movie>>> searchMovies(String query) async {
+    Map<String, dynamic> response = await Api.get(
+      url: Api.movieSearch,
+      queryParameters: {'keyword': query},
+    );
+
+    return ApiResponse.fromJson(
+      response,
+      (data) => (data as List).map((e) => Movie.fromJson(e)).toList(),
+    );
+  }
+
   /// Lấy chi tiết phim
   Future<ApiResponse<MovieDetail>> getMovieDetail(int movieId) async {
     Map<String, dynamic> response = await Api.get(

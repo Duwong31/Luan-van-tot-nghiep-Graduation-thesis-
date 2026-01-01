@@ -13,8 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:Celes/data/models/movie_model.dart';
-import 'package:Celes/data/models/home_model.dart';
+import 'package:Celes/data/repositories/movie_repository.dart';
 import 'package:Celes/ui/components/movie_card.dart';
+import 'dart:async';
 
 const double sidePadding = 10;
 
@@ -34,6 +35,11 @@ class HomeScreenState extends State<HomeScreen>
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
+  final MovieRepository _movieRepository = MovieRepository();
+  Timer? _debounce;
+  bool _isSearching = false;
+  List<Movie> _searchResults = [];
+  String? _searchErrorMessage;
   String _searchQuery = "";
 
   @override
@@ -45,6 +51,7 @@ class HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -192,14 +199,10 @@ class HomeScreenState extends State<HomeScreen>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        HomeSearchField(onSearchChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-        }),
+        HomeSearchField(onSearchChanged: _onSearchChanged),
         const SizedBox(height: 24),
         if (_searchQuery.isNotEmpty)
-          _buildSearchResults(homeData)
+          _buildSearchResults()
         else ...[
           MainSlider(
             movies: homeData.nowShowing,
@@ -244,21 +247,84 @@ class HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildSearchResults(HomeData homeData) {
-    // Combine all movies
-    final allMovies = <Movie>{
-      ...homeData.nowShowing,
-      ...homeData.comingSoon,
-      ...homeData.upcoming
-    }.toList();
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
 
-    // Filter
-    final results = allMovies
-        .where(
-            (m) => m.title.toLowerCase().contains(_searchQuery.toLowerCase()))
-        .toList();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    if (results.isEmpty) {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+        _isSearching = false;
+        _searchErrorMessage = null;
+      });
+      return;
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      setState(() {
+        _isSearching = true;
+        _searchErrorMessage = null;
+        _searchResults = [];
+      });
+
+      try {
+        final response = await _movieRepository.searchMovies(query);
+        if (response.success && response.data != null) {
+          if (mounted) {
+            setState(() {
+              _searchResults = response.data!;
+              _isSearching = false;
+            });
+          }
+        } else {
+          if (mounted) {
+            setState(() {
+              _searchResults = [];
+              _isSearching = false;
+              _searchErrorMessage = response.message;
+            });
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _searchResults = [];
+            _isSearching = false;
+            _searchErrorMessage = e.toString();
+          });
+        }
+      }
+    });
+  }
+
+  Widget _buildSearchResults() {
+    if (_isSearching) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: CircularProgressIndicator(
+            color: context.color.territoryColor,
+          ),
+        ),
+      );
+    }
+
+    if (_searchErrorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            _searchErrorMessage!,
+            style: TextStyle(color: context.color.error),
+          ),
+        ),
+      );
+    }
+
+    if (_searchResults.isEmpty) {
       return Center(
           child: Padding(
         padding: const EdgeInsets.only(top: 20),
@@ -274,13 +340,13 @@ class HomeScreenState extends State<HomeScreen>
         shrinkWrap: true,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.60,
+            childAspectRatio: 0.50,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
-        itemCount: results.length,
+        itemCount: _searchResults.length,
         padding: const EdgeInsets.symmetric(horizontal: sidePadding),
         itemBuilder: (ctx, index) {
-          final movie = results[index];
+          final movie = _searchResults[index];
           return Container(
               alignment: Alignment.center,
               child: MovieCard(
