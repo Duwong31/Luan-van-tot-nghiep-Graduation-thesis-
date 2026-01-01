@@ -116,6 +116,8 @@ class LoginScreenState extends State<LoginScreen> {
       print('FCM Token: $fcmToken');
       context.read<NotificationCubit>().sendFcmToken(fcmToken);
     }
+    // Subscribe to topic
+    await FirebaseMessaging.instance.subscribeToTopic('celes_all_users');
   }
 
   // void _showSnackBar(String message) {

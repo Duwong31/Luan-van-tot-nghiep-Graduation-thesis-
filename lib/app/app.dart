@@ -2,7 +2,9 @@
 import 'package:Celes/firebase_options.dart';
 import 'package:Celes/main.dart';
 import 'package:Celes/utils/hive_keys.dart';
+import 'package:Celes/utils/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -17,6 +19,9 @@ void initApp() async {
   } else {
     await Firebase.initializeApp();
   }
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  await NotificationService().init();
   
   MobileAds.instance.initialize();
 

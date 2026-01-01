@@ -3,6 +3,7 @@ import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/hive_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -49,6 +50,9 @@ class SplashScreenState extends State<SplashScreen>
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         if (isAuthenticated) {
+          // Subscribe to topic
+          FirebaseMessaging.instance.subscribeToTopic('celes_all_users');
+
           // User is logged in, go to main screen
           Navigator.of(context).pushReplacementNamed(
             Routes.main,
