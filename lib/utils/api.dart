@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Celes/settings.dart';
+import 'package:Celes/utils/auth_interceptor.dart';
 import 'package:Celes/utils/constant.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/hive_utils.dart';
@@ -84,6 +85,14 @@ class Api {
   static String favoriteRemove(int movieId) => 'favorites/$movieId';
   static const String favoritesList = 'favorites';
 
+  /// Create configured Dio instance với interceptors
+  static Dio _getDio() {
+    final dio = Dio();
+    dio.interceptors.add(NetworkRequestInterceptor());
+    dio.interceptors.add(AuthInterceptor(dio));
+    return dio;
+  }
+
   static Future<Map<String, dynamic>> post({
     required String url,
     dynamic parameter,
@@ -91,8 +100,7 @@ class Api {
     bool? useBaseUrl,
   }) async {
     try {
-      final Dio dio = Dio();
-      dio.interceptors.add(NetworkRequestInterceptor());
+      final dio = _getDio();
 
       Map<String, dynamic> formMap = {};
 
@@ -177,8 +185,7 @@ class Api {
     bool? useBaseUrl,
   }) async {
     try {
-      final Dio dio = Dio();
-      dio.interceptors.add(NetworkRequestInterceptor());
+      final dio = _getDio();
 
       // late FormData formData;
 
@@ -259,8 +266,7 @@ class Api {
       Map<String, dynamic>? queryParameters,
       bool? useBaseUrl}) async {
     try {
-      final Dio dio = Dio();
-      dio.interceptors.add(NetworkRequestInterceptor());
+      final dio = _getDio();
 
       final response = await dio.delete(
           ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
@@ -294,8 +300,7 @@ class Api {
       Map<String, dynamic>? queryParameters,
       bool? useBaseUrl}) async {
     try {
-      final Dio dio = Dio();
-      dio.interceptors.add(NetworkRequestInterceptor());
+      final dio = _getDio();
       String mainurl = ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url;
       final response = await dio.get(mainurl,
           queryParameters: queryParameters,

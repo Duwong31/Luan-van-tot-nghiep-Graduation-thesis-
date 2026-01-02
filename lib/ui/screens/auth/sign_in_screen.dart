@@ -4,14 +4,14 @@ import 'package:Celes/data/cubits/system/notification_cubit.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
+import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/custom_text.dart';
-// import 'package:Celes/data/cubits/auth/auth_cubit.dart';
-// import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/app_icon.dart';
+import 'package:Celes/utils/extensions/lib/build_context.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:Celes/utils/app_icon.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool? isDeleteAccount;
@@ -139,13 +139,6 @@ class LoginScreenState extends State<LoginScreen> {
 
               _sendFcmTokenToServer();
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.green,
-                ),
-              );
-
               // Navigate to main screen
               Navigator.of(context).pushNamedAndRemoveUntil(
                 Routes.main,
@@ -180,7 +173,7 @@ class LoginScreenState extends State<LoginScreen> {
           final isLoading = state is LoginInProgress;
 
           return Scaffold(
-            backgroundColor: Colors.black,
+            backgroundColor: context.color.primaryColor,
             body: SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -195,9 +188,9 @@ class LoginScreenState extends State<LoginScreen> {
                       children: [
                         IconButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.close,
-                            color: Colors.white,
+                            color: context.color.textDefaultColor,
                             size: 30,
                           ),
                         ),
@@ -214,14 +207,14 @@ class LoginScreenState extends State<LoginScreen> {
                             Tr.of(context)!.logInTitle,
                             fontSize: 32,
                             fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                            color: context.color.textDefaultColor,
                           ),
                           const SizedBox(height: 8),
                           CustomText(
                             Tr.of(context)!.logInSubtitle,
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
-                            color: Colors.grey,
+                            color: context.color.descriptionColor,
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -238,8 +231,9 @@ class LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.emailAddress,
                       colorType: TextFieldColorType.dark,
                       height: 62,
-                      textColor: Colors.white,
-                      borderColor: Colors.white30,
+                      textColor: context.color.textDefaultColor,
+                      borderColor:
+                          context.color.borderColor.withValues(alpha: 0.3),
                     ),
 
                     const SizedBox(height: 25),
@@ -252,8 +246,9 @@ class LoginScreenState extends State<LoginScreen> {
                       isPassword: true,
                       colorType: TextFieldColorType.dark,
                       height: 62,
-                      textColor: Colors.white,
-                      borderColor: Colors.white30,
+                      textColor: context.color.textDefaultColor,
+                      borderColor:
+                          context.color.borderColor.withValues(alpha: 0.3),
                     ),
 
                     const SizedBox(height: 10),
@@ -268,10 +263,10 @@ class LoginScreenState extends State<LoginScreen> {
                             value: _rememberMe,
                             onChanged: (value) =>
                                 setState(() => _rememberMe = value ?? false),
-                            activeColor: const Color(0xFFFFB800),
-                            checkColor: Colors.white,
-                            side: const BorderSide(
-                              color: Colors.white,
+                            activeColor: context.color.territoryColor,
+                            checkColor: context.color.primaryColor,
+                            side: BorderSide(
+                              color: context.color.borderColor,
                               width: 2,
                             ),
                           ),
@@ -279,7 +274,7 @@ class LoginScreenState extends State<LoginScreen> {
                         const SizedBox(width: 8),
                         CustomText(
                           Tr.of(context)!.rememberMe,
-                          color: Colors.white,
+                          color: context.color.textDefaultColor,
                           fontSize: 16,
                         ),
                         const Spacer(),
@@ -290,7 +285,7 @@ class LoginScreenState extends State<LoginScreen> {
                               MaterialTapTargetSize.shrinkWrap,
                           child: CustomText(
                             Tr.of(context)!.forgotPassword,
-                            color: Colors.red,
+                            color: context.color.territoryColor,
                             fontSize: 16,
                             showUnderline: true,
                           ),
@@ -300,18 +295,54 @@ class LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Login Button
-                    CustomButton(
-                      label: isLoading
-                          ? Tr.of(context)!.loggingIn
-                          : Tr.of(context)!.logIn,
-                      onPressed: isLoading ? () {} : _onLogin,
-                      colorType: ButtonColorType.territory,
-                      height: 56,
-                      borderRadius: 10,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      textColor: Colors.white,
+                    // Login Button with Biometric
+                    Row(
+                      children: [
+                        // Login Button
+                        Expanded(
+                          child: CustomButton(
+                            label: isLoading
+                                ? Tr.of(context)!.loggingIn
+                                : Tr.of(context)!.logIn,
+                            onPressed: isLoading ? () {} : _onLogin,
+                            colorType: ButtonColorType.territory,
+                            height: 56,
+                            borderRadius: 10,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            textColor: const Color(0xFFF2F2F2),
+                          ),
+                        ),
+
+                        // const SizedBox(width: 12),
+
+                        // Biometric Fingerprint Button
+                        // Container(
+                        //   height: 56,
+                        //   width: 56,
+                        //   decoration: BoxDecoration(
+                        //     color: context.color.forthColor,
+                        //     borderRadius: BorderRadius.circular(10),
+                        //     border: Border.all(
+                        //       color: context.color.borderColor
+                        //           .withValues(alpha: 0.3),
+                        //       width: 1,
+                        //     ),
+                        //   ),
+                        //   child: IconButton(
+                        //     onPressed: () {},
+                        //     icon: SvgPicture.asset(
+                        //       AppIcons.biometricFingerprint,
+                        //       width: 32,
+                        //       height: 32,
+                        //       colorFilter: ColorFilter.mode(
+                        //         context.color.textDefaultColor,
+                        //         BlendMode.srcIn,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
                     ),
 
                     // const SizedBox(height: 30),
@@ -394,7 +425,7 @@ class LoginScreenState extends State<LoginScreen> {
                           CustomText(
                             Tr.of(context)!.haveNotAccount,
                             fontSize: 16,
-                            color: Colors.white70,
+                            color: context.color.descriptionColor,
                           ),
                           const SizedBox(height: 8),
                           GestureDetector(
@@ -402,7 +433,7 @@ class LoginScreenState extends State<LoginScreen> {
                             child: CustomText(
                               Tr.of(context)!.signUpNow,
                               fontSize: 16,
-                              color: const Color(0xFFFF385C),
+                              color: context.color.territoryColor,
                               showUnderline: true,
                             ),
                           ),

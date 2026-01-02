@@ -1,10 +1,13 @@
-import 'package:Celes/data/repositories/auth_repository.dart';
+import 'package:Celes/app/app_routes.dart';
+import 'package:Celes/data/cubits/auth/reset_password_cubit.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
-import 'package:Celes/utils/api_exception.dart';
+import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/custom_text.dart';
+import 'package:Celes/utils/extensions/lib/build_context.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -24,8 +27,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final AuthRepository _authRepository = AuthRepository();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -34,11 +35,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  void _handleResetPassword() async {
+  void _handleResetPassword() {
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    // Validation
     if (password.isEmpty) {
       _showError('Please enter your new password');
       return;
@@ -59,65 +59,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await _authRepository.resetPassword(
-        email: widget.email,
-        resetToken: widget.resetToken,
-        password: password,
-        passwordConfirmation: confirmPassword,
-      );
-
-      if (response.success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 3),
-            ),
-          );
-
-          // Navigate back to login screen
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      }
-    } on ApiException catch (e) {
-      if (mounted) {
-        String errorMessage = e.message;
-
-        // Handle specific error codes
-        if (e.code == 'INVALID_TOKEN') {
-          errorMessage = 'Invalid or expired reset token';
-        } else if (e.code == 'TOKEN_EXPIRED') {
-          errorMessage = 'Reset token has expired. Please request a new one.';
-        } else if (e.code == 'VALIDATION_ERROR' && e.errors != null) {
-          // Get first validation error
-          errorMessage = e.errors!.values.first.toString();
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
+    context.read<ResetPasswordCubit>().resetPassword(
+          email: widget.email,
+          resetToken: widget.resetToken,
+          password: password,
+          passwordConfirmation: confirmPassword,
         );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(Tr.of(context)!.anErrorOccurred),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
   }
 
   void _showError(String message) {
@@ -131,152 +78,192 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: CustomText(
-          Tr.of(context)!.resetPassword,
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
+    return BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
+      listener: (context, state) {
+        if (state is ResetPasswordSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 3),
+            ),
+          );
 
-              // Title
-              CustomText(
-                Tr.of(context)!.createNewPassword,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFE50914),
-              ),
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.signIn,
+            (route) => false,
+          );
+        } else if (state is ResetPasswordFailure) {
+          String errorMessage = state.errorMessage;
 
-              const SizedBox(height: 16),
+          if (state.errorCode == 'INVALID_TOKEN') {
+            errorMessage = 'Invalid or expired reset token';
+          } else if (state.errorCode == 'TOKEN_EXPIRED') {
+            errorMessage = 'Reset token has expired. Please request a new one.';
+          }
 
-              // Description
-              CustomText(
-                Tr.of(context)!.createNewPasswordDescription,
-                fontSize: 14,
-                color: Colors.white70,
-                maxLines: 2,
-                height: 1.5,
-              ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is ResetPasswordInProgress;
 
-              const SizedBox(height: 8),
-
-              // Email display
-              CustomText(
-                'Email: ${widget.email}',
-                fontSize: 13,
-                color: Colors.white60,
-              ),
-
-              const SizedBox(height: 40),
-
-              // New Password Field
-              CustomTextField(
-                controller: _passwordController,
-                label: Tr.of(context)!.newPassword,
-                hintText: '••••••',
-                isPassword: true,
-                colorType: TextFieldColorType.dark,
-                height: 62,
-                textColor: Colors.white,
-                borderColor: Colors.white30,
-              ),
-
-              const SizedBox(height: 20),
-
-              // Confirm Password Field
-              CustomTextField(
-                controller: _confirmPasswordController,
-                label: Tr.of(context)!.confirmNewPassword,
-                hintText: '••••••',
-                isPassword: true,
-                colorType: TextFieldColorType.dark,
-                height: 62,
-                textColor: Colors.white,
-                borderColor: Colors.white30,
-              ),
-
-              const SizedBox(height: 12),
-
-              // Password requirements
-              const Padding(
-                padding: EdgeInsets.only(left: 4.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      'Password must:',
-                      fontSize: 12,
-                      color: Colors.white60,
-                    ),
-                    SizedBox(height: 4),
-                    CustomText(
-                      '• Be at least 6 characters',
-                      fontSize: 12,
-                      color: Colors.white60,
-                    ),
-                    CustomText(
-                      '• Match the confirmation',
-                      fontSize: 12,
-                      color: Colors.white60,
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Reset Password Button
-              CustomButton(
-                label: _isLoading
-                    ? Tr.of(context)!.resettingPassword
-                    : Tr.of(context)!.resetPassword,
-                onPressed: _isLoading ? () {} : _handleResetPassword,
-                colorType: ButtonColorType.territory,
-                height: 56,
-                borderRadius: 10,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                textColor: Colors.white,
-              ),
-
-              const SizedBox(height: 24),
-
-              // Back to Login
-              Center(
-                child: GestureDetector(
-                  onTap: () =>
-                      Navigator.of(context).popUntil((route) => route.isFirst),
-                  child: CustomText(
-                    Tr.of(context)!.backToLogin,
-                    fontSize: 16,
-                    color: const Color(0xFFE50914),
-                    showUnderline: true,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 40),
-            ],
+        return Scaffold(
+          backgroundColor: context.color.primaryColor,
+          appBar: AppBar(
+            backgroundColor: context.color.primaryColor,
+            elevation: 0,
+            leading: IconButton(
+              icon:
+                  Icon(Icons.arrow_back, color: context.color.textDefaultColor),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: CustomText(
+              Tr.of(context)!.resetPassword,
+              color: context.color.textDefaultColor,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+            centerTitle: true,
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
+
+                  // Title
+                  CustomText(
+                    Tr.of(context)!.createNewPassword,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: context.color.textDefaultColor,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Description
+                  CustomText(
+                    Tr.of(context)!.createNewPasswordDescription,
+                    fontSize: 14,
+                    color: context.color.descriptionColor,
+                    maxLines: 2,
+                    height: 1.5,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Email display
+                  CustomText(
+                    'Email: ${widget.email}',
+                    fontSize: 13,
+                    color: context.color.descriptionColor,
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // New Password Field
+                  CustomTextField(
+                    controller: _passwordController,
+                    label: Tr.of(context)!.newPassword,
+                    hintText: '••••••',
+                    isPassword: true,
+                    colorType: TextFieldColorType.dark,
+                    height: 62,
+                    textColor: context.color.textDefaultColor,
+                    borderColor:
+                        context.color.borderColor.withValues(alpha: 0.3),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Confirm Password Field
+                  CustomTextField(
+                    controller: _confirmPasswordController,
+                    label: Tr.of(context)!.confirmNewPassword,
+                    hintText: '••••••',
+                    isPassword: true,
+                    colorType: TextFieldColorType.dark,
+                    height: 62,
+                    textColor: context.color.textDefaultColor,
+                    borderColor:
+                        context.color.borderColor.withValues(alpha: 0.3),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Password requirements
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          'Password must:',
+                          fontSize: 12,
+                          color: context.color.descriptionColor,
+                        ),
+                        const SizedBox(height: 4),
+                        CustomText(
+                          '• Be at least 6 characters',
+                          fontSize: 12,
+                          color: context.color.descriptionColor,
+                        ),
+                        CustomText(
+                          '• Match the confirmation',
+                          fontSize: 12,
+                          color: context.color.descriptionColor,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Reset Password Button
+                  CustomButton(
+                    label: isLoading
+                        ? Tr.of(context)!.resettingPassword
+                        : Tr.of(context)!.resetPassword,
+                    onPressed: isLoading ? () {} : _handleResetPassword,
+                    colorType: ButtonColorType.territory,
+                    height: 56,
+                    borderRadius: 10,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    textColor: const Color(0xFFF2F2F2),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Back to Login
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context)
+                          .popUntil((route) => route.isFirst),
+                      child: CustomText(
+                        Tr.of(context)!.backToLogin,
+                        fontSize: 16,
+                        color: context.color.territoryColor,
+                        showUnderline: true,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

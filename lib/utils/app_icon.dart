@@ -43,6 +43,7 @@ class AppIcons {
   static String note = _svgPath("note");
   static String seat = _svgPath("seat");
   static String video = _svgPath("video");
+  static String biometricFingerprint = _svgPath("biometric-authentication");
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";

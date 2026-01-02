@@ -2,8 +2,10 @@ import 'package:Celes/app/app_routes.dart';
 import 'package:Celes/data/repositories/auth_repository.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
+import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/api_exception.dart';
 import 'package:Celes/utils/custom_text.dart';
+import 'package:Celes/utils/extensions/lib/build_context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -228,12 +230,12 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: context.color.primaryColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: context.color.primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: context.color.textDefaultColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -251,7 +253,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
                 Tr.of(context)!.confirmOtpCode,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: context.color.textDefaultColor,
               ),
 
               const SizedBox(height: 16),
@@ -260,7 +262,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
               CustomText(
                 Tr.of(context)!.otpDescription(widget.email),
                 fontSize: 13,
-                color: Colors.white70,
+                color: context.color.descriptionColor,
                 maxLines: 3,
               ),
 
@@ -285,7 +287,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
                     child: CustomText(
                       '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
                       fontSize: 16,
-                      color: Colors.white,
+                      color: context.color.textDefaultColor,
                       fontWeight: FontWeight.w500,
                     ),
                   );
@@ -312,8 +314,8 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
                                     .resendOtpIn(_timerAnimation.value),
                         fontSize: 14,
                         color: canResend && !_isResending
-                            ? const Color(0xFFE50914)
-                            : Colors.grey,
+                            ? context.color.territoryColor
+                            : context.color.descriptionColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -334,7 +336,7 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
                 borderRadius: 28,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                textColor: Colors.white,
+                textColor: const Color(0xFFF2F2F2),
               ),
 
               const SizedBox(height: 40),
@@ -354,8 +356,8 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
-              ? const Color(0xFFE50914)
-              : Colors.grey.withValues(alpha: 0.5),
+              ? context.color.territoryColor
+              : context.color.borderColor.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
@@ -366,10 +368,10 @@ class _OtpConfirmScreenState extends State<OtpConfirmScreen>
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           maxLength: 1,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: context.color.textDefaultColor,
           ),
           decoration: const InputDecoration(
             border: InputBorder.none,

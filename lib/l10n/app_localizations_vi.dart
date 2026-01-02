@@ -127,7 +127,7 @@ class TrVi extends Tr {
 
   @override
   String get termsAndPrivacy =>
-      'Bằng việc đăng nhập hoặc đăng ký, bạn đồng ý với Điều khoản dịch vụ\nvà Chính sách bảo mật của chúng tôi';
+      'Bằng việc đăng nhập hoặc đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi';
 
   @override
   String get forgotPasswordTitle => 'Quên mật khẩu';

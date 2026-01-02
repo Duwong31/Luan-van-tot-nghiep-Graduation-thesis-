@@ -15,6 +15,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:Celes/data/models/movie_model.dart';
 import 'package:Celes/data/repositories/movie_repository.dart';
 import 'package:Celes/ui/components/movie_card.dart';
+import 'package:Celes/ui/screens/movie/movie_list_screen.dart';
+import 'package:Celes/ui/screens/news/news_list_screen.dart';
 import 'dart:async';
 
 const double sidePadding = 10;
@@ -206,7 +208,17 @@ class HomeScreenState extends State<HomeScreen>
         else ...[
           MainSlider(
             movies: homeData.nowShowing,
-            onSeeAllTap: () {},
+            onSeeAllTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieListScreen(
+                    title: Tr.of(context)!.nowShowing,
+                    movies: homeData.nowShowing,
+                  ),
+                ),
+              );
+            },
           ),
 
           // Coming Soon section
@@ -215,7 +227,17 @@ class HomeScreenState extends State<HomeScreen>
             CategoryHome(
               title: 'Coming Soon',
               movies: homeData.comingSoon,
-              onSeeAllTap: () {},
+              onSeeAllTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MovieListScreen(
+                      title: Tr.of(context)!.comingSoon,
+                      movies: homeData.comingSoon,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
 
@@ -226,19 +248,33 @@ class HomeScreenState extends State<HomeScreen>
               title: 'Upcoming',
               movies: homeData.upcoming,
               onSeeAllTap: () {
-                // Navigate to all upcoming movies
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MovieListScreen(
+                      title: Tr.of(context)!.upcoming,
+                      movies: homeData.upcoming,
+                    ),
+                  ),
+                );
               },
             ),
           ],
 
           // Movie News section
           if (homeData.news.isNotEmpty) ...[
-            const SizedBox(height: 32),
             NewsHomeCard(
               title: 'Movie News',
               news: homeData.news,
               onSeeAllTap: () {
-                // Navigate to all news
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewsListScreen(
+                      newsList: homeData.news,
+                    ),
+                  ),
+                );
               },
             ),
           ],
