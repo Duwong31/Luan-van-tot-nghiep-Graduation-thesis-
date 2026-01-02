@@ -256,5 +256,6 @@
   "noFavorites": "No favorite movies yet",
   "addToFavoritesSuccess": "Added to favorites",
   "removeFromFavoritesSuccess": "Removed from favorites",
-  "favoriteActionFailed": "Action failed. Please try again."
+  "favoriteActionFailed": "Action failed. Please try again.",
+  "noMoviesAvailable": "No movies available"
 }

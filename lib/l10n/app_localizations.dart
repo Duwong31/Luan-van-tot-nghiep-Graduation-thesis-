@@ -1266,6 +1266,12 @@ abstract class Tr {
   /// In en, this message translates to:
   /// **'Action failed. Please try again.'**
   String get favoriteActionFailed;
+
+  /// No description provided for @noMoviesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No movies available'**
+  String get noMoviesAvailable;
 }
 
 class _TrDelegate extends LocalizationsDelegate<Tr> {

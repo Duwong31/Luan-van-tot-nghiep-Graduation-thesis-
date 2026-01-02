@@ -217,5 +217,6 @@
   "noFavorites": "Chưa có phim yêu thích",
   "addToFavoritesSuccess": "Đã thêm vào yêu thích",
   "removeFromFavoritesSuccess": "Đã xóa khỏi yêu thích",
-  "favoriteActionFailed": "Thao tác thất bại. Vui lòng thử lại."
+  "favoriteActionFailed": "Thao tác thất bại. Vui lòng thử lại.",
+  "noMoviesAvailable": "Không có phim nào"
 }

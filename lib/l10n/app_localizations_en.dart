@@ -607,4 +607,7 @@ class TrEn extends Tr {
 
   @override
   String get favoriteActionFailed => 'Action failed. Please try again.';
+
+  @override
+  String get noMoviesAvailable => 'No movies available';
 }

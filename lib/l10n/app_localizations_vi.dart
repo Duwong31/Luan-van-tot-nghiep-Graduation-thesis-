@@ -607,4 +607,7 @@ class TrVi extends Tr {
 
   @override
   String get favoriteActionFailed => 'Thao tác thất bại. Vui lòng thử lại.';
+
+  @override
+  String get noMoviesAvailable => 'Không có phim nào';
 }

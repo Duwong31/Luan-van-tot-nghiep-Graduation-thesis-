@@ -13,7 +13,7 @@ class MovieCard extends StatelessWidget {
   final String? genres;
   final String? releaseDate;
   final double? width;
-  final double aspectRatio; // 👈 thêm tỷ lệ poster (mặc định 2:3)
+  final double aspectRatio;
   final VoidCallback? onTap;
 
   const MovieCard({
@@ -38,23 +38,16 @@ class MovieCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: width, 
+        width: width,
         child: Column(
-          mainAxisSize: MainAxisSize.min, 
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: aspectRatio, // 2:3 
+              aspectRatio: aspectRatio, // 2:3
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -93,7 +86,7 @@ class MovieCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: context.color.territoryColor,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
 
