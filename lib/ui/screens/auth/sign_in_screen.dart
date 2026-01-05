@@ -12,6 +12,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:Celes/utils/biometric_utils.dart';
+import 'package:Celes/data/repositories/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool? isDeleteAccount;
@@ -43,7 +45,6 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _rememberMe = false;
 
   @override
   void initState() {
@@ -118,6 +119,49 @@ class LoginScreenState extends State<LoginScreen> {
     }
     // Subscribe to topic
     await FirebaseMessaging.instance.subscribeToTopic('celes_all_users');
+  }
+
+  Future<void> _onBiometricLogin() async {
+    try {
+      // Check if biometric is enabled
+      final isEnabled = await BiometricUtils.isBiometricEnabled();
+      if (!isEnabled) {
+        _showError(
+            'Biometric login is not enabled. Please enable it in Profile settings.');
+        return;
+      }
+
+      // Check if device supports biometrics
+      final canCheck = await BiometricUtils.canCheckBiometrics();
+      if (!canCheck) {
+        _showError('Device does not support biometric authentication');
+        return;
+      }
+
+      // Authenticate and login
+      final authRepo = AuthRepository();
+      final response = await authRepo.loginWithBiometric();
+
+      if (response.success) {
+        if (!mounted) return;
+
+        _sendFcmTokenToServer();
+
+        // Navigate to main screen
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.main,
+          (route) => false,
+          arguments: {
+            'from': 'biometric_login',
+            'slug': null,
+          },
+        );
+      } else {
+        _showError(response.message);
+      }
+    } catch (e) {
+      _showError(e.toString().replaceAll('ApiException: ', ''));
+    }
   }
 
   // void _showSnackBar(String message) {
@@ -330,7 +374,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: isLoading ? null : _onBiometricLogin,
                             icon: SvgPicture.asset(
                               AppIcons.biometricFingerprint,
                               width: 32,

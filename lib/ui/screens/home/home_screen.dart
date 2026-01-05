@@ -51,7 +51,9 @@ class HomeScreenState extends State<HomeScreen>
     super.initState();
     notificationPermissionChecker();
     context.read<HomeCubit>().fetchHomeData();
-    context.read<NotificationCubit>().fetchNotifications();
+    if (HiveUtils.isUserAuthenticated()) {
+      context.read<NotificationCubit>().fetchNotifications();
+    }
   }
 
   @override
@@ -122,15 +124,17 @@ class HomeScreenState extends State<HomeScreen>
                     }
 
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const NotificationListScreen(),
-                          ),
-                        );
-                      },
+                      onTap: HiveUtils.isUserAuthenticated()
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationListScreen(),
+                                ),
+                              );
+                            }
+                          : null, // Disable tap for guest users
                       child: SizedBox(
                         width: 32,
                         height: 32,

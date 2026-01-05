@@ -14,6 +14,8 @@ import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/ui_utils.dart';
 import 'package:Celes/data/models/user_model.dart';
+import 'package:Celes/utils/biometric_utils.dart';
+import 'package:Celes/utils/hive_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +39,18 @@ class _ProfileScreenState extends State<ProfileScreen>
   void initState() {
     super.initState();
     _loadProfile();
+    _loadBiometricState();
   }
 
   void _loadProfile() {
     final profileCubit = context.read<ProfileCubit>();
     profileCubit.loadUserFromCache();
     profileCubit.fetchProfile();
+  }
+
+  Future<void> _loadBiometricState() async {
+    final isEnabled = await BiometricUtils.isBiometricEnabled();
+    isFaceIDEnabled.value = isEnabled;
   }
 
   @override
@@ -559,8 +567,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                     value: value,
                     activeTrackColor:
                         const Color(0xFFFDB022), // Yellow/Gold color
-                    onChanged: (newValue) {
-                      isFaceIDEnabled.value = newValue;
+                    onChanged: (newValue) async {
+                      await _toggleBiometric(newValue);
                     },
                   ),
                 );
@@ -570,6 +578,84 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _toggleBiometric(bool enable) async {
+    try {
+      if (enable) {
+        // Check if device supports biometrics
+        final canCheck = await BiometricUtils.canCheckBiometrics();
+        if (!canCheck) {
+          _showError('Device does not support biometric authentication');
+          return;
+        }
+
+        final isSupported = await BiometricUtils.isDeviceSupported();
+        if (!isSupported) {
+          _showError(
+              'No biometric enrolled. Please set up fingerprint or face ID in device settings.');
+          return;
+        }
+
+        // Get available biometric types for user-friendly message
+        final biometricTypes = await BiometricUtils.getAvailableBiometrics();
+        final biometricName = BiometricUtils.getBiometricTypeName(biometricTypes);
+
+        // Authenticate first
+        final authenticated = await BiometricUtils.authenticate(
+          reason: 'Authenticate to enable $biometricName login',
+        );
+
+        if (!authenticated) {
+          _showError('Authentication failed or was cancelled');
+          return;
+        }
+
+        // Get refresh token from Hive
+        final refreshToken = await _getRefreshTokenFromHive();
+        if (refreshToken == null) {
+          _showError('No active session found. Please login again.');
+          return;
+        }
+
+        // Enable biometric and save refresh token securely
+        await BiometricUtils.enableBiometricLogin(refreshToken);
+        isFaceIDEnabled.value = true;
+        
+        if (mounted) {
+          HelperUtils.showSnackBarMessage(
+            context,
+            '$biometricName login enabled successfully',
+          );
+        }
+      } else {
+        // Disable biometric
+        await BiometricUtils.disableBiometricLogin();
+        isFaceIDEnabled.value = false;
+        
+        if (mounted) {
+          HelperUtils.showSnackBarMessage(
+            context,
+            'Biometric login disabled',
+          );
+        }
+      }
+    } catch (e) {
+      _showError(e.toString().replaceAll('Exception: ', ''));
+      // Revert the switch state
+      isFaceIDEnabled.value = !enable;
+    }
+  }
+
+  Future<String?> _getRefreshTokenFromHive() async {
+    // Use HiveUtils to get refresh token
+    return HiveUtils.getRefreshToken();
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      HelperUtils.showSnackBarMessage(context, message);
+    }
   }
 
   Widget _buildThemeSwitchItem({

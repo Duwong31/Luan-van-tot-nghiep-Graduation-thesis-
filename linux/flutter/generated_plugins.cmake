@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications
   device_region
   file_selector_linux
+  flutter_secure_storage_linux
   record_linux
   url_launcher_linux
 )

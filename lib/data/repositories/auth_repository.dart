@@ -2,6 +2,7 @@ import 'package:Celes/data/models/api_response.dart';
 import 'package:Celes/data/models/user_model.dart';
 import 'package:Celes/utils/api.dart';
 import 'package:Celes/utils/hive_utils.dart';
+import 'package:Celes/utils/biometric_utils.dart';
 
 /// Repository xử lý các API liên quan đến Authentication
 /// Đây là tầng trung gian giữa UI và Data Source
@@ -121,6 +122,61 @@ class AuthRepository {
     return apiResponse;
   }
 
+  /// Login using biometric authentication (Fingerprint/Face ID)
+  Future<ApiResponse<Map<String, dynamic>>> loginWithBiometric() async {
+    try {
+      // Check if biometric is enabled
+      final isEnabled = await BiometricUtils.isBiometricEnabled();
+      if (!isEnabled) {
+        throw ApiException(
+            'Biometric login is not enabled. Please enable it in settings.');
+      }
+
+      // Check if device supports biometrics
+      final canCheck = await BiometricUtils.canCheckBiometrics();
+      if (!canCheck) {
+        throw ApiException('Device does not support biometric authentication');
+      }
+
+      // Authenticate with biometrics
+      final authenticated = await BiometricUtils.authenticate(
+        reason: 'Authenticate to login to your account',
+      );
+
+      if (!authenticated) {
+        throw ApiException('Biometric authentication failed or was cancelled');
+      }
+
+      // Get refresh token from secure storage
+      final refreshTokenValue = await BiometricUtils.getSecureRefreshToken();
+      if (refreshTokenValue == null) {
+        throw ApiException(
+            'No biometric login data found. Please login normally and enable biometric in settings.');
+      }
+
+      // Call refresh API to get new access token
+      final response = await refreshToken(refreshToken: refreshTokenValue);
+
+      if (response.success && response.data != null) {
+        // Load and save user profile
+        try {
+          await getProfile();
+        } catch (e) {
+          print('Failed to load profile after biometric login: $e');
+        }
+
+        await HiveUtils.setUserIsAuthenticated(true);
+      }
+
+      return response;
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiException(e.toString());
+    }
+  }
+
   /// Quên mật khẩu
   Future<ApiResponse<dynamic>> forgotPassword({
     required String email,
@@ -209,9 +265,11 @@ class AuthRepository {
       final expiresIn = apiResponse.data!['expires_in'] as int?;
 
       if (newAccessToken != null) {
+        final tokenToSave = newRefreshToken ?? refreshToken;
+        
         await _saveTokens(
           accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
+          refreshToken: tokenToSave,
           expiresIn: expiresIn,
         );
       }
@@ -230,6 +288,10 @@ class AuthRepository {
     // Xóa tất cả dữ liệu đã lưu
     await _clearTokens();
     await HiveUtils.clear();
+    
+    // Note: Don't clear biometric data on logout
+    // User should be able to login with biometric after logout
+    // Only clear biometric when user explicitly disables it in settings
 
     return ApiResponse.fromJson(response, (data) => data);
   }
@@ -363,6 +425,9 @@ class AuthRepository {
 
     if (refreshToken != null) {
       await HiveUtils.setRefreshToken(refreshToken);
+      
+      // Also update biometric storage if biometric is enabled
+      await BiometricUtils.updateSecureRefreshToken(refreshToken);
     }
 
     if (expiresIn != null) {

@@ -80,6 +80,8 @@
 		<string>We need access to recognize speech for audio message in chat functionality.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app requires access to the photo library because we upload profile picture and ads images</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>We use Face ID to provide secure and convenient login to your account</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIBackgroundModes</key>
