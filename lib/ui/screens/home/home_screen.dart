@@ -1,4 +1,5 @@
 import 'package:Celes/data/cubits/home/home_cubit.dart';
+import 'package:Celes/data/cubits/notification/notification_cubit.dart';
 import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/screens/home/widgets/category_home.dart';
 import 'package:Celes/ui/screens/home/widgets/home_search.dart';
@@ -17,6 +18,7 @@ import 'package:Celes/data/repositories/movie_repository.dart';
 import 'package:Celes/ui/components/movie_card.dart';
 import 'package:Celes/ui/screens/movie/movie_list_screen.dart';
 import 'package:Celes/ui/screens/news/news_list_screen.dart';
+import 'package:Celes/ui/screens/notification/notification_list_screen.dart';
 import 'dart:async';
 
 const double sidePadding = 10;
@@ -49,6 +51,7 @@ class HomeScreenState extends State<HomeScreen>
     super.initState();
     notificationPermissionChecker();
     context.read<HomeCubit>().fetchHomeData();
+    context.read<NotificationCubit>().fetchNotifications();
   }
 
   @override
@@ -110,15 +113,72 @@ class HomeScreenState extends State<HomeScreen>
                     ],
                   ),
                 ),
-                // Right side - Profile/Notification icon
-                SizedBox(
-                  width: 32,
-                  height: 32,
-                  child: UiUtils.getSvg(
-                    AppIcons.notification_dark,
-                    fit: BoxFit.none,
-                    color: context.color.iconColor,
-                  ),
+                // Right side - Notification icon with badge
+                BlocBuilder<NotificationCubit, NotificationState>(
+                  builder: (context, notificationState) {
+                    int unreadCount = 0;
+                    if (notificationState is NotificationLoaded) {
+                      unreadCount = notificationState.unreadCount;
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const NotificationListScreen(),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            // Bell icon
+                            UiUtils.getSvg(
+                              AppIcons.notification_dark,
+                              fit: BoxFit.none,
+                              color: context.color.iconColor,
+                            ),
+                            // Badge
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: -4,
+                                top: -4,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: context.color.territoryColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: context.color.secondaryColor,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      unreadCount > 99 ? '99+' : '$unreadCount',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -225,7 +285,7 @@ class HomeScreenState extends State<HomeScreen>
           if (homeData.comingSoon.isNotEmpty) ...[
             const SizedBox(height: 32),
             CategoryHome(
-              title: 'Coming Soon',
+              title: Tr.of(context)!.comingSoon,
               movies: homeData.comingSoon,
               onSeeAllTap: () {
                 Navigator.push(
@@ -245,7 +305,7 @@ class HomeScreenState extends State<HomeScreen>
           if (homeData.upcoming.isNotEmpty) ...[
             const SizedBox(height: 32),
             CategoryHome(
-              title: 'Upcoming',
+              title: Tr.of(context)!.upcoming,
               movies: homeData.upcoming,
               onSeeAllTap: () {
                 Navigator.push(
@@ -264,7 +324,7 @@ class HomeScreenState extends State<HomeScreen>
           // Movie News section
           if (homeData.news.isNotEmpty) ...[
             NewsHomeCard(
-              title: 'Movie News',
+              title: Tr.of(context)!.movieNews,
               news: homeData.news,
               onSeeAllTap: () {
                 Navigator.push(

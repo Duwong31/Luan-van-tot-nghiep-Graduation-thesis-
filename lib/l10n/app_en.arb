@@ -257,5 +257,6 @@
   "addToFavoritesSuccess": "Added to favorites",
   "removeFromFavoritesSuccess": "Removed from favorites",
   "favoriteActionFailed": "Action failed. Please try again.",
-  "noMoviesAvailable": "No movies available"
+  "noMoviesAvailable": "No movies available",
+  "seeAll": "See all"
 }

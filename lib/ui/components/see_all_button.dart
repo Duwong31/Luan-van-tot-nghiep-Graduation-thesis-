@@ -1,9 +1,10 @@
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
 class SeeAllButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback? onTap;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -11,7 +12,7 @@ class SeeAllButton extends StatelessWidget {
 
   const SeeAllButton({
     super.key,
-    this.text = 'See all',
+    this.text,
     this.onTap,
     this.fontSize = 14,
     this.fontWeight = FontWeight.w500,
@@ -26,7 +27,7 @@ class SeeAllButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            text,
+            text ?? Tr.of(context)!.seeAll,
             style: TextStyle(
               fontSize: fontSize,
               color: context.color.territoryColor,

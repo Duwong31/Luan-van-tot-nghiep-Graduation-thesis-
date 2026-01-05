@@ -610,4 +610,7 @@ class TrEn extends Tr {
 
   @override
   String get noMoviesAvailable => 'No movies available';
+
+  @override
+  String get seeAll => 'See all';
 }

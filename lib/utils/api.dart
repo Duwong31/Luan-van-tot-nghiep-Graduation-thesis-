@@ -85,6 +85,12 @@ class Api {
   static String favoriteRemove(int movieId) => 'favorites/$movieId';
   static const String favoritesList = 'favorites';
 
+  // Notification APIs
+  static const String notificationsList = 'notifications';
+
+  // Voucher APIs
+  static const String vouchersList = 'vouchers';
+
   /// Create configured Dio instance với interceptors
   static Dio _getDio() {
     final dio = Dio();

@@ -175,8 +175,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: CustomText(
                         Tr.of(context)!.backToLogin,
                         fontSize: 16,
-                        color: context.color.territoryColor,
-                        showUnderline: true,
+                        color: context.color.textDefaultColor,
+                        showUnderline: false,
                       ),
                     ),
                   ),

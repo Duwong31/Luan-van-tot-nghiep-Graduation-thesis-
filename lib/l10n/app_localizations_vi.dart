@@ -610,4 +610,7 @@ class TrVi extends Tr {
 
   @override
   String get noMoviesAvailable => 'Không có phim nào';
+
+  @override
+  String get seeAll => 'Xem tất cả';
 }

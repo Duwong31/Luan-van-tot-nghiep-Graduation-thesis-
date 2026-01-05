@@ -251,7 +251,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: CustomText(
                         Tr.of(context)!.backToLogin,
                         fontSize: 16,
-                        color: context.color.territoryColor,
+                        color: context.color.textDefaultColor,
                         showUnderline: true,
                       ),
                     ),

@@ -323,7 +323,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
                                   .resendOtpIn(_timerAnimation.value),
                       fontSize: 14,
                       color: canResend && !_isResending
-                          ? context.color.territoryColor
+                          ? context.color.textDefaultColor
                           : context.color.descriptionColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -364,8 +364,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen>
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
-              ? context.color.territoryColor
-              : context.color.borderColor.withValues(alpha: 0.5),
+              ? Color(0xffFF1E00)
+              : Colors.grey,
           width: 1.5,
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:Celes/data/models/movie_model.dart';
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/see_all_button.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
@@ -40,7 +41,7 @@ class _MainSliderState extends State<MainSlider> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Now Playing',
+                Tr.of(context)!.nowShowing,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,

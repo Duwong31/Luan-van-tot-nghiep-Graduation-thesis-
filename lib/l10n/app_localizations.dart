@@ -1272,6 +1272,12 @@ abstract class Tr {
   /// In en, this message translates to:
   /// **'No movies available'**
   String get noMoviesAvailable;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
 }
 
 class _TrDelegate extends LocalizationsDelegate<Tr> {

@@ -14,6 +14,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:async';
 import 'package:Celes/ui/screens/ticket/my_ticket_screen.dart';
+import 'package:Celes/data/models/voucher_model.dart';
+import 'package:Celes/ui/screens/payment/widgets/voucher_bottom_sheet.dart';
 
 /// Data class for payment screen
 class PaymentData {
@@ -265,6 +267,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
         );
   }
 
+  void _showVoucherBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => VoucherBottomSheet(
+          currentVoucherCode: _discountController.text.isNotEmpty
+              ? _discountController.text
+              : null,
+          onVoucherSelected: (Voucher voucher) {
+            // Set voucher code in text field
+            _discountController.text = voucher.code;
+
+            // Automatically apply the voucher
+            context.read<CalculatePriceCubit>().applyVoucher(voucher.code);
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildBody() {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -321,14 +348,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
               // Payment Options - Stripe & VNPay
               _buildPaymentOption(
                 'Stripe',
-                AppIcons.stripe,
+                AppIcons.stripePng,
                 'stripe',
                 subtitle: Tr.of(context)!.stripePaymentSubtitle,
               ),
               const SizedBox(height: 12),
               _buildPaymentOption(
                 'VNPay',
-                AppIcons.vnpay,
+                AppIcons.vnpayPng,
                 'vnpay',
                 subtitle: Tr.of(context)!.vnpayPaymentSubtitle,
               ),
@@ -533,19 +560,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: TextField(
-                            controller: _discountController,
-                            enabled: !hasVoucher,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: hasVoucher
-                                  ? _discountController.text
-                                  : Tr.of(context)!.discountCode,
-                              hintStyle: TextStyle(
-                                color:
-                                    hasVoucher ? Colors.green : Colors.white38,
+                          child: GestureDetector(
+                            onTap: !hasVoucher
+                                ? () => _showVoucherBottomSheet(context)
+                                : null,
+                            child: AbsorbPointer(
+                              child: TextField(
+                                controller: _discountController,
+                                enabled: !hasVoucher,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  hintText: hasVoucher
+                                      ? _discountController.text
+                                      : Tr.of(context)!.discountCode,
+                                  hintStyle: TextStyle(
+                                    color: hasVoucher
+                                        ? Colors.green
+                                        : Colors.white38,
+                                  ),
+                                  border: InputBorder.none,
+                                  suffixIcon: !hasVoucher
+                                      ? Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.white38,
+                                        )
+                                      : null,
+                                ),
                               ),
-                              border: InputBorder.none,
                             ),
                           ),
                         ),
@@ -740,11 +781,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Row(
           children: [
             // Payment Icon
-            Container(
+            SizedBox(
               width: 48,
               height: 32,
               child: Center(
-                child: _buildPaymentIcon(value),
+                child: _buildPaymentIcon(imagePath),
               ),
             ),
             const SizedBox(width: 12),
@@ -793,12 +834,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildPaymentIcon(String iconPath) {
-    return SvgPicture.asset(
-      iconPath,
-      width: 32,
-      height: 24,
-      fit: BoxFit.contain,
-    );
+    // Check if the file is PNG or SVG
+    if (iconPath.endsWith('.png')) {
+      return Image.asset(
+        iconPath,
+        width: 40,
+        height: 28,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return SvgPicture.asset(
+        iconPath,
+        width: 40,
+        height: 28,
+        fit: BoxFit.contain,
+      );
+    }
   }
 
   Widget _buildTimer() {
@@ -810,9 +861,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       child: Row(
         children: [
-          const Text(
-            'Hoàn tất thanh toán trong',
-            style: TextStyle(
+          Text(
+            Tr.of(context)!.completePaymentIn,
+            style: const TextStyle(
               color: Colors.white54,
               fontSize: 14,
             ),
@@ -860,9 +911,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       color: Colors.white,
                     ),
                   )
-                : const Text(
-                    'Thanh toán',
-                    style: TextStyle(
+                : Text(
+                    Tr.of(context)!.payNow,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

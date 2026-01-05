@@ -256,27 +256,27 @@ class LoginScreenState extends State<LoginScreen> {
                     // Remember Me and Forgot Password
                     Row(
                       children: [
-                        SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: Checkbox(
-                            value: _rememberMe,
-                            onChanged: (value) =>
-                                setState(() => _rememberMe = value ?? false),
-                            activeColor: context.color.territoryColor,
-                            checkColor: context.color.primaryColor,
-                            side: BorderSide(
-                              color: context.color.borderColor,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        CustomText(
-                          Tr.of(context)!.rememberMe,
-                          color: context.color.textDefaultColor,
-                          fontSize: 16,
-                        ),
+                        // SizedBox(
+                        //   width: 24,
+                        //   height: 24,
+                        //   child: Checkbox(
+                        //     value: _rememberMe,
+                        //     onChanged: (value) =>
+                        //         setState(() => _rememberMe = value ?? false),
+                        //     activeColor: context.color.territoryColor,
+                        //     checkColor: context.color.primaryColor,
+                        //     side: BorderSide(
+                        //       color: context.color.borderColor,
+                        //       width: 2,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 8),
+                        // CustomText(
+                        //   Tr.of(context)!.rememberMe,
+                        //   color: context.color.textDefaultColor,
+                        //   fontSize: 16,
+                        // ),
                         const Spacer(),
                         MaterialButton(
                           onPressed: _onForgotPassword,
@@ -314,34 +314,34 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
 
-                        // const SizedBox(width: 12),
+                        const SizedBox(width: 12),
 
                         // Biometric Fingerprint Button
-                        // Container(
-                        //   height: 56,
-                        //   width: 56,
-                        //   decoration: BoxDecoration(
-                        //     color: context.color.forthColor,
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     border: Border.all(
-                        //       color: context.color.borderColor
-                        //           .withValues(alpha: 0.3),
-                        //       width: 1,
-                        //     ),
-                        //   ),
-                        //   child: IconButton(
-                        //     onPressed: () {},
-                        //     icon: SvgPicture.asset(
-                        //       AppIcons.biometricFingerprint,
-                        //       width: 32,
-                        //       height: 32,
-                        //       colorFilter: ColorFilter.mode(
-                        //         context.color.textDefaultColor,
-                        //         BlendMode.srcIn,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
+                        Container(
+                          height: 56,
+                          width: 56,
+                          decoration: BoxDecoration(
+                            color: context.color.forthColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: context.color.borderColor
+                                  .withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: SvgPicture.asset(
+                              AppIcons.biometricFingerprint,
+                              width: 32,
+                              height: 32,
+                              colorFilter: ColorFilter.mode(
+                                context.color.textDefaultColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
 
@@ -434,7 +434,7 @@ class LoginScreenState extends State<LoginScreen> {
                               Tr.of(context)!.signUpNow,
                               fontSize: 16,
                               color: context.color.territoryColor,
-                              showUnderline: true,
+                              showUnderline: false,
                             ),
                           ),
                         ],

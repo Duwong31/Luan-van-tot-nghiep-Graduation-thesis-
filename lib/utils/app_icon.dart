@@ -37,6 +37,8 @@ class AppIcons {
   static String translate = _svgPath("translate");
   static String stripe = _svgPath("stripe");
   static String vnpay = _svgPath("vnpay");
+  static String stripePng = "assets/svg/stripe.png";
+  static String vnpayPng = "assets/svg/vnpay.png";
   static String clock = _svgPath("clock");
   static String location = _svgPath("location");
   static String moneySend = _svgPath("money-send");
@@ -44,6 +46,7 @@ class AppIcons {
   static String seat = _svgPath("seat");
   static String video = _svgPath("video");
   static String biometricFingerprint = _svgPath("biometric-authentication");
+
   ///
   static String _svgPath(String name) {
     return "$_basePath$name.svg";
