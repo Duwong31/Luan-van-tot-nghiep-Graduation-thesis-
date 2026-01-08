@@ -294,18 +294,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget _buildBody() {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: context.color.primaryColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: context.color.primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: context.color.textColorDark),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           Tr.of(context)!.payment,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: context.color.textColorDark,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -337,8 +337,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               // Payment Method Section
               Text(
                 Tr.of(context)!.paymentMethod,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.color.textColorDark,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -379,8 +379,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
+        color: context.color.secondaryColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: context.color.borderColor,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -418,13 +422,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.theaters, size: 14, color: Colors.white54),
+                    Icon(Icons.theaters, size: 14, color: context.color.textLightColor),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         data.genres,
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.color.textLightColor,
                           fontSize: 12,
                         ),
                         maxLines: 1,
@@ -436,14 +440,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.location_on,
-                        size: 14, color: Colors.white54),
+                    Icon(Icons.location_on,
+                        size: 14, color: context.color.textLightColor),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         '${data.cinemaName} - Rạp ${data.roomNumber}',
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: context.color.textLightColor,
                           fontSize: 12,
                         ),
                         maxLines: 1,
@@ -455,13 +459,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.access_time,
-                        size: 14, color: Colors.white54),
+                    Icon(Icons.access_time,
+                        size: 14, color: context.color.textLightColor),
                     const SizedBox(width: 4),
                     Text(
                       '${data.date} - ${data.showtime}',
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: context.color.textLightColor,
                         fontSize: 12,
                       ),
                     ),
@@ -479,8 +483,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Container(
       width: 60,
       height: 80,
-      color: Colors.grey[800],
-      child: const Icon(Icons.movie, color: Colors.white54),
+      color: context.color.forthColor,
+      child: Icon(Icons.movie, color: context.color.textLightColor),
     );
   }
 
@@ -506,16 +510,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white54,
+          style: TextStyle(
+            color: context.color.textLightColor,
             fontSize: 14,
           ),
         ),
         Flexible(
           child: Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.color.textColorDark,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -545,17 +549,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1C1C),
+                      color: context.color.secondaryColor,
                       borderRadius: BorderRadius.circular(8),
                       border: hasVoucher
                           ? Border.all(color: Colors.green, width: 1)
-                          : null,
+                          : Border.all(color: context.color.borderColor, width: 1),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           hasVoucher ? Icons.check_circle : Icons.discount,
-                          color: hasVoucher ? Colors.green : Colors.white54,
+                          color: hasVoucher ? Colors.green : context.color.textLightColor,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
@@ -568,7 +572,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               child: TextField(
                                 controller: _discountController,
                                 enabled: !hasVoucher,
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(color: context.color.textColorDark),
                                 decoration: InputDecoration(
                                   hintText: hasVoucher
                                       ? _discountController.text
@@ -576,13 +580,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   hintStyle: TextStyle(
                                     color: hasVoucher
                                         ? Colors.green
-                                        : Colors.white38,
+                                        : context.color.textLightColor,
                                   ),
                                   border: InputBorder.none,
                                   suffixIcon: !hasVoucher
                                       ? Icon(
                                           Icons.arrow_drop_down,
-                                          color: Colors.white38,
+                                          color: context.color.textLightColor,
                                         )
                                       : null,
                                 ),
@@ -685,15 +689,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
               children: [
                 Text(
                   Tr.of(context)!.originalPrice,
-                  style: const TextStyle(
-                    color: Colors.white54,
+                  style: TextStyle(
+                    color: context.color.textLightColor,
                     fontSize: 14,
                   ),
                 ),
                 Text(
                   '${originalPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} VND',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.color.textColorDark,
                     fontSize: 14,
                   ),
                 ),
@@ -724,7 +728,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ],
             const SizedBox(height: 12),
-            const Divider(color: Colors.white24, height: 1),
+            Divider(color: context.color.borderColor, height: 1),
             const SizedBox(height: 12),
             // Total
             Row(
@@ -732,8 +736,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               children: [
                 Text(
                   Tr.of(context)!.total,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.color.textColorDark,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -771,10 +775,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1C1C1C),
+          color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFFA726) : Colors.transparent,
+            color: isSelected ? const Color(0xFFFFA726) : context.color.borderColor,
             width: 2,
           ),
         ),
@@ -796,8 +800,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.color.textColorDark,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
@@ -806,8 +810,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: context.color.textLightColor,
                         fontSize: 12,
                       ),
                     ),
@@ -823,9 +827,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 size: 24,
               )
             else
-              const Icon(
+              Icon(
                 Icons.chevron_right,
-                color: Colors.white54,
+                color: context.color.textLightColor,
               ),
           ],
         ),
@@ -856,15 +860,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xff260D08),
+        color: context.color.territoryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: context.color.territoryColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
           Text(
             Tr.of(context)!.completePaymentIn,
-            style: const TextStyle(
-              color: Colors.white54,
+            style: TextStyle(
+              color: context.color.textLightColor,
               fontSize: 14,
             ),
           ),
@@ -896,7 +904,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: context.color.territoryColor,
-              disabledBackgroundColor: Colors.grey[800],
+              disabledBackgroundColor: context.color.deactivateColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
