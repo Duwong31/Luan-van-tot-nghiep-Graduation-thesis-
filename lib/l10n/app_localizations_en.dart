@@ -613,4 +613,73 @@ class TrEn extends Tr {
 
   @override
   String get seeAll => 'See all';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get noNotifications => 'No notifications';
+
+  @override
+  String get selectVoucher => 'Select Voucher';
+
+  @override
+  String get noVouchersAvailable => 'No vouchers available';
+
+  @override
+  String get code => 'Code';
+
+  @override
+  String daysAgo(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String dayAgo(int day) {
+    return '$day day ago';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '$hours hours ago';
+  }
+
+  @override
+  String hourAgo(int hour) {
+    return '$hour hour ago';
+  }
+
+  @override
+  String minutesAgo(int minutes) {
+    return '$minutes minutes ago';
+  }
+
+  @override
+  String minuteAgo(int minute) {
+    return '$minute minute ago';
+  }
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get sun => 'Sun';
 }

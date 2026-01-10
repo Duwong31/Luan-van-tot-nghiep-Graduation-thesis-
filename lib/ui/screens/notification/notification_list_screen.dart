@@ -33,7 +33,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Notifications', // TODO: Add to localization
+          Tr.of(context)!.notifications,
           style: TextStyle(
             color: context.color.textDefaultColor,
             fontSize: 18,
@@ -98,7 +98,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No notifications', // TODO: Add to localization
+                      Tr.of(context)!.noNotifications,
                       style: TextStyle(
                         color: context.color.textDefaultColor
                             .withValues(alpha: 0.7),
@@ -280,7 +280,7 @@ class _NotificationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _formatRelativeTime(notification.createdAt),
+                      _formatRelativeTime(context, notification.createdAt),
                       style: TextStyle(
                         color: context.color.textDefaultColor
                             .withValues(alpha: 0.5),
@@ -327,7 +327,7 @@ class _NotificationCard extends StatelessWidget {
     }
   }
 
-  String _formatRelativeTime(String createdAt) {
+  String _formatRelativeTime(BuildContext context, String createdAt) {
     try {
       final dateTime = DateTime.parse(createdAt);
       final now = DateTime.now();
@@ -335,14 +335,20 @@ class _NotificationCard extends StatelessWidget {
 
       if (difference.inDays > 7) {
         return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
-      } else if (difference.inDays > 0) {
-        return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
-      } else if (difference.inHours > 0) {
-        return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
-      } else if (difference.inMinutes > 0) {
-        return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+      } else if (difference.inDays > 1) {
+        return Tr.of(context)!.daysAgo(difference.inDays);
+      } else if (difference.inDays == 1) {
+        return Tr.of(context)!.dayAgo(1);
+      } else if (difference.inHours > 1) {
+        return Tr.of(context)!.hoursAgo(difference.inHours);
+      } else if (difference.inHours == 1) {
+        return Tr.of(context)!.hourAgo(1);
+      } else if (difference.inMinutes > 1) {
+        return Tr.of(context)!.minutesAgo(difference.inMinutes);
+      } else if (difference.inMinutes == 1) {
+        return Tr.of(context)!.minuteAgo(1);
       } else {
-        return 'Just now';
+        return Tr.of(context)!.justNow;
       }
     } catch (e) {
       return createdAt;

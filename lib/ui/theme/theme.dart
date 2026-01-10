@@ -31,12 +31,6 @@ const Color errorMessageColor =
 const Color successMessageColor = Color(0xff00B2CA);
 const Color warningMessageColor = Color(0xFFC2AF6F);
 
-//status button color
-const Color pendingButtonColor = Color(0xff0C5D9C);
-const Color soldOutButtonColor = Color(0xffFFBB33);
-const Color deactivateButtonColor = Color(0xffFE0000);
-const Color activateButtonColor = Color(0xFF02AD11);
-
 //Button text color
 const Color buttonTextColor = Colors.white;
 

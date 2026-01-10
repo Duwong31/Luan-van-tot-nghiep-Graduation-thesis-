@@ -613,4 +613,73 @@ class TrVi extends Tr {
 
   @override
   String get seeAll => 'Xem tất cả';
+
+  @override
+  String get notifications => 'Thông báo';
+
+  @override
+  String get noNotifications => 'Không có thông báo';
+
+  @override
+  String get selectVoucher => 'Chọn voucher';
+
+  @override
+  String get noVouchersAvailable => 'Không có voucher khả dụng';
+
+  @override
+  String get code => 'Mã';
+
+  @override
+  String daysAgo(int days) {
+    return '$days ngày trước';
+  }
+
+  @override
+  String dayAgo(int day) {
+    return '$day ngày trước';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '$hours giờ trước';
+  }
+
+  @override
+  String hourAgo(int hour) {
+    return '$hour giờ trước';
+  }
+
+  @override
+  String minutesAgo(int minutes) {
+    return '$minutes phút trước';
+  }
+
+  @override
+  String minuteAgo(int minute) {
+    return '$minute phút trước';
+  }
+
+  @override
+  String get justNow => 'Vừa xong';
+
+  @override
+  String get mon => 'T2';
+
+  @override
+  String get tue => 'T3';
+
+  @override
+  String get wed => 'T4';
+
+  @override
+  String get thu => 'T5';
+
+  @override
+  String get fri => 'T6';
+
+  @override
+  String get sat => 'T7';
+
+  @override
+  String get sun => 'CN';
 }

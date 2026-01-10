@@ -258,5 +258,66 @@
   "removeFromFavoritesSuccess": "Removed from favorites",
   "favoriteActionFailed": "Action failed. Please try again.",
   "noMoviesAvailable": "No movies available",
-  "seeAll": "See all"
+  "seeAll": "See all",
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "selectVoucher": "Select Voucher",
+  "noVouchersAvailable": "No vouchers available",
+  "code": "Code",
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dayAgo": "{day} day ago",
+  "@dayAgo": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "hourAgo": "{hour} hour ago",
+  "@hourAgo": {
+    "placeholders": {
+      "hour": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesAgo": "{minutes} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "minuteAgo": "{minute} minute ago",
+  "@minuteAgo": {
+    "placeholders": {
+      "minute": {
+        "type": "int"
+      }
+    }
+  },
+  "justNow": "Just now",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "sun": "Sun"
 }

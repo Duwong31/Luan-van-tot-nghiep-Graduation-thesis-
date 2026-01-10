@@ -56,7 +56,7 @@ class _VoucherBottomSheetState extends State<VoucherBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Select Voucher', // TODO: Add to localization
+                  Tr.of(context)!.selectVoucher,
                   style: TextStyle(
                     color: context.color.textDefaultColor,
                     fontSize: 18,
@@ -144,7 +144,7 @@ class _VoucherBottomSheetState extends State<VoucherBottomSheet> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No vouchers available', // TODO: Add to localization
+                              Tr.of(context)!.noVouchersAvailable,
                               style: TextStyle(
                                 color: context.color.textDefaultColor
                                     .withValues(alpha: 0.7),
@@ -252,7 +252,7 @@ class _VoucherCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Code: ${voucher.code}',
+                    '${Tr.of(context)!.code}: ${voucher.code}',
                     style: TextStyle(
                       color:
                           context.color.textDefaultColor.withValues(alpha: 0.7),

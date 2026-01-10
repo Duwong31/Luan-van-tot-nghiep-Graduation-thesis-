@@ -1,3 +1,4 @@
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,18 @@ class _DateSelectorState extends State<DateSelector> {
   late List<List<DateModel>> _weeks;
   late int _currentWeekIndex;
 
+  List<String> _getWeekdays(BuildContext context) {
+    return [
+      Tr.of(context)!.mon,
+      Tr.of(context)!.tue,
+      Tr.of(context)!.wed,
+      Tr.of(context)!.thu,
+      Tr.of(context)!.fri,
+      Tr.of(context)!.sat,
+      Tr.of(context)!.sun,
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
@@ -109,8 +122,8 @@ class _DateSelectorState extends State<DateSelector> {
 
   @override
   Widget build(BuildContext context) {
-    // Fixed weekday labels
-    final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    // Get localized weekday labels
+    final weekdays = _getWeekdays(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -248,7 +261,7 @@ class _DateCircle extends StatelessWidget {
           // "Today" label
           const SizedBox(height: 6),
           Text(
-            date.isToday ? 'Today' : '',
+            date.isToday ? Tr.of(context)!.today : '',
             style: TextStyle(
               color: context.color.territoryColor,
               fontSize: 11,
