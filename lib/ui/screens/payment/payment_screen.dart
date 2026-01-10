@@ -2,13 +2,11 @@ import 'package:Celes/data/cubits/booking/booking_cubit.dart';
 import 'package:Celes/data/cubits/booking/calculate_price_cubit.dart';
 import 'package:Celes/data/models/seat_model.dart';
 import 'package:Celes/l10n/app_localizations.dart';
-import 'package:Celes/settings.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/lib/build_context.dart';
 import 'package:Celes/utils/helper_utils.dart';
 import 'package:Celes/utils/payment/gateaways/payment_webview.dart';
-import 'package:Celes/utils/payment/gateaways/stripe_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -196,22 +194,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
         ),
       );
-    } else if (payment.isStripe && payment.hasClientSecret) {
-      // Open Stripe Payment Sheet (when API returns client_secret)
-      StripeService.payWithPaymentSheet(
-        context: context,
-        clientSecret: payment.clientSecret!,
-        merchantDisplayName: AppSettings.applicationName,
-        onPaymentResult: (success, message) {
-          if (success) {
-            _onPaymentSuccess(state.bookingCode);
-          } else {
-            _onPaymentFailed(state.bookingCode);
-          }
-        },
-      );
     } else {
-      // No valid payment URL
       HelperUtils.showSnackBarMessage(
         context,
         Tr.of(context)!.cannotOpenPayment,

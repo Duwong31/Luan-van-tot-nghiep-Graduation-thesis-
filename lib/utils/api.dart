@@ -91,6 +91,9 @@ class Api {
   // Voucher APIs
   static const String vouchersList = 'vouchers';
 
+  // News APIs
+  static String newsDetail(int newsId) => 'news/$newsId';
+
   /// Create configured Dio instance với interceptors
   static Dio _getDio() {
     final dio = Dio();

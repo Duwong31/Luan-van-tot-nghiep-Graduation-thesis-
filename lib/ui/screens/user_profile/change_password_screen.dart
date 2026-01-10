@@ -43,27 +43,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final confirmPassword = _confirmPasswordController.text.trim();
 
     if (currentPassword.isEmpty) {
-      _showError('Please enter your current password');
+      _showError(Tr.of(context)!.pleaseEnterCurrentPassword);
       return;
     }
 
     if (newPassword.isEmpty) {
-      _showError('Please enter your new password');
+      _showError(Tr.of(context)!.pleaseEnterNewPassword);
       return;
     }
 
     if (newPassword.length < 6) {
-      _showError('Password must be at least 6 characters');
+      _showError(Tr.of(context)!.passwordMinLength);
       return;
     }
 
     if (newPassword != confirmPassword) {
-      _showError('New password and confirmation do not match');
+      _showError(Tr.of(context)!.passwordsDoNotMatch);
       return;
     }
 
     if (currentPassword == newPassword) {
-      _showError('New password must be different from current password');
+      _showError(Tr.of(context)!.newPasswordMustBeDifferent);
       return;
     }
 
@@ -96,9 +96,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
         // Handle specific error codes
         if (e.code == 'INVALID_PASSWORD' || e.code == 'WRONG_PASSWORD') {
-          errorMessage = 'Current password is incorrect';
+          errorMessage = Tr.of(context)!.currentPasswordIncorrect;
         } else if (e.code == 'UNAUTHORIZED') {
-          errorMessage = 'Please login to change password';
+          errorMessage = Tr.of(context)!.pleaseLoginToChangePassword;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -135,20 +135,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'This field is required';
+      return Tr.of(context)!.fieldRequired;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return Tr.of(context)!.passwordMinLength;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return Tr.of(context)!.pleaseConfirmPassword;
     }
     if (value != _newPasswordController.text) {
-      return 'Passwords do not match';
+      return Tr.of(context)!.passwordMismatch;
     }
     return null;
   }
@@ -197,7 +197,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                 // Description
                 CustomText(
-                  'Enter your current password and choose a new password.',
+                  Tr.of(context)!.changePasswordDescription,
                   fontSize: 14,
                   color: context.color.textColorDark.withValues(alpha: 0.7),
                   maxLines: 3,
@@ -210,7 +210,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 CustomTextField(
                   controller: _currentPasswordController,
                   label: Tr.of(context)!.currentPassword,
-                  hintText: 'Enter your current password',
+                  hintText: Tr.of(context)!.enterCurrentPassword,
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
                   colorType: TextFieldColorType.dark,
@@ -220,7 +220,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       context.color.textColorDark.withValues(alpha: 0.3),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your current password';
+                      return Tr.of(context)!.pleaseEnterCurrentPassword;
                     }
                     return null;
                   },
@@ -232,7 +232,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 CustomTextField(
                   controller: _newPasswordController,
                   label: Tr.of(context)!.newPassword,
-                  hintText: 'Enter your new password',
+                  hintText: Tr.of(context)!.enterNewPassword,
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
                   colorType: TextFieldColorType.dark,
@@ -249,7 +249,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 CustomTextField(
                   controller: _confirmPasswordController,
                   label: Tr.of(context)!.confirmNewPassword,
-                  hintText: 'Confirm your new password',
+                  hintText: Tr.of(context)!.confirmNewPasswordHint,
                   isPassword: true,
                   keyboardType: TextInputType.visiblePassword,
                   colorType: TextFieldColorType.dark,

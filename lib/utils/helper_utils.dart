@@ -1,6 +1,7 @@
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 enum MessageType {
   success(successMessageColor),
@@ -59,6 +60,39 @@ class HelperUtils {
     var snackBarClosedReason = await snackBar.closed;
     if (SnackBarClosedReason.values.contains(snackBarClosedReason)) {
       onClose?.call();
+    }
+  }
+
+  /// Calculate distance between two coordinates
+  /// Returns formatted string (e.g., "850m" or "2.5km")
+  /// Returns null if any coordinate is null or calculation fails
+  static String? calculateDistance({
+    required double? userLat,
+    required double? userLng,
+    required double? targetLat,
+    required double? targetLng,
+  }) {
+    if (userLat == null || userLng == null || targetLat == null || targetLng == null) {
+      return null;
+    }
+
+    try {
+      double distanceInMeters = Geolocator.distanceBetween(
+        userLat,
+        userLng,
+        targetLat,
+        targetLng,
+      );
+
+      // Convert to km and format
+      if (distanceInMeters < 1000) {
+        return '${distanceInMeters.toInt()}m';
+      } else {
+        double distanceInKm = distanceInMeters / 1000;
+        return '${distanceInKm.toStringAsFixed(1)}km';
+      }
+    } catch (e) {
+      return null;
     }
   }
 }

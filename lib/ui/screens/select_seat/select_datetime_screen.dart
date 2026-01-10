@@ -6,9 +6,11 @@ import 'package:Celes/ui/screens/select_seat/widgets/date_selector.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/app_icon.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
+import 'package:Celes/utils/helper_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SelectDateTimeScreen extends StatefulWidget {
   final String movieTitle;
@@ -49,11 +51,13 @@ class SelectDateTimeScreen extends StatefulWidget {
 
 class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
   DateTime? _selectedDate;
+  Position? _currentPosition;
 
   @override
   void initState() {
     super.initState();
     _fetchShowtimes();
+    _getCurrentLocation();
   }
 
   void _fetchShowtimes() {
@@ -62,6 +66,35 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
           widget.movieId,
           date,
         );
+  }
+
+  /// Get current location of user
+  Future<void> _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.medium,
+      ),
+    );
+
+    if (mounted) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }
+  }
+
+  /// Calculate distance between user and cinema using HelperUtils
+  String? _calculateDistance(double? cinemaLat, double? cinemaLng) {
+    if (_currentPosition == null) {
+      return null;
+    }
+
+    return HelperUtils.calculateDistance(
+      userLat: _currentPosition!.latitude,
+      userLng: _currentPosition!.longitude,
+      targetLat: cinemaLat,
+      targetLng: cinemaLng,
+    );
   }
 
   @override
@@ -211,6 +244,12 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
     final firstShowtime = showtimes.first;
     final cinemaAddress =
         firstShowtime.cinemaAddress ?? firstShowtime.cinemaLocation ?? '';
+    
+    // Calculate distance if coordinates available
+    final distance = _calculateDistance(
+      firstShowtime.cinemaLat,
+      firstShowtime.cinemaLng,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -246,13 +285,47 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      cinemaName,
-                      style: TextStyle(
-                        color: context.color.textDefaultColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            cinemaName,
+                            style: TextStyle(
+                              color: context.color.textDefaultColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        if (distance != null) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  size: 12,
+                                  color: context.color.territoryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  distance,
+                                  style: TextStyle(
+                                    color: context.color.territoryColor,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     if (cinemaAddress.isNotEmpty) ...[
                       const SizedBox(height: 4),

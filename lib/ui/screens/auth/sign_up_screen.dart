@@ -3,7 +3,9 @@ import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/ui/components/custom_button.dart';
 import 'package:Celes/ui/components/custom_text_field.dart';
 import 'package:Celes/ui/screens/auth/otp/otp_confirm_screen.dart';
+import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/custom_text.dart';
+import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -109,18 +111,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final isLoading = state is RegisterInProgress;
 
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: context.color.primaryColor,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: context.color.primaryColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(
+                Icons.arrow_back,
+                color: context.color.textColorDark,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
             title: CustomText(
               Tr.of(context)!.signUpTitle,
-              color: Colors.white,
+              color: context.color.textColorDark,
               fontSize: 25,
               fontWeight: FontWeight.w600,
             ),
@@ -140,10 +145,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.name,
                     colorType: TextFieldColorType.dark,
                     height: 56,
-                    borderColor: Colors.white,
+                    borderColor: context.color.borderColor.withValues(alpha: 0.3),
                     borderRadius: 12,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.white,
+                    textColor: context.color.textDefaultColor,
                     inputFontSize: 15,
                   ),
                   const SizedBox(height: 20),
@@ -155,10 +159,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.emailAddress,
                     colorType: TextFieldColorType.dark,
                     height: 56,
-                    borderColor: Colors.white,
+                    borderColor: context.color.borderColor.withValues(alpha: 0.3),
                     borderRadius: 12,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.white,
+                    textColor: context.color.textDefaultColor,
                     inputFontSize: 15,
                   ),
                   const SizedBox(height: 20),
@@ -171,10 +174,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isPassword: true,
                     colorType: TextFieldColorType.dark,
                     height: 56,
-                    borderColor: Colors.white,
+                    borderColor: context.color.borderColor.withValues(alpha: 0.3),
                     borderRadius: 12,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.white,
+                    textColor: context.color.textDefaultColor,
                     inputFontSize: 15,
                   ),
                   const SizedBox(height: 20),
@@ -186,10 +188,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.phone,
                     colorType: TextFieldColorType.dark,
                     height: 56,
-                    borderColor: Colors.white,
+                    borderColor: context.color.borderColor.withValues(alpha: 0.3),
                     borderRadius: 12,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.white,
+                    textColor: context.color.textDefaultColor,
                     inputFontSize: 15,
                   ),
                   const SizedBox(height: 20),
@@ -201,10 +202,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.streetAddress,
                     colorType: TextFieldColorType.dark,
                     height: 56,
-                    borderColor: Colors.white,
+                    borderColor: context.color.borderColor.withValues(alpha: 0.3),
                     borderRadius: 12,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.white,
+                    textColor: context.color.textDefaultColor,
                     inputFontSize: 15,
                   ),
                   const SizedBox(height: 28),
@@ -305,7 +305,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomText(
                     Tr.of(context)!.termsAndPrivacy,
                     textAlign: TextAlign.center,
-                    color: Colors.grey,
+                    color: context.color.descriptionColor,
                     fontSize: 11,
                     height: 1.4,
                   ),

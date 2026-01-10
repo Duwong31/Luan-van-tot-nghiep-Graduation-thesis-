@@ -199,7 +199,20 @@ class TrEn extends Tr {
   String get changePasswordTitle => 'Change Password';
 
   @override
+  String get changePasswordDescription =>
+      'Enter your current password and choose a new password.';
+
+  @override
   String get currentPassword => 'Current Password';
+
+  @override
+  String get enterCurrentPassword => 'Enter your current password';
+
+  @override
+  String get enterNewPassword => 'Enter your new password';
+
+  @override
+  String get confirmNewPasswordHint => 'Confirm your new password';
 
   @override
   String get savingPassword => 'Saving...';
@@ -211,7 +224,69 @@ class TrEn extends Tr {
   String get passwordChangedSuccess => 'Password changed successfully!';
 
   @override
+  String get pleaseEnterCurrentPassword => 'Please enter your current password';
+
+  @override
+  String get pleaseEnterNewPassword => 'Please enter your new password';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get passwordsDoNotMatch =>
+      'New password and confirmation do not match';
+
+  @override
+  String get newPasswordMustBeDifferent =>
+      'New password must be different from current password';
+
+  @override
+  String get currentPasswordIncorrect => 'Current password is incorrect';
+
+  @override
+  String get pleaseLoginToChangePassword => 'Please login to change password';
+
+  @override
+  String get fieldRequired => 'This field is required';
+
+  @override
+  String get pleaseConfirmPassword => 'Please confirm your password';
+
+  @override
   String get editProfile => 'Edit Profile';
+
+  @override
+  String get selectImageSource => 'Select Image Source';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get enterFullName => 'Enter your full name';
+
+  @override
+  String get enterEmail => 'Enter your email';
+
+  @override
+  String get enterPhoneNumber => 'Enter your phone number';
+
+  @override
+  String get selectDateOfBirth => 'Select your date of birth';
+
+  @override
+  String get enterAddress => 'Enter your address';
+
+  @override
+  String get pleaseEnterName => 'Please enter your name';
+
+  @override
+  String get pleaseEnterPhoneNumber => 'Please enter your phone number';
+
+  @override
+  String get pleaseEnterAddress => 'Please enter your address';
 
   @override
   String get dateOfBirth => 'Date of Birth';
@@ -459,13 +534,7 @@ class TrEn extends Tr {
   String get pleaseEnterPassword => 'Please enter your password';
 
   @override
-  String get pleaseEnterName => 'Please enter your name';
-
-  @override
   String get pleaseEnterPhone => 'Please enter your phone number';
-
-  @override
-  String get pleaseEnterAddress => 'Please enter your address';
 
   @override
   String get pleaseEnterValidEmail => 'Please enter a valid email address';

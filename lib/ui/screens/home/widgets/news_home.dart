@@ -1,5 +1,6 @@
 import 'package:Celes/data/models/news_model.dart';
 import 'package:Celes/ui/components/see_all_button.dart';
+import 'package:Celes/ui/screens/news/news_detail_screen.dart';
 import 'package:Celes/ui/theme/theme.dart';
 import 'package:Celes/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -71,9 +72,15 @@ class NewsHomeCard extends StatelessWidget {
                 ),
                 child: GestureDetector(
                   onTap: () {
-                    // Navigate to news detail
-                    Navigator.pushNamed(context, '/newsDetail',
-                        arguments: newsItem);
+                    // Navigate to news detail with newsId
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NewsDetailScreen(
+                          newsId: newsItem.id,
+                        ),
+                      ),
+                    );
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -130,7 +130,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: context.color.secondaryColor,
         title: CustomText(
-          'Select Image Source',
+        Tr.of(context)!.selectImageSource,
           fontSize: 18,
           fontWeight: FontWeight.bold,
           color: context.color.textColorDark,
@@ -141,7 +141,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ListTile(
               leading: const Icon(Icons.photo_library),
               title: CustomText(
-                'Gallery',
+                Tr.of(context)!.gallery,
                 color: context.color.textColorDark,
               ),
               onTap: () {
@@ -152,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: CustomText(
-                'Camera',
+                Tr.of(context)!.camera,
                 color: context.color.textColorDark,
               ),
               onTap: () {
@@ -190,6 +190,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {
         _dateOfBirthController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
+    }
+  }
+
+  String _getGenderTranslation(String gender) {
+    switch (gender) {
+      case 'male':
+        return Tr.of(context)!.male;
+      case 'female':
+        return Tr.of(context)!.female;
+      case 'other':
+        return Tr.of(context)!.other;
+      default:
+        return gender;
     }
   }
 
@@ -379,7 +392,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       CustomTextField(
                         controller: _nameController,
                         label: Tr.of(context)!.fullName,
-                        hintText: 'Enter your full name',
+                        hintText: Tr.of(context)!.enterFullName,
                         keyboardType: TextInputType.name,
                         colorType: TextFieldColorType.dark,
                         height: 62,
@@ -388,7 +401,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             context.color.textColorDark.withValues(alpha: 0.3),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your name';
+                            return Tr.of(context)!.pleaseEnterName;
                           }
                           return null;
                         },
@@ -401,7 +414,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: CustomTextField(
                           controller: _emailController,
                           label: Tr.of(context)!.email,
-                          hintText: 'Enter your email',
+                          hintText: Tr.of(context)!.enterEmail,
                           keyboardType: TextInputType.emailAddress,
                           colorType: TextFieldColorType.dark,
                           height: 62,
@@ -419,7 +432,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       CustomTextField(
                         controller: _phoneController,
                         label: Tr.of(context)!.phoneNumber,
-                        hintText: 'Enter your phone number',
+                        hintText: Tr.of(context)!.enterPhoneNumber,
                         keyboardType: TextInputType.phone,
                         colorType: TextFieldColorType.dark,
                         height: 62,
@@ -428,7 +441,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             context.color.textColorDark.withValues(alpha: 0.3),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your phone number';
+                            return Tr.of(context)!.pleaseEnterPhoneNumber;
                           }
                           return null;
                         },
@@ -443,7 +456,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: CustomTextField(
                             controller: _dateOfBirthController,
                             label: Tr.of(context)!.dateOfBirth,
-                            hintText: 'Select your date of birth',
+                            hintText: Tr.of(context)!.selectDateOfBirth,
                             keyboardType: TextInputType.datetime,
                             colorType: TextFieldColorType.dark,
                             height: 62,
@@ -485,7 +498,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             return DropdownMenuItem<String>(
                               value: gender,
                               child: Text(
-                                gender[0].toUpperCase() + gender.substring(1),
+                                _getGenderTranslation(gender),
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: context.color.textColorDark,
@@ -511,7 +524,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       CustomTextField(
                         controller: _addressController,
                         label: Tr.of(context)!.address,
-                        hintText: 'Enter your address',
+                        hintText: Tr.of(context)!.enterAddress,
                         keyboardType: TextInputType.streetAddress,
                         colorType: TextFieldColorType.dark,
                         height: 62,
@@ -520,7 +533,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             context.color.textColorDark.withValues(alpha: 0.3),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your address';
+                            return Tr.of(context)!.pleaseEnterAddress;
                           }
                           return null;
                         },

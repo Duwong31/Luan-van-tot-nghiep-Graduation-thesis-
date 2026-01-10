@@ -199,7 +199,20 @@ class TrVi extends Tr {
   String get changePasswordTitle => 'Đổi mật khẩu';
 
   @override
+  String get changePasswordDescription =>
+      'Nhập mật khẩu hiện tại của bạn và chọn mật khẩu mới.';
+
+  @override
   String get currentPassword => 'Mật khẩu hiện tại';
+
+  @override
+  String get enterCurrentPassword => 'Nhập mật khẩu hiện tại của bạn';
+
+  @override
+  String get enterNewPassword => 'Nhập mật khẩu mới của bạn';
+
+  @override
+  String get confirmNewPasswordHint => 'Xác nhận mật khẩu mới của bạn';
 
   @override
   String get savingPassword => 'Đang lưu...';
@@ -211,7 +224,70 @@ class TrVi extends Tr {
   String get passwordChangedSuccess => 'Đổi mật khẩu thành công!';
 
   @override
+  String get pleaseEnterCurrentPassword =>
+      'Vui lòng nhập mật khẩu hiện tại của bạn';
+
+  @override
+  String get pleaseEnterNewPassword => 'Vui lòng nhập mật khẩu mới của bạn';
+
+  @override
+  String get passwordMinLength => 'Mật khẩu phải có ít nhất 6 ký tự';
+
+  @override
+  String get passwordsDoNotMatch => 'Mật khẩu mới và xác nhận không khớp';
+
+  @override
+  String get newPasswordMustBeDifferent =>
+      'Mật khẩu mới phải khác với mật khẩu hiện tại';
+
+  @override
+  String get currentPasswordIncorrect => 'Mật khẩu hiện tại không đúng';
+
+  @override
+  String get pleaseLoginToChangePassword =>
+      'Vui lòng đăng nhập để đổi mật khẩu';
+
+  @override
+  String get fieldRequired => 'Trường này là bắt buộc';
+
+  @override
+  String get pleaseConfirmPassword => 'Vui lòng xác nhận mật khẩu của bạn';
+
+  @override
   String get editProfile => 'Chỉnh sửa hồ sơ';
+
+  @override
+  String get selectImageSource => 'Chọn nguồn ảnh';
+
+  @override
+  String get gallery => 'Thư viện';
+
+  @override
+  String get camera => 'Máy ảnh';
+
+  @override
+  String get enterFullName => 'Nhập họ tên đầy đủ của bạn';
+
+  @override
+  String get enterEmail => 'Nhập email của bạn';
+
+  @override
+  String get enterPhoneNumber => 'Nhập số điện thoại của bạn';
+
+  @override
+  String get selectDateOfBirth => 'Chọn ngày sinh của bạn';
+
+  @override
+  String get enterAddress => 'Nhập địa chỉ của bạn';
+
+  @override
+  String get pleaseEnterName => 'Vui lòng nhập tên của bạn';
+
+  @override
+  String get pleaseEnterPhoneNumber => 'Vui lòng nhập số điện thoại của bạn';
+
+  @override
+  String get pleaseEnterAddress => 'Vui lòng nhập địa chỉ của bạn';
 
   @override
   String get dateOfBirth => 'Ngày sinh';
@@ -459,13 +535,7 @@ class TrVi extends Tr {
   String get pleaseEnterPassword => 'Vui lòng nhập mật khẩu của bạn';
 
   @override
-  String get pleaseEnterName => 'Vui lòng nhập tên của bạn';
-
-  @override
   String get pleaseEnterPhone => 'Vui lòng nhập số điện thoại của bạn';
-
-  @override
-  String get pleaseEnterAddress => 'Vui lòng nhập địa chỉ của bạn';
 
   @override
   String get pleaseEnterValidEmail => 'Vui lòng nhập địa chỉ email hợp lệ';

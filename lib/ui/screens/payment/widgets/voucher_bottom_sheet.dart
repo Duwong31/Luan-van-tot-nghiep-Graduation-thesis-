@@ -209,11 +209,12 @@ class _VoucherCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1C1C1C),
+          color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color:
-                isSelected ? context.color.territoryColor : Colors.transparent,
+            color: isSelected 
+                ? context.color.territoryColor 
+                : context.color.borderColor.withValues(alpha: 0.2),
             width: 2,
           ),
         ),
