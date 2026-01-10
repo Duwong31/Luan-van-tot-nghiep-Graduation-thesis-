@@ -306,24 +306,24 @@ class HomeScreenState extends State<HomeScreen>
           ],
 
           // Upcoming section
-          if (homeData.upcoming.isNotEmpty) ...[
-            const SizedBox(height: 32),
-            CategoryHome(
-              title: Tr.of(context)!.upcoming,
-              movies: homeData.upcoming,
-              onSeeAllTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MovieListScreen(
-                      title: Tr.of(context)!.upcoming,
-                      movies: homeData.upcoming,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
+          // if (homeData.upcoming.isNotEmpty) ...[
+          //   const SizedBox(height: 32),
+          //   CategoryHome(
+          //     title: Tr.of(context)!.upcoming,
+          //     movies: homeData.upcoming,
+          //     onSeeAllTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => MovieListScreen(
+          //             title: Tr.of(context)!.upcoming,
+          //             movies: homeData.upcoming,
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ],
 
           // Movie News section
           if (homeData.news.isNotEmpty) ...[

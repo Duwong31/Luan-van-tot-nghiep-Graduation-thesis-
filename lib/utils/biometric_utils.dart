@@ -84,9 +84,7 @@ class BiometricUtils {
         key: _keyBiometricEnabled,
         value: 'true',
       );
-      print('✅ Biometric login enabled');
     } catch (e) {
-      print('Error enabling biometric login: $e');
       throw Exception('Failed to enable biometric login');
     }
   }
@@ -96,9 +94,7 @@ class BiometricUtils {
     try {
       await _secureStorage.delete(key: _keyRefreshToken);
       await _secureStorage.delete(key: _keyBiometricEnabled);
-      print('✅ Biometric login disabled');
     } catch (e) {
-      print('Error disabling biometric login: $e');
       throw Exception('Failed to disable biometric login');
     }
   }
@@ -109,7 +105,6 @@ class BiometricUtils {
       final enabled = await _secureStorage.read(key: _keyBiometricEnabled);
       return enabled == 'true';
     } catch (e) {
-      print('Error checking biometric enabled: $e');
       return false;
     }
   }
@@ -119,24 +114,18 @@ class BiometricUtils {
     try {
       return await _secureStorage.read(key: _keyRefreshToken);
     } catch (e) {
-      print('Error reading secure refresh token: $e');
       return null;
     }
   }
 
   /// Update refresh token in secure storage (when refreshed)
   static Future<void> updateSecureRefreshToken(String newRefreshToken) async {
-    try {
-      final isEnabled = await isBiometricEnabled();
-      if (isEnabled) {
-        await _secureStorage.write(
-          key: _keyRefreshToken,
-          value: newRefreshToken,
-        );
-        print('✅ Secure refresh token updated');
-      }
-    } catch (e) {
-      print('Error updating secure refresh token: $e');
+    final isEnabled = await isBiometricEnabled();
+    if (isEnabled) {
+      await _secureStorage.write(
+        key: _keyRefreshToken,
+        value: newRefreshToken,
+      );
     }
   }
 
@@ -157,10 +146,6 @@ class BiometricUtils {
 
   /// Clear all biometric data (for logout)
   static Future<void> clearAll() async {
-    try {
-      await disableBiometricLogin();
-    } catch (e) {
-      print('Error clearing biometric data: $e');
-    }
+    await disableBiometricLogin();
   }
 }
