@@ -1,3 +1,4 @@
+import 'package:Celes/l10n/app_localizations.dart';
 import 'package:Celes/utils/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -88,7 +89,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText('Payment'),
+        title: CustomText(Tr.of(context)!.payment),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: _handleCancel,

@@ -400,7 +400,7 @@ class TrEn extends Tr {
   String get selected => 'Selected';
 
   @override
-  String get sold => 'Sold';
+  String get sold => 'Unavailable';
 
   @override
   String get vip => 'VIP';
@@ -461,6 +461,24 @@ class TrEn extends Tr {
 
   @override
   String get upcoming => 'Upcoming';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get upcomingTickets => 'Upcoming';
+
+  @override
+  String get historyTickets => 'History';
+
+  @override
+  String get noTicketsFound => 'No tickets found';
+
+  @override
+  String get noUpcomingTickets => 'No upcoming tickets';
+
+  @override
+  String get noTicketHistory => 'No ticket history';
 
   @override
   String get movieNews => 'Movie News';

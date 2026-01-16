@@ -402,7 +402,7 @@ class TrVi extends Tr {
   String get selected => 'Đã chọn';
 
   @override
-  String get sold => 'Đã bán';
+  String get sold => 'Không khả dụng';
 
   @override
   String get vip => 'VIP';
@@ -462,6 +462,24 @@ class TrVi extends Tr {
 
   @override
   String get upcoming => 'Sắp ra mắt';
+
+  @override
+  String get history => 'Lịch sử';
+
+  @override
+  String get upcomingTickets => 'Sắp tới';
+
+  @override
+  String get historyTickets => 'Lịch sử';
+
+  @override
+  String get noTicketsFound => 'Không có vé nào';
+
+  @override
+  String get noUpcomingTickets => 'Không có vé sắp tới';
+
+  @override
+  String get noTicketHistory => 'Không có lịch sử vé';
 
   @override
   String get movieNews => 'Tin tức phim';

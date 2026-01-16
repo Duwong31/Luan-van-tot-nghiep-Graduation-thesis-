@@ -364,28 +364,26 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                     right: index < showtimes.length - 1 ? 8 : 0,
                   ),
                   child: GestureDetector(
-                    onTap: showtime.isAvailable
-                        ? () {
-                            final selectedDate =
-                                _selectedDate ?? DateTime.now();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SelectSeatScreen(
-                                  cinemaName: showtime.cinemaName,
-                                  showTime: showtime.startTime,
-                                  endTime: showtime.endTime,
-                                  selectedDate: selectedDate,
-                                  roomNumber: showtime.room?.id ?? 1,
-                                  showtimeId: showtime.id,
-                                  movieTitle: widget.movieTitle,
-                                  movieImage: widget.movieImage,
-                                  genres: widget.genres,
-                                ),
-                              ),
-                            );
-                          }
-                        : null,
+                    onTap: () {
+                      final selectedDate =
+                          _selectedDate ?? DateTime.now();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectSeatScreen(
+                            cinemaName: showtime.cinemaName,
+                            showTime: showtime.startTime,
+                            endTime: showtime.endTime,
+                            selectedDate: selectedDate,
+                            roomNumber: showtime.room?.id ?? 1,
+                            showtimeId: showtime.id,
+                            movieTitle: widget.movieTitle,
+                            movieImage: widget.movieImage,
+                            genres: widget.genres,
+                          ),
+                        ),
+                      );
+                    },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
@@ -396,20 +394,15 @@ class _SelectDateTimeScreenState extends State<SelectDateTimeScreen> {
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: showtime.isAvailable
-                              ? context.color.descriptionColor
-                                  .withValues(alpha: 0.3)
-                              : context.color.descriptionColor
-                                  .withValues(alpha: 0.1),
+                          color: context.color.descriptionColor
+                              .withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         timeDisplay,
                         style: TextStyle(
-                          color: showtime.isAvailable
-                              ? context.color.textDefaultColor
-                              : context.color.descriptionColor,
+                          color: context.color.textDefaultColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),

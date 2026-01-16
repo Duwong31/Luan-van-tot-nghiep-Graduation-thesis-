@@ -16,15 +16,28 @@ class TicketHistoryScreen extends StatefulWidget {
   State<TicketHistoryScreen> createState() => _TicketHistoryScreenState();
 }
 
-class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
+class _TicketHistoryScreenState extends State<TicketHistoryScreen> with TickerProviderStateMixin {
+  TabController? _tabController;
+  
   @override
   void initState() {
     super.initState();
-    _fetchTickets();
+    _tabController = TabController(length: 2, vsync: this);
+    _fetchUpcomingTickets(); // Load upcoming tickets by default
   }
 
-  void _fetchTickets() {
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  void _fetchUpcomingTickets() {
     context.read<BookingCubit>().fetchUserBookings(status: 'confirmed');
+  }
+
+  void _fetchHistoryTickets() {
+    context.read<BookingCubit>().fetchUserBookings(status: 'completed');
   }
 
   @override
@@ -45,28 +58,66 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
           color: context.color.textColorDark,
         ),
         centerTitle: true,
-      ),
-      body: BlocBuilder<BookingCubit, BookingState>(
-        builder: (context, state) {
-          if (state is MyBookingsLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is MyBookingsLoaded) {
-            if (state.bookings.isEmpty) {
-              return _buildEmptyState();
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: context.color.territoryColor,
+          labelColor: context.color.textColorDark,
+          unselectedLabelColor: context.color.textColorDark.withValues(alpha: 0.6),
+          onTap: (index) {
+            if (index == 0) {
+              _fetchUpcomingTickets();
+            } else {
+              _fetchHistoryTickets();
             }
-            return _buildTicketList(state.bookings);
-          } else if (state is MyBookingsError) {
-            return _buildErrorState(state.errorMessage);
-          }
-          return const SizedBox.shrink();
-        },
+          },
+          tabs: [
+            Tab(text: Tr.of(context)!.upcomingTickets),
+            Tab(text: Tr.of(context)!.historyTickets),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildTicketTab(),
+          _buildTicketTab(),
+        ],
       ),
     );
   }
 
+  Widget _buildTicketTab() {
+    return BlocBuilder<BookingCubit, BookingState>(
+      builder: (context, state) {
+        if (state is MyBookingsLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state is MyBookingsLoaded) {
+          if (state.bookings.isEmpty) {
+            return _buildEmptyState();
+          }
+          return _buildTicketList(state.bookings);
+        } else if (state is MyBookingsError) {
+          return _buildErrorState(state.errorMessage);
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
   Widget _buildEmptyState() {
+    // Determine message based on current tab
+    String message = Tr.of(context)!.noTicketsFound;
+    if (_tabController != null) {
+      final currentIndex = _tabController!.index;
+      if (currentIndex == 0) {
+        message = Tr.of(context)!.noUpcomingTickets;
+      } else {
+        message = Tr.of(context)!.noTicketHistory;
+      }
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +129,7 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
           ),
           const SizedBox(height: 16),
           CustomText(
-            'No tickets found',
+            message,
             fontSize: 18,
             color: context.color.textColorDark.withValues(alpha: 0.5),
           ),
@@ -104,7 +155,15 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _fetchTickets,
+              onPressed: () {
+                // Retry based on current tab
+                final currentIndex = _tabController?.index ?? 0;
+                if (currentIndex == 0) {
+                  _fetchUpcomingTickets();
+                } else {
+                  _fetchHistoryTickets();
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.color.territoryColor,
               ),

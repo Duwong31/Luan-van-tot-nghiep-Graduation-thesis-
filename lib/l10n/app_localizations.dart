@@ -862,7 +862,7 @@ abstract class Tr {
   /// No description provided for @sold.
   ///
   /// In en, this message translates to:
-  /// **'Sold'**
+  /// **'Unavailable'**
   String get sold;
 
   /// No description provided for @vip.
@@ -978,6 +978,42 @@ abstract class Tr {
   /// In en, this message translates to:
   /// **'Upcoming'**
   String get upcoming;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @upcomingTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcomingTickets;
+
+  /// No description provided for @historyTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get historyTickets;
+
+  /// No description provided for @noTicketsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No tickets found'**
+  String get noTicketsFound;
+
+  /// No description provided for @noUpcomingTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming tickets'**
+  String get noUpcomingTickets;
+
+  /// No description provided for @noTicketHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No ticket history'**
+  String get noTicketHistory;
 
   /// No description provided for @movieNews.
   ///
