@@ -6,7 +6,7 @@ Celes is a modern movie ticket booking application designed to simplify the cine
 ## Logo
 
 <p align="center">
-  <img src="./assets/logo.png" alt="Celes Logo" width="200" />
+  <img src="./assets/logo.png" alt="Celes Logo" width="300" />
 </p>
 
 ## Screenshots
@@ -125,4 +125,4 @@ open  build/app/outputs/flutter-apk/
 ## Contributor
 - [Ly Trieu Duong](https://github.com/Duwong31) – Mobile Developer
 - [Nguyen Quoc Tuan](https://github.com/NguyenTuan298) – Mobile Developer
-- [Ly Trieu Duong](https://github.com/LyHoTuanAn) – Backend Developer
+- [Ly Ho Tuan An](https://github.com/LyHoTuanAn) – Backend Developer
